@@ -21,7 +21,7 @@ body, html {
     transition: transform 1s, width 1s;
 }
 
-#match-info {
+#matches-container {
     text-align: center;
     position: relative;
     z-index: 1;
@@ -29,6 +29,15 @@ body, html {
     padding: 20px;
     margin-top: 60px; /* Space between logo and match info */
     border-radius: 15px;
+}
+
+.match-info {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #01AB7A;
+    margin: 1rem;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
 }
 
 .player-card {
