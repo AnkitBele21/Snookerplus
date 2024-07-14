@@ -5,7 +5,6 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Prevent body scroll */
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -16,6 +15,9 @@ header {
     background-color: #33363B;
     padding: 20px;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 header img {
@@ -27,14 +29,13 @@ header h1 {
     margin: 10px 0 0;
     font-size: 24px;
     font-weight: 600;
-    text-align: left;
 }
 
 /* Flexbox container styles */
 .container-fluid {
     display: flex;
     flex-direction: row;
-    height: 100%;
+    height: calc(100% - 100px); /* Adjust height based on header size */
     overflow: hidden;
 }
 
@@ -42,6 +43,7 @@ header h1 {
     display: flex;
     flex-direction: column;
     padding: 10px;
+    height: 100%;
     overflow-y: auto; /* Enable vertical scrolling */
 }
 
