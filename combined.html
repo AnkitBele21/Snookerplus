@@ -17,51 +17,49 @@
             <h1>Club Frames & Players</h1>
         </div>
     </header>
-    <div class="container-fluid d-flex flex-column">
-        <div class="row flex-grow-1">
-            <!-- Frames Section -->
-            <div class="col-md-6 d-flex flex-column" id="framesSection">
-                <section id="filters" class="card">
-                    <input type="text" id="playerNameFilter" list="playerNames" placeholder="Filter by player name">
-                    <datalist id="playerNames">
-                        <!-- Player names will be dynamically added here via JavaScript -->
-                    </datalist>
-                    <input type="date" id="dateFilter">
-                    <button onclick="applyFilters()">Apply Filters</button>
-                    <div id="activeFramesContainer" class="ml-auto">
-                        <label for="activeFramesFilter">Active Frames:</label>
-                        <input type="checkbox" id="activeFramesFilter" onchange="applyFilters()">
-                    </div>
-                </section>
-                <button id="frameOnButton" class="btn btn-success" onclick="markFrameOn()">Frame On</button>
-                <section id="frameEntries" class="flex-grow-1 overflow-auto">
-                    <!-- Frame entries will be dynamically added here via JavaScript -->
-                </section>
+    <div class="container-fluid d-flex flex-grow-1">
+        <!-- Frames Section -->
+        <div class="col-md-6 d-flex flex-column" id="framesSection">
+            <section id="filters" class="card">
+                <input type="text" id="playerNameFilter" list="playerNames" placeholder="Filter by player name">
+                <datalist id="playerNames">
+                    <!-- Player names will be dynamically added here via JavaScript -->
+                </datalist>
+                <input type="date" id="dateFilter">
+                <button onclick="applyFilters()">Apply Filters</button>
+                <div id="activeFramesContainer" class="ml-auto">
+                    <label for="activeFramesFilter">Active Frames:</label>
+                    <input type="checkbox" id="activeFramesFilter" onchange="applyFilters()">
+                </div>
+            </section>
+            <button id="frameOnButton" class="btn btn-success" onclick="markFrameOn()">Frame On</button>
+            <section id="frameEntries" class="flex-grow-1 overflow-auto">
+                <!-- Frame entries will be dynamically added here via JavaScript -->
+            </section>
+        </div>
+        <!-- Players Section -->
+        <div class="col-md-6 d-flex flex-column" id="playersSection">
+            <header class="header">
+                <img src="https://img1.wsimg.com/isteam/ip/9e11a5db-9940-4d56-b773-7f8426617dc8/Frame%2012995%20(1).png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25" alt="SnookerPlus Logo">
+                <h2>Club Players</h2>
+            </header>
+            <div class="d-flex justify-content-between mb-3">
+                <input type="search" id="playerSearch" class="form-control" placeholder="Search player">
+                <button id="addPlayerButton" class="btn btn-success ml-2">Add Player</button>
             </div>
-            <!-- Players Section -->
-            <div class="col-md-6 d-flex flex-column" id="playersSection">
-                <header class="header">
-                    <img src="https://img1.wsimg.com/isteam/ip/9e11a5db-9940-4d56-b773-7f8426617dc8/Frame%2012995%20(1).png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25" alt="SnookerPlus Logo">
-                    <h2>Club Players</h2>
-                </header>
-                <div class="d-flex justify-content-between mb-3">
-                    <input type="search" id="playerSearch" class="form-control" placeholder="Search player">
-                    <button id="addPlayerButton" class="btn btn-success ml-2">Add Player</button>
-                </div>
-                <div class="flex-grow-1 overflow-auto">
-                    <table class="table table-dark table-striped" id="playersTable">
-                        <thead>
-                            <tr>
-                                <th>Player Name</th>
-                                <th>Balance</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Players data will be inserted here by clubplayers.js -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="flex-grow-1 overflow-auto">
+                <table class="table table-dark table-striped" id="playersTable">
+                    <thead>
+                        <tr>
+                            <th>Player Name</th>
+                            <th>Balance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Players data will be inserted here by clubplayers.js -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
