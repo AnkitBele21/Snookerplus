@@ -1,32 +1,42 @@
+/* General styles */
 body {
-    font-family: Arial, sans-serif;
+    background-color: #22252B;
+    color: #FFFFFF;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
+/* Header styles */
 header {
-    background-color: #343a40;
-    color: white;
-    padding: 10px;
+    background-color: #33363B;
+    padding: 20px;
+    text-align: center;
 }
 
 header img {
-    height: 50px;
-    margin-right: 10px;
+    width: 180px;
 }
 
-header h1, header h2 {
-    margin: 0;
+header h1 {
+    color: #01AB7A;
+    margin: 10px 0 0;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: left;
 }
 
-#framesSection, #playersSection {
+/* Frames Section styles */
+#framesSection .card, .frame-card {
+    background-color: #33363B;
+    border-radius: 8px;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+    margin: 20px;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    background-color: #f8f9fa;
 }
 
-#framesSection {
-    border-right: 1px solid #ddd;
+.frame-card {
+    margin-bottom: 10px;
 }
 
 #filters {
@@ -47,18 +57,80 @@ header h1, header h2 {
     margin-bottom: 20px;
 }
 
-#playersSection .d-flex {
-    margin-bottom: 20px;
+.active-frame {
+    border: 2px solid #01AB7A;
+    background-color: #394045;
+}
+
+/* Players Section styles */
+.header {
+    background-color: #33363B;
+    padding: 20px;
+    text-align: center;
+}
+
+.header h2 {
+    color: #01AB7A;
+    margin-top: 10px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.container {
+    margin-top: 20px;
 }
 
 .table {
-    margin-bottom: 0;
+    color: #FFFFFF;
 }
 
-.table th, .table td {
-    vertical-align: middle;
+/* Row background and text color styles */
+.high-balance {
+    background-color: #4CAF50; /* Green for high balance */
+    color: #FFFFFF; /* White text for contrast */
 }
 
-.container-fluid {
-    padding: 20px;
+.medium-balance {
+    background-color: #FFEB3B; /* Yellow for medium balance */
+    color: #000000; /* Black text for contrast */
+}
+
+.low-balance {
+    background-color: #FFC107; /* Amber for low balance */
+    color: #000000; /* Black text for contrast */
+}
+
+.negative-balance {
+    background-color: #F44336; /* Red for negative balance */
+    color: #FFFFFF; /* White text for contrast */
+}
+
+/* Button styles */
+.btn-primary {
+    background-color: #01AB7A;
+    border-color: #01AB7A;
+}
+
+.btn-success {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.btn-primary:hover, .btn-success:hover {
+    opacity: 0.85;
+}
+
+/* Input and button alignment */
+.d-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-control, .btn {
+    margin: 5px 0;
+}
+
+.ml-2 {
+    margin-left: 8px;
 }
