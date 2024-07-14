@@ -6,6 +6,9 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden; /* Prevent body scroll */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 /* Header styles */
@@ -30,22 +33,19 @@ header h1 {
 /* Flexbox container styles */
 .container-fluid {
     display: flex;
-    flex-direction: column;
-    height: 100vh;
+    flex-direction: row;
+    height: 100%;
+    overflow: hidden;
 }
 
-.row {
-    flex-grow: 1;
-    display: flex;
-}
-
-/* Frames Section styles */
-#framesSection {
+.col-md-6 {
     display: flex;
     flex-direction: column;
     padding: 10px;
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
+/* Frames Section styles */
 #filters {
     display: flex;
     align-items: center;
@@ -83,12 +83,6 @@ header h1 {
 }
 
 /* Players Section styles */
-#playersSection {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-}
-
 .header {
     background-color: #33363B;
     padding: 20px;
@@ -118,39 +112,6 @@ header h1 {
 
 .table {
     color: #FFFFFF;
-}
-
-.table tbody {
-    display: block;
-    max-height: calc(100vh - 230px);
-    overflow-y: auto;
-}
-
-.table thead, .table tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-}
-
-/* Row background and text color styles */
-.high-balance {
-    background-color: #4CAF50; /* Green for high balance */
-    color: #FFFFFF; /* White text for contrast */
-}
-
-.medium-balance {
-    background-color: #FFEB3B; /* Yellow for medium balance */
-    color: #000000; /* Black text for contrast */
-}
-
-.low-balance {
-    background-color: #FFC107; /* Amber for low balance */
-    color: #000000; /* Black text for contrast */
-}
-
-.negative-balance {
-    background-color: #F44336; /* Red for negative balance */
-    color: #FFFFFF; /* White text for contrast */
 }
 
 /* Button styles */
