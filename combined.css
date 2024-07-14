@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+}
+
+header img {
+    height: 50px;
+    margin-right: 10px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+#framesSection, #playersSection {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+}
+
+#framesSection {
+    border-right: 1px solid #ddd;
+}
+
+#filters {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+#filters input, #filters button {
+    margin-right: 10px;
+}
+
+#frameOnButton {
+    margin-bottom: 20px;
+}
+
+#playersSection .d-flex {
+    margin-bottom: 20px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.container-fluid {
+    padding: 20px;
+}
