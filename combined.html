@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="combined.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="https://github.com/AnkitBele21/centurydewas/blob/updateframedata/photo/Thumbnail.jpg?raw=true" type="image/x-icon"> 
+    <title>Club Frames & Players</title>
+</head>
+<body>
+    <header class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <img src="https://img1.wsimg.com/isteam/ip/9e11a5db-9940-4d56-b773-7f8426617dc8/Frame%2012995%20(1).png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25" alt="SnookerPlus Logo" id="logo">
+            <h1>Club Frames & Players</h1>
+        </div>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Frames Section -->
+            <div class="col-md-8" id="framesSection">
+                <section id="filters" class="card">
+                    <input type="text" id="playerNameFilter" list="playerNames" placeholder="Filter by player name">
+                    <datalist id="playerNames">
+                        <!-- Player names will be dynamically added here via JavaScript -->
+                    </datalist>
+                    <input type="date" id="dateFilter">
+                    <button onclick="applyFilters()">Apply Filters</button>
+                    <div id="activeFramesContainer" class="ml-auto">
+                        <label for="activeFramesFilter">Active Frames:</label>
+                        <input type="checkbox" id="activeFramesFilter" onchange="applyFilters()">
+                    </div>
+                </section>
+                <button id="frameOnButton" class="btn btn-success" onclick="markFrameOn()">Frame On</button>
+                <section id="frameEntries">
+                    <!-- Frame entries will be dynamically added here via JavaScript -->
+                </section>
+            </div>
+            <!-- Players Section -->
+            <div class="col-md-4" id="playersSection">
+                <div class="d-flex justify-content-between mb-3">
+                    <input type="search" id="playerSearch" class="form-control" placeholder="Search player">
+                    <button id="addPlayerButton" class="btn btn-success ml-2">Add Player</button>
+                </div>
+                <table class="table table-dark table-striped" id="playersTable">
+                    <thead>
+                        <tr>
+                            <th>Player Name</th>
+                            <th>Balance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Players data will be inserted here by clubplayers.js -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS (includes Popper) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="loader.js" defer></script>
+    <script src="clubframes.js" defer></script>
+    <script src="clubplayers.js" defer></script>
+</body>
+</html>
