@@ -14,7 +14,6 @@ body {
 header {
     background-color: #33363B;
     padding: 20px;
-    text-align: center;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -49,17 +48,9 @@ header h1 {
 
 /* Frames Section styles */
 #filters {
-    display: flex;
-    align-items: center;
-    padding: 10px;
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-bottom: 20px;
-}
-
-#filters input, #filters button {
-    margin-right: 10px;
 }
 
 #frameOnButton {
@@ -85,27 +76,10 @@ header h1 {
 }
 
 /* Players Section styles */
-.header {
-    background-color: #33363B;
-    padding: 20px;
-    text-align: center;
-}
-
-.header h2 {
-    color: #01AB7A;
-    margin-top: 10px;
-    font-size: 24px;
-    font-weight: 600;
-}
-
 .d-flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.form-control, .btn {
-    margin: 5px 0;
 }
 
 .ml-2 {
@@ -121,7 +95,6 @@ header h1 {
     background-color: #01AB7A;
     border-color: #01AB7A;
 }
-
 
 .btn-success {
     background-color: #4CAF50;
