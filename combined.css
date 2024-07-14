@@ -134,3 +134,14 @@ header h1 {
 .ml-2 {
     margin-left: 8px;
 }
+
+/* Additional styles to ensure both sections are of equal height and scrollable */
+#framesSection, #playersSection {
+    height: calc(100vh - 100px);
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.row {
+    height: 100%;
+}
