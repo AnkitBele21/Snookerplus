@@ -20,6 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Add event listener to the Back button
+    const backButton = document.getElementById("backButton");
+    if (backButton) {
+        backButton.addEventListener("click", function () {
+            window.location.href = "https://leaderboard.snookerplus.in/clubframes";
+        });
+    }
 });
 
 function fetchPlayerData() {
@@ -47,9 +55,9 @@ function fetchPlayerData() {
                     playerNameCell.textContent = playerName;
 
                     if (!isNaN(balance) && balance > 5) {
-                        playerNameCell.style.color = '#F44336'; // Example color, adjust as needed
+                        playerNameCell.style.color = '#F44336';
                     } else if (!isNaN(balance) && balance < -5) {
-                        playerNameCell.style.color = '#4CAF50'; // Example color, adjust as needed
+                        playerNameCell.style.color = '#4CAF50';
                     }
 
                     const balanceCell = rowElement.insertCell(1);
@@ -83,7 +91,7 @@ function topUpBalance(playerName) {
 function makePurchase(playerName) {
     const amount = prompt(`Enter purchase amount for ${playerName}:`);
     if (amount) {
-        recordAppPurchase(playerName, amount)
+        recordAppPurchase(playerName, amount);
     }
 }
 
