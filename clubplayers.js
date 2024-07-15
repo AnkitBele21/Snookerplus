@@ -154,3 +154,4 @@ function recordAppPurchase(playerName, amount) {
         alert("Something went wrong while handling payment success. Contact support.");
     }
 }
+
