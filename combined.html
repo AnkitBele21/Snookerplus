@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="combined.css">
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.2/css/bootstrap.min.css">
-    <!-- Favicon -->
-    <link rel="icon" href="https://github.com/AnkitBele21/centurydewas/blob/updateframedata/photo/Thumbnail.jpg?raw=true" type="image/x-icon"> <!-- Replace "favicon.ico" with the URL of your favicon image -->
+    <link rel="icon" href="https://github.com/AnkitBele21/centurydewas/blob/updateframedata/photo/Thumbnail.jpg?raw=true" type="image/x-icon">
     <title>Club Frames and Players</title>
 </head>
 <body>
@@ -18,26 +16,9 @@
         </div>
         <button id="addPlayersButton" class="btn btn-primary" onclick="window.location.href='https://leaderboard.snookerplus.in/clubplayers'">Players</button>
     </header>
-    <section id="filters" class="card">
-        <input type="text" id="playerNameFilter" list="playerNames" placeholder="Filter by player name">
-        <datalist id="playerNames">
-            <!-- Player names will be dynamically added here via JavaScript -->
-        </datalist>
-        <input type="date" id="dateFilter">
-        <button onclick="applyFilters()">Apply Filters</button>
-        <div id="activeFramesContainer" class="ml-auto">
-            <label for="activeFramesFilter">Active Frames:</label>
-            <input type="checkbox" id="activeFramesFilter" onchange="applyFilters()">
-        </div>
-    </section>
-    <button id="frameOnButton" class="btn btn-success" onclick="markFrameOn()">Frame On</button>
-    <section id="frameEntries">
-        <!-- Frame entries will be dynamically added here via JavaScript -->
-    </section>
-
-    <!-- Bootstrap Bundle JS (includes Popper) -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
-    <script src="loader.js" defer></script>
-    <script src="combined.js" defer></script>
+    <div id="main-content">
+        <iframe id="clubFrames" src="clubframes.html" class="split-frame"></iframe>
+        <iframe id="clubPlayers" src="clubplayers.html" class="split-frame"></iframe>
+    </div>
 </body>
 </html>
