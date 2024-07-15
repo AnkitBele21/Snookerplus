@@ -4,12 +4,18 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 header {
     background-color: #33363B;
     padding: 20px;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 header img {
@@ -24,142 +30,29 @@ h1 {
     text-align: left;
 }
 
-.card, .frame-card {
-    background-color: #33363B;
-    border-radius: 8px;
-    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
-    margin: 20px;
-    padding: 20px;
-}
-
-.frame-card {
-    margin-bottom: 10px;
-}
-
-h5 {
-    color: #01AB7A;
-}
-
-input, button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-input {
-    width: 100%;
-}
-
 button {
     background-color: #01AB7A;
     color: #fff;
     cursor: pointer;
-    width: 100%;
 }
 
 button:hover {
     background-color: #018a5e;
 }
 
+#main-content {
+    display: flex;
+    height: calc(100% - 80px); /* Adjust the height to fill the remaining space */
+}
+
+.split-frame {
+    flex: 1;
+    border: none;
+    height: 100%;
+}
+
 @media (min-width: 768px) {
     h1 {
         font-size: 24px;
     }
-
-    #filters {
-        flex-direction: row;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: wrap
-    }
-
-    input, button {
-        margin-bottom: 0;
-        flex-grow: 1;
-    }
-}
-
-.active-frame {
-    border: 2px solid #01AB7A; /* Highlight active frames with a border color similar to the header */
-    background-color: #394045; /* Slightly lighter than the default frame card for distinction */
-}
-
-/* Assuming .frame-card is your card container */
-.frame-card {
-    position: relative;
-    padding: 15px; /* Adjust padding as needed */
-    /* Other styling for your card */
-}
-
-.edit-btn, .off-btn {
-    width: 100%; /* Make buttons full width of the card container */
-    margin-bottom: 5px; /* Adds space between the buttons */
-}
-
-/* Additional styling for the off button if needed */
-.off-btn {
-    background-color: #dc3545; /* Bootstrap's btn-danger color */
-    color: white;
-}
-
-#addPlayersButton {
-    background-color: #01AB7A;
-    color: #FFFFFF;
-    padding: 5px 15px; /* Adjust padding as needed */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.3s ease;
-}
-
-#addPlayersButton:hover {
-    background-color: #018a5e; /* Darker shade for hover effect */
-}
-
-#activeFramesContainer {
-    display: flex;
-    align-items: center; /* Align items vertically */
-    justify-content: flex-end; /* Align items to the right */
-    margin-bottom: 10px; /* Add margin to create space */
-    margin-right: 20px; /* Add margin to create space between the text and checkbox */
-}
-
-/* Style for the custom checkbox */
-#activeFramesFilter {
-    display: inline-block; /* Ensure checkbox is visible */
-    opacity: 1; /* Show the checkbox */
-    margin-left: 5px; /* Add margin to create space */
-}
-
-/* Style for the custom checkbox label */
-#activeFramesContainer label {
-    color: #FFFFFF; /* Text color for the label */
-    cursor: pointer; /* Change cursor to pointer on hover */
-    white-space: nowrap; /* Prevent text from wrapping */
-}
-
-/* Style for the custom checkbox when checked */
-#activeFramesFilter:checked + label::before {
-    background-color: #00FF00; /* Background color for the checked state */
-}
-
-#activeFramesFilter + label::before {
-    content: "";
-    display: inline-block;
-    width: 15px; /* Adjust width and height as needed for the checkbox */
-    height: 15px;
-    border: 2px solid #018a5e; /* Border color for the checkbox */
-    border-radius: 3px; /* Border radius for the checkbox */
-    background-color: transparent; /* Background color for the checkbox */
-    vertical-align: middle; /* Align the checkbox vertically with the text */
-    margin-right: 5px; /* Add margin to create space */
-    cursor: pointer; /* Change cursor to pointer on hover */
-}
-#activeFramesContainer label {
-    color: #FFFFFF; /* Text color for the label */
-    cursor: pointer; /* Change cursor to pointer on hover */
-    margin-right: 5px; /* Add margin to create space between the text and checkbox */
-    white-space: nowrap; /* Prevent text from wrapping */
 }
