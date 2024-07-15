@@ -20,18 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // Add event listener to the Back button
-    const backButton = document.getElementById("backButton");
-    if (backButton) {
-        backButton.addEventListener("click", function () {
-            window.location.href = "https://leaderboard.snookerplus.in/clubframes";
-        });
-    }
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    fetchPlayerData();
 });
 
 function fetchPlayerData() {
@@ -48,26 +36,24 @@ function fetchPlayerData() {
                     const balance = parseFloat(row[6]); // Assuming balances are in column G
                     const rowElement = tableBody.insertRow();
 
-                          // Apply classes based on conditions, here you might need to adjust logic based on what 'balance' can be
-                    if (!isNaN(parseFloat(balance)) && parseFloat(balance) > 5) {
+                    // Apply classes based on conditions
+                    if (!isNaN(balance) && balance > 5) {
                         rowElement.classList.add('balance-high');
-                    } else if (!isNaN(parseFloat(balance)) && parseFloat(balance) < -5) {
+                    } else if (!isNaN(balance) && balance < -5) {
                         rowElement.classList.add('balance-low');
                     }
 
                     const playerNameCell = rowElement.insertCell(0);
                     playerNameCell.textContent = playerName;
 
-                    // You might want to adjust these conditions if balance can be non-numeric
-                    if (!isNaN(parseFloat(balance)) && parseFloat(balance) > 5) {
+                    if (!isNaN(balance) && balance > 5) {
                         playerNameCell.style.color = '#F44336'; // Example color, adjust as needed
-                    } else if (!isNaN(parseFloat(balance)) && parseFloat(balance) < -5) {
+                    } else if (!isNaN(balance) && balance < -5) {
                         playerNameCell.style.color = '#4CAF50'; // Example color, adjust as needed
                     }
 
                     const balanceCell = rowElement.insertCell(1);
-                    balanceCell.textContent = balance; // Directly display the balance without conversion
-
+                    balanceCell.textContent = balance;
 
                     const actionsCell = rowElement.insertCell(2);
                     const topUpButton = document.createElement('button');
@@ -87,12 +73,11 @@ function fetchPlayerData() {
         .catch(error => console.error('Error fetching player data:', error));
 }
 
-
 function topUpBalance(playerName) {
     const amount = prompt(`Enter top-up amount for ${playerName}:`);
     if (amount) {
         recordTopUp(playerName, amount);
-      }
+    }
 }
 
 function makePurchase(playerName) {
@@ -102,95 +87,62 @@ function makePurchase(playerName) {
     }
 }
 
-function applyFilter() {
-    const filterValue = document.getElementById('playerFilter').value.toLowerCase();
-    const tableBody = document.getElementById('playersTable').getElementsByTagName('tbody')[0];
-    const rows = tableBody.getElementsByTagName('tr');
-
-    for (let i = 0; i < rows.length; i++) {
-        let playerName = rows[i].getElementsByTagName('td')[0].textContent;
-        if (playerName.toLowerCase().indexOf(filterValue) > -1) {
-            rows[i].style.display = "";
-        } else {
-            rows[i].style.display = "none";
-        }
+function recordTopUp(playerName, amount) {
+    try {
+        loaderInstance.showLoader();
+        fetch("https://payment.snookerplus.in/record_top_up/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                user_id: playerName,
+                amount_paid: amount,
+            }),
+        })
+        .then((resp) => {
+            loaderInstance.hideLoader();
+            if (!resp.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return resp.json();
+        })
+        .then((_body) => {
+            window.location.reload();
+        });
+    } catch (error) {
+        loaderInstance.hideLoader();
+        console.error("Fetch error:", error);
+        alert("Something went wrong while handling payment success. Contact support.");
     }
 }
 
-function addPlayer() {
-    console.log('Add Player button clicked');
-    // Implement the functionality to add a new player
-    // This could involve displaying a modal to enter the new player's details or redirecting to a new page/form
+function recordAppPurchase(playerName, amount) {
+    try {
+        loaderInstance.showLoader();
+        fetch("https://payment.snookerplus.in/record_app_purchase/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                user_id: playerName,
+                amount_paid: amount,
+            }),
+        })
+        .then((resp) => {
+            loaderInstance.hideLoader();
+            if (!resp.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return resp.json();
+        })
+        .then((_body) => {
+            window.location.reload();
+        });
+    } catch (error) {
+        loaderInstance.hideLoader();
+        console.error("Fetch error:", error);
+        alert("Something went wrong while handling payment success. Contact support.");
+    }
 }
-
-// Removed the redundant window.onload function as it was causing issues with loading the player data correctly.
-
-
-function recordTopUp(playerName, amount,) {
-    try {
-      loaderInstance.showLoader();
-  
-      fetch("https://payment.snookerplus.in/record_top_up/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: playerName,
-          amount_paid: amount,
-        }),
-      })
-        .then((resp) => {
-          loaderInstance.hideLoader();
-          if (!resp.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return resp.json();
-        })
-        .then((_body) => {
-          // Just reload to get latest info
-          window.location.reload();
-        });
-    } catch (error) {
-      loaderInstance.hideLoader();
-      console.error("Fetch error:", error);
-      alert(
-        "Something went wrong while handling payment success. Contact support."
-      );
-    }
-  }
-
-
-  function recordAppPurchase(playerName, amount,) {
-    try {
-      loaderInstance.showLoader();
-  
-      fetch("https://payment.snookerplus.in/record_app_purchase/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: playerName,
-          amount_paid: amount,
-        }),
-      })
-        .then((resp) => {
-          loaderInstance.hideLoader();
-          if (!resp.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return resp.json();
-        })
-        .then((_body) => {
-          // Just reload to get latest info
-          window.location.reload();
-        });
-    } catch (error) {
-      loaderInstance.hideLoader();
-      console.error("Fetch error:", error);
-      alert(
-        "Something went wrong while handling payment success. Contact support."
-      );
-    }
-  }
