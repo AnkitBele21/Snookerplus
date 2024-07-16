@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Players</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="clubplayers.css">
+</head>
+<body>
+    <header class="header">
+        <img src="https://img1.wsimg.com/isteam/ip/9e11a5db-9940-4d56-b773-7f8426617dc8/Frame%2012995%20(1).png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25" alt="SnookerPlus Logo">
+        <h1>Club Players</h1>
+<button id="backButton" class="btn btn-primary">Back</button>
+
+    </header>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between mb-3">
+            <input type="search" id="playerSearch" class="form-control" placeholder="Search player">
+            <button id="addPlayerButton" class="btn btn-success ml-2">Add Player</button>
+        </div>
+        <table class="table table-dark table-striped" id="playersTable">
+            <thead>
+                <tr>
+                    <th>Player Name</th>
+                    <th>Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Players data will be inserted here by clubplayers.js -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="loader.js" defer></script>
+    <script src="clubplayers.js" defer></script>
+</body>
+</html>
