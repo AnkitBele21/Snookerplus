@@ -87,3 +87,6 @@ body {
 .balance-low td {
     color: #4CAF50; /* Green text for low (negative) balance */
 }
+.sticky-top {
+    z-index: 1020; /* Ensure it appears above other elements */
+}
