@@ -32,6 +32,12 @@
         .logo {
             height: 50px;
         }
+        .center-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
         .player-info {
             display: flex;
             justify-content: space-around;
@@ -45,8 +51,8 @@
             font-size: 1.5em;
             transition: color 0.3s;
         }
-        .score {
-            font-size: 2em;
+        .score, .round-score {
+            font-size: 1.2em;
             margin-top: 5px;
         }
         .break {
@@ -56,25 +62,46 @@
         .active-player {
             color: #01AB7A;
         }
-        .footer {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.9em;
+        .round-scores {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .round {
+            margin: 0 5px;
         }
     </style>
 </head>
 <body>
 
-<div class="overlay">
+<div class="center-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Logo" class="logo">
+</div>
+
+<div class="overlay">
     <div class="player-info">
         <div class="player" id="player1">
             <div class="name" id="player1Name">Player 1</div>
             <div class="score" id="player1Score">0</div>
+            <div class="round-scores" id="player1Rounds">
+                <span class="round" id="player1Round1">0</span> -
+                <span class="round" id="player1Round2">0</span> -
+                <span class="round" id="player1Round3">0</span> -
+                <span class="round" id="player1Round4">0</span> -
+                <span class="round" id="player1Round5">0</span>
+            </div>
         </div>
         <div class="player" id="player2">
             <div class="name" id="player2Name">Player 2</div>
             <div class="score" id="player2Score">0</div>
+            <div class="round-scores" id="player2Rounds">
+                <span class="round" id="player2Round1">0</span> -
+                <span class="round" id="player2Round2">0</span> -
+                <span class="round" id="player2Round3">0</span> -
+                <span class="round" id="player2Round4">0</span> -
+                <span class="round" id="player2Round5">0</span>
+            </div>
         </div>
     </div>
     <div class="break" id="breakScore">Break: 00</div>
@@ -103,6 +130,19 @@
                 document.getElementById('player2Name').textContent = rowData[2];
                 document.getElementById('player2Score').textContent = rowData[3];
                 document.getElementById('breakScore').textContent = `Break: ${rowData[4]}`;
+
+                // Round scores
+                document.getElementById('player1Round1').textContent = rowData[6] || 0;
+                document.getElementById('player1Round2').textContent = rowData[7] || 0;
+                document.getElementById('player1Round3').textContent = rowData[8] || 0;
+                document.getElementById('player1Round4').textContent = rowData[9] || 0;
+                document.getElementById('player1Round5').textContent = rowData[10] || 0;
+
+                document.getElementById('player2Round1').textContent = rowData[11] || 0;
+                document.getElementById('player2Round2').textContent = rowData[12] || 0;
+                document.getElementById('player2Round3').textContent = rowData[13] || 0;
+                document.getElementById('player2Round4').textContent = rowData[14] || 0;
+                document.getElementById('player2Round5').textContent = rowData[15] || 0;
 
                 const activePlayer = rowData[5];
                 if (activePlayer === 'Player1') {
