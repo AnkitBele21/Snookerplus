@@ -13,7 +13,7 @@
             position: relative;
             height: 100vh;
             width: 100vw;
-            background: black;
+            background: rgba(0, 0, 0, 0); /* Transparent background */
         }
         .overlay {
             position: absolute;
@@ -82,13 +82,9 @@
 </div>
 
 <script>
-    // Google Sheets API key
     const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc';
-    // Google Sheets ID
     const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';
-    // Sheet name
     const SHEET_NAME = 'Scoring';
-    // URL to fetch the data
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
     async function fetchData() {
@@ -96,25 +92,20 @@
             const response = await fetch(url);
             const data = await response.json();
             const values = data.values;
-            if (values.length > 1) {
-                // Assuming the first row contains headers
+            if (values && values.length > 1) {
                 const rowData = values[1];
-                document.getElementById('player1Name').textContent = rowData[0];
-                document.getElementById('player1Score').textContent = rowData[1];
-                document.getElementById('player2Name').textContent = rowData[2];
-                document.getElementById('player2Score').textContent = rowData[3];
-                
-                const rounds = `(${rowData[6]}-${rowData[7]})`;
-                document.getElementById('rounds').textContent = rounds;
+                document.getElementById('player1Name').textContent = rowData[0] || 'Player 1';
+                document.getElementById('player1Score').textContent = rowData[1] || '0';
+                document.getElementById('player2Name').textContent = rowData[2] || 'Player 2';
+                document.getElementById('player2Score').textContent = rowData[3] || '0';
+                document.getElementById('rounds').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
             }
         } catch (error) {
             console.error('Error fetching data from Google Sheets:', error);
         }
     }
 
-    // Fetch data initially
     fetchData();
-    // Fetch data every 5 seconds
     setInterval(fetchData, 5000);
 </script>
 
