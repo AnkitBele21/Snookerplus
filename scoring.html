@@ -13,7 +13,7 @@
             position: relative;
             height: 100vh;
             width: 100vw;
-            background: rgba(0, 0, 0, 0); /* Transparent background */
+            background: rgba(0, 0, 0, 0);
         }
         .overlay {
             position: absolute;
@@ -28,10 +28,10 @@
             z-index: 10;
             padding: 10px 20px;
             box-sizing: border-box;
+            border-top: 2px solid #01AB7A;
         }
         .logo {
-            height: 30px;
-            margin-top: 5px;
+            height: 50px;
         }
         .center-content {
             display: flex;
@@ -40,26 +40,23 @@
         }
         .player-info {
             display: flex;
-            justify-content: space-between;
-            width: 100%;
-        }
-        .player {
+            flex-direction: column;
+            align-items: center;
             flex: 1;
-            text-align: center;
         }
         .name {
-            font-size: 1.5em;
-            transition: color 0.3s;
+            font-size: 2em;
+            margin: 0;
         }
         .score {
-            font-size: 1.2em;
-            margin-top: 5px;
+            font-size: 1.5em;
+            margin: 5px 0;
         }
         .rounds {
             font-size: 1.2em;
-            margin-top: 10px;
+            margin: 10px 0;
         }
-        .active-player {
+        .active {
             color: #01AB7A;
         }
     </style>
@@ -67,7 +64,7 @@
 <body>
 
 <div class="overlay">
-    <div class="player" id="player1">
+    <div class="player-info" id="player1">
         <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
     </div>
@@ -75,7 +72,7 @@
         <div class="rounds" id="rounds">(0-0)</div>
         <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Logo" class="logo">
     </div>
-    <div class="player" id="player2">
+    <div class="player-info" id="player2">
         <div class="name" id="player2Name">Player 2</div>
         <div class="score" id="player2Score">0</div>
     </div>
@@ -99,6 +96,17 @@
                 document.getElementById('player2Name').textContent = rowData[2] || 'Player 2';
                 document.getElementById('player2Score').textContent = rowData[3] || '0';
                 document.getElementById('rounds').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
+
+                const player1Name = document.getElementById('player1Name');
+                const player2Name = document.getElementById('player2Name');
+                player1Name.classList.remove('active');
+                player2Name.classList.remove('active');
+
+                if (rowData[4] === '1') {
+                    player1Name.classList.add('active');
+                } else if (rowData[4] === '2') {
+                    player2Name.classList.add('active');
+                }
             }
         } catch (error) {
             console.error('Error fetching data from Google Sheets:', error);
