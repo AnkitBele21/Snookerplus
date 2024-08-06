@@ -75,7 +75,11 @@
             color: #01AB7A;
         }
         .message {
-            width: 100%;
+            width: calc(100% - 20px); /* Minimal spacing from the edges */
+            margin: 10px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
             text-align: center;
             font-size: 1.5em; /* Font size for message */
             padding: 5px;
