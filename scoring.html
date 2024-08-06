@@ -32,14 +32,15 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 100%;
+            width: calc(100% - 20px); /* Minimal spacing from the edges */
+            margin: 10px;
             background: #1D1D25;
             color: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            padding: 10px 20px;
+            padding: 5px 10px; /* Reduced padding */
             box-sizing: border-box;
             border-top: 2px solid #01AB7A;
         }
@@ -49,8 +50,8 @@
             align-items: center;
         }
         .logo {
-            height: 25px; /* Reduced to half the size */
-            margin-bottom: 5px;
+            height: 25px; /* Reduced size */
+            margin-bottom: 2px;
         }
         .player-info {
             display: flex;
@@ -59,19 +60,27 @@
             flex: 1;
         }
         .name {
-            font-size: 1.5em;
+            font-size: 1.2em; /* Adjusted font size */
             margin: 0;
         }
         .score {
-            font-size: 1.2em;
+            font-size: 1em; /* Adjusted font size */
             margin: 2px 0;
         }
         .rounds {
-            font-size: 1em;
+            font-size: 0.8em; /* Adjusted font size */
             margin: 2px 0;
         }
         .active {
             color: #01AB7A;
+        }
+        .message {
+            width: 100%;
+            text-align: center;
+            font-size: 1.5em; /* Font size for message */
+            padding: 5px;
+            background: #01AB7A;
+            color: #1D1D25;
         }
     </style>
 </head>
@@ -79,7 +88,7 @@
 
 <div class="fullscreen-bg" id="fullscreenBg"></div>
 
-<div class="overlay">
+<div class="overlay" id="scoreStrip">
     <div class="player-info" id="player1">
         <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
@@ -93,6 +102,8 @@
         <div class="score" id="player2Score">0</div>
     </div>
 </div>
+
+<div class="message" id="messageStrip" style="display: none;"></div>
 
 <script>
     const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc';
@@ -130,6 +141,17 @@
                     document.getElementById('fullscreenBg').innerHTML = `<img src="${imageUrl}" alt="Background">`;
                 } else {
                     document.getElementById('fullscreenBg').innerHTML = '';
+                }
+
+                // Display the message if content exists in cell K2
+                const message = rowData[10];
+                if (message) {
+                    document.getElementById('messageStrip').textContent = message;
+                    document.getElementById('messageStrip').style.display = 'block';
+                    document.getElementById('scoreStrip').style.display = 'none';
+                } else {
+                    document.getElementById('messageStrip').style.display = 'none';
+                    document.getElementById('scoreStrip').style.display = 'flex';
                 }
             }
         } catch (error) {
