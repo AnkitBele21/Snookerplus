@@ -15,6 +15,30 @@
             width: 100vw;
             background: rgba(0, 0, 0, 0);
         }
+        .fullscreen-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .fullscreen-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .logo-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #1D1D25;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .logo {
+            height: 30px;
+        }
         .overlay {
             position: absolute;
             bottom: 0;
@@ -29,27 +53,6 @@
             padding: 5px 10px;
             box-sizing: border-box;
             border-top: 2px solid #01AB7A;
-        }
-        .logo-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #1D1D25;
-            padding: 5px;
-            border-radius: 5px;
-        }
-        .logo {
-            height: 30px;
-        }
-        .image-container {
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-        }
-        .image-container img {
-            max-height: 100px;
         }
         .center-content {
             display: flex;
@@ -81,11 +84,11 @@
 </head>
 <body>
 
+<div class="fullscreen-bg" id="fullscreenBg"></div>
+
 <div class="logo-container">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Logo" class="logo">
 </div>
-
-<div class="image-container" id="imageContainer"></div>
 
 <div class="overlay">
     <div class="player-info" id="player1">
@@ -131,11 +134,12 @@
                     player2Name.classList.add('active');
                 }
 
-                const imageContainer = document.getElementById('imageContainer');
-                if (rowData[9]) {
-                    imageContainer.innerHTML = `<img src="${rowData[9]}" alt="Image">`;
+                // Display the image if URL exists in cell J2
+                const imageUrl = rowData[9];
+                if (imageUrl) {
+                    document.getElementById('fullscreenBg').innerHTML = `<img src="${imageUrl}" alt="Background">`;
                 } else {
-                    imageContainer.innerHTML = '';
+                    document.getElementById('fullscreenBg').innerHTML = '';
                 }
             }
         } catch (error) {
