@@ -20,17 +20,20 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #1D1D25;
-            color: #FFFFFF;
+            background: #FFFFFF;
+            color: #1D1D25;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            padding: 10px 20px;
+            padding: 5px 10px;
             box-sizing: border-box;
             border-top: 2px solid #01AB7A;
         }
         .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
             height: 50px;
         }
         .center-content {
@@ -45,16 +48,16 @@
             flex: 1;
         }
         .name {
-            font-size: 2em;
+            font-size: 1.5em;
             margin: 0;
         }
         .score {
-            font-size: 1.5em;
-            margin: 5px 0;
+            font-size: 1.2em;
+            margin: 2px 0;
         }
         .rounds {
-            font-size: 1.2em;
-            margin: 10px 0;
+            font-size: 1em;
+            margin: 2px 0;
         }
         .active {
             color: #01AB7A;
@@ -63,6 +66,8 @@
 </head>
 <body>
 
+<img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Logo" class="logo">
+
 <div class="overlay">
     <div class="player-info" id="player1">
         <div class="name" id="player1Name">Player 1</div>
@@ -70,7 +75,6 @@
     </div>
     <div class="center-content">
         <div class="rounds" id="rounds">(0-0)</div>
-        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Logo" class="logo">
     </div>
     <div class="player-info" id="player2">
         <div class="name" id="player2Name">Player 2</div>
