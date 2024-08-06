@@ -41,6 +41,16 @@
         .logo {
             height: 30px;
         }
+        .image-container {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        .image-container img {
+            max-height: 100px;
+        }
         .center-content {
             display: flex;
             flex-direction: column;
@@ -74,6 +84,8 @@
 <div class="logo-container">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Logo" class="logo">
 </div>
+
+<div class="image-container" id="imageContainer"></div>
 
 <div class="overlay">
     <div class="player-info" id="player1">
@@ -117,6 +129,13 @@
                     player1Name.classList.add('active');
                 } else if (rowData[4] === '2') {
                     player2Name.classList.add('active');
+                }
+
+                const imageContainer = document.getElementById('imageContainer');
+                if (rowData[9]) {
+                    imageContainer.innerHTML = `<img src="${rowData[9]}" alt="Image">`;
+                } else {
+                    imageContainer.innerHTML = '';
                 }
             }
         } catch (error) {
