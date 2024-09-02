@@ -18,38 +18,41 @@ async function fetchFrameData() {
 function populateTable(data) {
     const tableBody = document.getElementById('frameTableBody');
 
-    // Assuming data is an array of frames
+    // Check if data is an array
     if (Array.isArray(data)) {
         data.forEach(frame => {
-            // Log each frame to understand its structure
-            console.log('Frame:', frame);
+            // Check if frame is an array
+            if (Array.isArray(frame)) {
+                // Create a new row
+                const row = document.createElement('tr');
 
-            // Create a new row
-            const row = document.createElement('tr');
+                // Assuming frame is an array with values in order:
+                // [Frame ID, Duration, Winner, Loser, Total Money]
+                const idCell = document.createElement('td');
+                idCell.textContent = frame[0] || 'N/A'; // Adjust index based on actual data
+                row.appendChild(idCell);
 
-            // Create and append cells based on the actual data structure
-            const idCell = document.createElement('td');
-            idCell.textContent = frame.id || 'N/A'; // Replace with correct field name
-            row.appendChild(idCell);
+                const durationCell = document.createElement('td');
+                durationCell.textContent = frame[1] || 'N/A'; // Adjust index based on actual data
+                row.appendChild(durationCell);
 
-            const durationCell = document.createElement('td');
-            durationCell.textContent = frame.duration || 'N/A'; // Replace with correct field name
-            row.appendChild(durationCell);
+                const winnerCell = document.createElement('td');
+                winnerCell.textContent = frame[2] || 'N/A'; // Adjust index based on actual data
+                row.appendChild(winnerCell);
 
-            const winnerCell = document.createElement('td');
-            winnerCell.textContent = frame.winner || 'N/A'; // Replace with correct field name
-            row.appendChild(winnerCell);
+                const loserCell = document.createElement('td');
+                loserCell.textContent = frame[3] || 'N/A'; // Adjust index based on actual data
+                row.appendChild(loserCell);
 
-            const loserCell = document.createElement('td');
-            loserCell.textContent = frame.loser || 'N/A'; // Replace with correct field name
-            row.appendChild(loserCell);
+                const moneyCell = document.createElement('td');
+                moneyCell.textContent = frame[4] || 'N/A'; // Adjust index based on actual data
+                row.appendChild(moneyCell);
 
-            const moneyCell = document.createElement('td');
-            moneyCell.textContent = frame.totalMoney || 'N/A'; // Replace with correct field name
-            row.appendChild(moneyCell);
-
-            // Append the row to the table body
-            tableBody.appendChild(row);
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            } else {
+                console.error('Frame is not an array:', frame);
+            }
         });
     } else {
         console.error('Expected an array but got:', data);
