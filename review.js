@@ -11,18 +11,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         const data = await response.json();
         console.log(data); // Log the data structure for debugging
         
-        // Populate the table with duration entries
+        // Populate the table with duration entries only
         const tableBody = document.getElementById('durationTableBody');
         if (data && data.frames) {
             data.frames.forEach(frame => {
                 const row = document.createElement('tr');
-                const dateCell = document.createElement('td');
                 const durationCell = document.createElement('td');
 
-                dateCell.textContent = frame.date;
                 durationCell.textContent = frame.duration;
 
-                row.appendChild(dateCell);
                 row.appendChild(durationCell);
                 tableBody.appendChild(row);
             });
