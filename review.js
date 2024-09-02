@@ -1,6 +1,6 @@
 // Fetch data from the API
 async function fetchData1(table, Studio) {
-    const url = `https://v2api.snookerplus.in/apis/data/${table}/${Studio}`;
+    const url = `https://v2apis.snookerplus.in/apis/data/${table}/${Studio}`;
     console.log('Fetching data from:', url);
 
     try {
