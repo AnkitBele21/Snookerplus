@@ -1,4 +1,5 @@
 async function fetchData1(table, Studio) {
+    // Correctly format the URL with backticks and ensure proper string interpolation
     const url = `https://v2apis.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
 
@@ -15,9 +16,10 @@ async function fetchData1(table, Studio) {
         return data[0]; // Assuming data is an array and we want the first item
     } catch (error) {
         console.error('Error fetching data:', error);
-        return []; // Return an empty array or handle error as needed
+        return []; // Return an empty array or handle the error as needed
     }
 }
+
 
 function populateTable(frames) {
     const tableBody = document.getElementById('frameTableBody');
