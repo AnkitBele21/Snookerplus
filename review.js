@@ -1,63 +1,70 @@
-async function fetchFrameData() {
+// Fetch data from the API
+async function fetchData1(table, Studio) {
+    const url = `https://v2api.snookerplus.in/apis/data/${table}/${Studio}`;
+    console.log('Fetching data from:', url);
+
     try {
-        const response = await fetch('https://v2api.snookerplus.in/apis/data/frames/Studio%20111');
+        const response = await fetch(url);
+
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
         const data = await response.json();
+        console.log('Fetched data:', data);
 
-        // Log the data to understand its structure
-        console.log('API Data:', data);
-
-        populateTable(data);
+        // Assuming data is an array and we want the first item
+        return data[0];
     } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
+        console.error('Error fetching data:', error);
+        return []; // Return an empty array in case of error
     }
 }
 
-function populateTable(data) {
+// Populate the table with data
+function populateTable(frames) {
     const tableBody = document.getElementById('frameTableBody');
+    
+    // Clear existing rows
+    tableBody.innerHTML = '';
 
-    // Check if data is an array
-    if (Array.isArray(data)) {
-        data.forEach(frame => {
-            // Check if frame is an array
-            if (Array.isArray(frame)) {
-                // Create a new row
-                const row = document.createElement('tr');
+    frames.forEach((frame) => {
+        const row = document.createElement('tr');
+        
+        // Create table cells
+        const frameIdCell = document.createElement('td');
+        frameIdCell.textContent = frame.frameId || 'N/A';
+        row.appendChild(frameIdCell);
 
-                // Assuming frame is an array with values in order:
-                // [Frame ID, Duration, Winner, Loser, Total Money]
-                const idCell = document.createElement('td');
-                idCell.textContent = frame[0] || 'N/A'; // Adjust index based on actual data
-                row.appendChild(idCell);
+        const durationCell = document.createElement('td');
+        durationCell.textContent = frame.duration || 'N/A';
+        row.appendChild(durationCell);
 
-                const durationCell = document.createElement('td');
-                durationCell.textContent = frame[1] || 'N/A'; // Adjust index based on actual data
-                row.appendChild(durationCell);
+        const winnerCell = document.createElement('td');
+        winnerCell.textContent = frame.winner || 'N/A';
+        row.appendChild(winnerCell);
 
-                const winnerCell = document.createElement('td');
-                winnerCell.textContent = frame[2] || 'N/A'; // Adjust index based on actual data
-                row.appendChild(winnerCell);
+        const looserCell = document.createElement('td');
+        looserCell.textContent = frame.looser || 'N/A';
+        row.appendChild(looserCell);
 
-                const loserCell = document.createElement('td');
-                loserCell.textContent = frame[3] || 'N/A'; // Adjust index based on actual data
-                row.appendChild(loserCell);
+        const totalMoneyCell = document.createElement('td');
+        totalMoneyCell.textContent = frame.totalMoney || 'N/A';
+        row.appendChild(totalMoneyCell);
 
-                const moneyCell = document.createElement('td');
-                moneyCell.textContent = frame[4] || 'N/A'; // Adjust index based on actual data
-                row.appendChild(moneyCell);
-
-                // Append the row to the table body
-                tableBody.appendChild(row);
-            } else {
-                console.error('Frame is not an array:', frame);
-            }
-        });
-    } else {
-        console.error('Expected an array but got:', data);
-    }
+        // Append the row to the table body
+        tableBody.appendChild(row);
+    });
 }
 
-// Call the function to fetch and display data
-fetchFrameData();
+// Initialize the script
+async function init() {
+    const table = 'frames';  // Replace with your table name
+    const Studio = 'Studio%20111';  // Replace with your studio identifier
+
+    const frames = await fetchData1(table, Studio);
+    populateTable(frames);
+}
+
+// Run the init function when the page loads
+window.addEventListener('load', init);
