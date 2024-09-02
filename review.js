@@ -3,85 +3,32 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     try {
         const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
+        console.log(data); // Log the data structure for debugging
+        
+        // Populate the table with duration entries
+        const tableBody = document.getElementById('durationTableBody');
+        if (data && data.frames) {
+            data.frames.forEach(frame => {
+                const row = document.createElement('tr');
+                const dateCell = document.createElement('td');
+                const durationCell = document.createElement('td');
 
-        // Process data and sum durations by date
-        const dateDurations = {};
-        data.frames.forEach(frame => {
-            const date = frame.date;
-            const duration = frame.duration;
-            if (!dateDurations[date]) {
-                dateDurations[date] = 0;
-            }
-            dateDurations[date] += duration;
-        });
+                dateCell.textContent = frame.date;
+                durationCell.textContent = frame.duration;
 
-        const labels = Object.keys(dateDurations);
-        const values = Object.values(dateDurations);
-
-        // Render duration chart
-        const durationCtx = document.getElementById('durationChart').getContext('2d');
-        new Chart(durationCtx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Sum of Durations per Day',
-                    data: values,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Duration (minutes)'
-                        }
-                    }
-                }
-            }
-        });
-
-        // Example for rendering another chart (replace with relevant data)
-        const otherCtx = document.getElementById('otherChart').getContext('2d');
-        new Chart(otherCtx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Example Data',
-                    data: values, // Replace with actual data
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Value'
-                        }
-                    }
-                }
-            }
-        });
+                row.appendChild(dateCell);
+                row.appendChild(durationCell);
+                tableBody.appendChild(row);
+            });
+        } else {
+            console.log('No frames data available');
+        }
 
     } catch (error) {
         console.error('Error fetching data:', error);
