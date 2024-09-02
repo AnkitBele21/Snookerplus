@@ -9,22 +9,38 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         
         const data = await response.json();
-        console.log(data); // Log the data structure for debugging
+        console.log(data); // Inspect the full data structure
         
-        // Populate the table with duration entries only
-        const tableBody = document.getElementById('durationTableBody');
-        if (data && data.frames) {
-            data.frames.forEach(frame => {
+        const tableBody = document.getElementById('frameTableBody');
+        
+        if (Array.isArray(data)) {
+            data.forEach(frame => {
                 const row = document.createElement('tr');
+
+                const frameIdCell = document.createElement('td');
+                frameIdCell.textContent = frame.FrameId;
+                row.appendChild(frameIdCell);
+
                 const durationCell = document.createElement('td');
-
-                durationCell.textContent = frame.duration;
-
+                durationCell.textContent = frame.Duration;
                 row.appendChild(durationCell);
+
+                const winnerCell = document.createElement('td');
+                winnerCell.textContent = frame.Winner;
+                row.appendChild(winnerCell);
+
+                const looserCell = document.createElement('td');
+                looserCell.textContent = frame.Looser;
+                row.appendChild(looserCell);
+
+                const totalMoneyCell = document.createElement('td');
+                totalMoneyCell.textContent = frame.TotalMoney;
+                row.appendChild(totalMoneyCell);
+
                 tableBody.appendChild(row);
             });
         } else {
-            console.log('No frames data available');
+            console.error('Unexpected data format:', data);
         }
 
     } catch (error) {
