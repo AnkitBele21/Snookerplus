@@ -1,6 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
+    padding: 0;
 }
 
 h1 {
@@ -13,17 +14,14 @@ table {
     border-collapse: collapse;
 }
 
-table, th, td {
-    border: 1px solid #ddd;
-}
-
 th, td {
     padding: 10px;
+    border: 1px solid #ddd;
     text-align: left;
 }
 
-th {
-    background-color: #f2f2f2;
+thead {
+    background-color: #f4f4f4;
 }
 
 tr:nth-child(even) {
@@ -31,5 +29,5 @@ tr:nth-child(even) {
 }
 
 tr:hover {
-    background-color: #e0e0e0;
+    background-color: #f1f1f1;
 }
