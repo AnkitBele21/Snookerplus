@@ -3,13 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Duration Graph</title>
+    <title>Snooker Studio 111 Dashboard</title>
+    <link rel="stylesheet" href="review.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="review.js" defer></script>
-    <link rel="stylesheet" href="review.css">
 </head>
 <body>
-    <h1>Sum of Durations per Day</h1>
-    <canvas id="durationChart"></canvas>
+    <div class="dashboard-container">
+        <header>
+            <h1>Snooker Studio 111 Dashboard</h1>
+        </header>
+        <section class="charts">
+            <div class="chart-container">
+                <canvas id="durationChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="otherChart"></canvas>
+            </div>
+        </section>
+    </div>
 </body>
 </html>
