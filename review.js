@@ -1,6 +1,5 @@
-// Fetch data from the API
 async function fetchData1(table, Studio) {
-    const url = `https://v2apis.snookerplus.in/apis/data/${table}/${Studio}`;
+    const url = `https://v2apis.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
 
     try {
@@ -13,54 +12,33 @@ async function fetchData1(table, Studio) {
         const data = await response.json();
         console.log('Fetched data:', data);
 
-        // Assuming data is an array and we want the first item
-        return data[0];
+        return data[0]; // Assuming data is an array and we want the first item
     } catch (error) {
         console.error('Error fetching data:', error);
-        return []; // Return an empty array in case of error
+        return []; // Return an empty array or handle error as needed
     }
 }
 
-// Populate the table with data
 function populateTable(frames) {
     const tableBody = document.getElementById('frameTableBody');
-    
-    // Clear existing rows
-    tableBody.innerHTML = '';
+    tableBody.innerHTML = ''; // Clear any existing rows
 
-    frames.forEach((frame) => {
+    frames.forEach(frame => {
         const row = document.createElement('tr');
-        
-        // Create table cells
-        const frameIdCell = document.createElement('td');
-        frameIdCell.textContent = frame.frameId || 'N/A';
-        row.appendChild(frameIdCell);
-
-        const durationCell = document.createElement('td');
-        durationCell.textContent = frame.duration || 'N/A';
-        row.appendChild(durationCell);
-
-        const winnerCell = document.createElement('td');
-        winnerCell.textContent = frame.winner || 'N/A';
-        row.appendChild(winnerCell);
-
-        const looserCell = document.createElement('td');
-        looserCell.textContent = frame.looser || 'N/A';
-        row.appendChild(looserCell);
-
-        const totalMoneyCell = document.createElement('td');
-        totalMoneyCell.textContent = frame.totalMoney || 'N/A';
-        row.appendChild(totalMoneyCell);
-
-        // Append the row to the table body
+        row.innerHTML = `
+            <td>${frame.frameID}</td>
+            <td>${frame.duration}</td>
+            <td>${frame.winner}</td>
+            <td>${frame.loser}</td>
+            <td>${frame.totalMoney}</td>
+        `;
         tableBody.appendChild(row);
     });
 }
 
-// Initialize the script
 async function init() {
-    const table = 'frames';  // Replace with your table name
-    const Studio = 'Studio%20111';  // Replace with your studio identifier
+    const table = 'frames';  // Replace with your actual table name
+    const Studio = 'Studio 111';  // Replace with your actual studio identifier
 
     const frames = await fetchData1(table, Studio);
     populateTable(frames);
