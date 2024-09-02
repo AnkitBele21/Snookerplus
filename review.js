@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Process data: sum durations by date
     const dateDurations = {};
     data.frames.forEach(frame => {
-        const date = frame.date; // Assuming 'date' is the key for date in the data
-        const duration = frame.duration; // Assuming 'duration' is in minutes or another unit
+        const date = frame.date;
+        const duration = frame.duration;
         if (!dateDurations[date]) {
             dateDurations[date] = 0;
         }
