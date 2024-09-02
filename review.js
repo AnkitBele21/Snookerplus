@@ -13,13 +13,18 @@ async function fetchData1(table, Studio) {
         const data = await response.json();
         console.log('Fetched data:', data);
 
-        return data[0]; // Assuming data is an array and we want the first item
+        // Check if data is an array and has at least one item
+        if (Array.isArray(data) && data.length > 0) {
+            return data; // Assuming the data is an array of frames
+        } else {
+            console.warn('No data available or incorrect data format.');
+            return [];
+        }
     } catch (error) {
         console.error('Error fetching data:', error);
         return []; // Return an empty array or handle the error as needed
     }
 }
-
 
 function populateTable(frames) {
     const tableBody = document.getElementById('frameTableBody');
@@ -28,11 +33,11 @@ function populateTable(frames) {
     frames.forEach(frame => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${frame.frameID}</td>
-            <td>${frame.duration}</td>
-            <td>${frame.winner}</td>
-            <td>${frame.loser}</td>
-            <td>${frame.totalMoney}</td>
+            <td>${frame.frameID || 'N/A'}</td>
+            <td>${frame.duration || 'N/A'}</td>
+            <td>${frame.winner || 'N/A'}</td>
+            <td>${frame.loser || 'N/A'}</td>
+            <td>${frame.totalMoney || 'N/A'}</td>
         `;
         tableBody.appendChild(row);
     });
