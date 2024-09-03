@@ -1,6 +1,7 @@
 async function fetchData1(table, Studio) {
     // Correctly format the URL with backticks and ensure proper string interpolation
-    const url = https://v2apis.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)};
+    const url = https://v2api.snookerplus.in/apis/data/frames/Studio%20111}
+    ;
     console.log('Fetching data from:', url);
 
     try {
