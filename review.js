@@ -1,19 +1,19 @@
 async function fetchData1(table, Studio) {
     // Correctly format the URL with backticks and ensure proper string interpolation
-    const url = `https://v2apis.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
+    const url = https://v2apis.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)};
     console.log('Fetching data from:', url);
 
     try {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(HTTP error! Status: ${response.status});
         }
 
         const data = await response.json();
         console.log('Fetched data:', data);
 
-        }
+        return data[0];  // Return the first element of the data array
     } catch (error) {
         console.error('Error fetching data:', error);
         return []; // Return an empty array or handle the error as needed
@@ -47,3 +47,6 @@ async function init() {
 
 // Run the init function when the page loads
 window.addEventListener('load', init);
+
+
+
