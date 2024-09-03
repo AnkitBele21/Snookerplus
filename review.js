@@ -13,12 +13,6 @@ async function fetchData1(table, Studio) {
         const data = await response.json();
         console.log('Fetched data:', data);
 
-        // Check if data is an array and has at least one item
-        if (Array.isArray(data) && data.length > 0) {
-            return data; // Assuming the data is an array of frames
-        } else {
-            console.warn('No data available or incorrect data format.');
-            return [];
         }
     } catch (error) {
         console.error('Error fetching data:', error);
