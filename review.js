@@ -10,10 +10,10 @@ async function fetchData1(table, Studio) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const data = await response.json().reverse();
+        const data = await response.json();
         console.log('Fetched data:', data);
 
-        return data[0];  // Return the first element of the data array
+        return data[0].reverse();  // Return the first element of the data array
     } catch (error) {
         console.error('Error fetching data:', error);
         return []; // Return an empty array or handle the error as needed
@@ -30,7 +30,7 @@ function populateTable(frames) {
             <td>${frame.FrameId || 'N/A'}</td>
             <td>${frame.Duration || 'N/A'}</td>
             <td>${frame.Winner || 'N/A'}</td>
-            <td>${frame.Loser || 'N/A'}</td>
+            <td>${frame.Looser || 'N/A'}</td>
             <td>${frame.TotalMoney || 'N/A'}</td>
         `;
         tableBody.appendChild(row);
