@@ -13,7 +13,7 @@ async function fetchData1(table, Studio) {
         const data = await response.json();
         console.log('Fetched data:', data);
 
-        return data[0][0];  // Return the first element of the data array
+        return data[0];  // Return the first element of the data array
     } catch (error) {
         console.error('Error fetching data:', error);
         return []; // Return an empty array or handle the error as needed
