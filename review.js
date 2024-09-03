@@ -27,11 +27,11 @@ function populateTable(frames) {
     frames.forEach(frame => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${frame.frameID || 'N/A'}</td>
-            <td>${frame.duration || 'N/A'}</td>
-            <td>${frame.winner || 'N/A'}</td>
-            <td>${frame.loser || 'N/A'}</td>
-            <td>${frame.totalMoney || 'N/A'}</td>
+            <td>${frame.FrameID || 'N/A'}</td>
+            <td>${frame.Duration || 'N/A'}</td>
+            <td>${frame.Winner || 'N/A'}</td>
+            <td>${frame.Loser || 'N/A'}</td>
+            <td>${frame.TotalMoney || 'N/A'}</td>
         `;
         tableBody.appendChild(row);
     });
