@@ -23,14 +23,21 @@ function groupDataByDate(frames) {
     const groupedData = {};
 
     frames.forEach(frame => {
-        const date = new Date(frame.StartTime).toLocaleDateString();  // Extract the date part
-        const duration = frame.Duration || 0;
+        const date = new Date(frame.StartTime);
+        const duration = parseInt(frame.Duration, 10) || 0;
 
-        if (!groupedData[date]) {
-            groupedData[date] = 0;
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date:', frame.StartTime);
+            return;
         }
 
-        groupedData[date] += duration;  // Sum the duration for each date
+        const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
+
+        if (!groupedData[dateString]) {
+            groupedData[dateString] = 0;
+        }
+
+        groupedData[dateString] += duration;  // Sum the duration for each date
     });
 
     return groupedData;
