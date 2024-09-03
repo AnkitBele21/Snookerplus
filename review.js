@@ -10,7 +10,7 @@ async function fetchData1(table, Studio) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data = await response.json().reverse();
         console.log('Fetched data:', data);
 
         return data[0];  // Return the first element of the data array
