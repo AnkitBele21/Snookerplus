@@ -27,7 +27,7 @@ function populateTable(frames) {
     frames.forEach(frame => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${frame.FrameID || 'N/A'}</td>
+            <td>${frame.FrameId || 'N/A'}</td>
             <td>${frame.Duration || 'N/A'}</td>
             <td>${frame.Winner || 'N/A'}</td>
             <td>${frame.Loser || 'N/A'}</td>
