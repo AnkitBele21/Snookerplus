@@ -12,7 +12,7 @@ async function fetchData1(table, Studio) {
         const data = await response.json();
         console.log('Fetched data:', data);
 
-        return data;  // Return the full data array
+        return data.flat();  // Flatten the nested arrays into a single array
     } catch (error) {
         console.error('Error fetching data:', error);
         return []; // Return an empty array or handle the error as needed
