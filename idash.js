@@ -19,13 +19,19 @@ async function fetchData1(table, Studio) {
     }
 }
 
-
+function convertToIST(date) {
+    // Convert the date to IST (UTC+5:30)
+    const utcDate = new Date(date);
+    const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC + 5:30
+    const istDate = new Date(utcDate.getTime() + istOffset);
+    return istDate;
+}
 
 function groupDataByDate(frames) {
     const groupedData = {};
 
     frames.forEach(frame => {
-        const date = new Date(frame.StartTime);
+        const date = convertToIST(frame.StartTime);
         const duration = parseInt(frame.Duration, 10) || 0;
 
         if (isNaN(date.getTime())) {
