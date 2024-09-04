@@ -140,15 +140,28 @@ function updateChart(groupedData) {
     });
 }
 
+function updateTotalMoneyBox(totalTableMoney) {
+    const totalMoneyBox = document.getElementById('totalMoneyBox');
+    if (!totalMoneyBox) {
+        console.error('Element with ID "totalMoneyBox" not found.');
+        return;
+    }
+
+    totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
+}
+
 async function init() {
     const table = 'frames';  // Replace with your actual table name
     const Studio = 'Studio 111';  // Replace with your actual studio identifier
 
     const frames = await fetchData1(table, Studio);
-    const { groupedData } = groupDataByDate(frames);
+    const { groupedData, totalTableMoney } = groupDataByDate(frames);
 
     // Update chart with the initial data
     updateChart(groupedData);
+
+    // Update the total money box
+    updateTotalMoneyBox(totalTableMoney);
 
     // Add event listener for date selection
     const datePicker = document.getElementById('datePicker');
