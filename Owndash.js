@@ -128,6 +128,11 @@ function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
     topupData.forEach(topup => {
+        if (!topup.RecordDate) {
+            console.error('RecordDate is undefined:', topup);
+            return; // Skip entries with undefined RecordDate
+        }
+
         const date = new Date(topup.RecordDate);
         if (isNaN(date.getTime())) {
             console.error('Invalid date:', topup.RecordDate);
@@ -150,6 +155,7 @@ function groupTopupDataByDate(topupData) {
 
     return groupedData;
 }
+
 
 
 function updateTotalReceivedBox(cashAmount, onlineAmount) {
@@ -187,6 +193,8 @@ function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
         updateTotalReceivedBox(0, 0);
     }
 }
+
+let analyticsChart = null; // Initialize as null
 
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
@@ -238,6 +246,7 @@ function updateChart(groupedData) {
         }
     });
 }
+
 
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
