@@ -60,7 +60,7 @@ function groupDataByDate(frames) {
         groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
         totalTableMoney += totalMoney; // Add to total table money
     });
-console.log(groupedData, totalTableMoney)
+    console.log(groupedData, totalTableMoney);
     return { groupedData, totalTableMoney };
 }
 
@@ -101,10 +101,9 @@ function groupDataByHour(frames) {
         }
     });
 
-console.log(hourSlots)
+    console.log(hourSlots);
     return hourSlots;
 }
-
 
 function updateSelectedDateBox(groupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
@@ -129,8 +128,8 @@ function updateSelectedDateBox(groupedData, selectedDate) {
     }
 }
 
-
 let analyticsChart; // Define a variable to store the Chart.js instance
+let peakHoursChart; // Define a variable to store the peak hours Chart.js instance
 
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
@@ -193,36 +192,48 @@ function updateTotalMoneyBox(totalTableMoney) {
     totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
 }
 
-function updatePeakHoursChart(hourSlots) {
-    const ctx = document.getElementById('peakHoursChart').getContext('2d');
+function populatePeakHoursTable(hourSlots) {
+    const peakHoursTable = document.getElementById('peakHoursTable');
+    const peakHoursChartCtx = document.getElementById('peakHoursChart').getContext('2d');
 
-    // Adjust the hour labels to start from 05:00
+    if (!peakHoursTable || !peakHoursChartCtx) {
+        console.error('Element with ID "peakHoursTable" or "peakHoursChart" not found.');
+        return;
+    }
+
+    peakHoursTable.innerHTML = '';  // Clear any existing rows
+
+    // Shift the hours to start from 05:00
+    const shiftedHourSlots = [...hourSlots.slice(5), ...hourSlots.slice(0, 5)];
     const labels = [];
-    for (let i = 5; i < 24; i++) {
-        labels.push(`${i}:00 - ${i + 1}:00`);
-    }
-    for (let i = 0; i < 5; i++) {
-        labels.push(`${i}:00 - ${i + 1}:00`);
+    const data = [];
+
+    shiftedHourSlots.forEach((duration, index) => {
+        const hour = (index + 5) % 24; // Adjust index to start from 05:00
+        const row = peakHoursTable.insertRow();
+        const hourCell = row.insertCell(0);
+        const durationCell = row.insertCell(1);
+
+        hourCell.textContent = `${hour.toString().padStart(2, '0')}:00 - ${((hour + 1) % 24).toString().padStart(2, '0')}:00`;
+        durationCell.textContent = duration.toFixed(2);
+
+        labels.push(`${hour.toString().padStart(2, '0')}:00`);
+        data.push(duration);
+    });
+
+    if (peakHoursChart) {
+        peakHoursChart.destroy(); // Destroy existing chart instance if it exists
     }
 
-    const adjustedHourSlots = [
-        ...hourSlots.slice(5, 24),
-        ...hourSlots.slice(0, 5)
-    ];
-
-    if (window.peakHoursChart) {
-        window.peakHoursChart.destroy(); // Destroy existing chart instance if it exists
-    }
-
-    window.peakHoursChart = new Chart(ctx, {
-        type: 'bar',
+    peakHoursChart = new Chart(peakHoursChartCtx, {
+        type: 'line',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Total Duration (minutes)',
-                data: adjustedHourSlots,
-                backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                borderColor: 'rgba(255, 159, 64, 1)',
+                data: data,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1
             }]
         },
@@ -232,37 +243,28 @@ function updatePeakHoursChart(hourSlots) {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Duration (minutes)'
+                        text: 'Total Duration (minutes)'
                     }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time Slot'
+                    }
                 }
             }
         }
     });
 }
 
-async function init() {
-    const table = 'frames';
-    const Studio = 'Studio 111';
+document.getElementById('datePicker').addEventListener('change', async function () {
+    const selectedDate = this.value;
+    const data = await fetchData1('tableName', 'studioName');
+    const { groupedData, totalTableMoney } = groupDataByDate(data);
+    const hourSlots = groupDataByHour(data);
 
-    const frames = await fetchData1(table, Studio);
-    const { groupedData, totalTableMoney } = groupDataByDate(frames);
-    const hourSlots = groupDataByHour(frames);
-
-    updateChart(groupedData);
+    updateSelectedDateBox(groupedData, selectedDate);
     updateTotalMoneyBox(totalTableMoney);
+    updateChart(groupedData);
     populatePeakHoursTable(hourSlots);
-    updatePeakHoursChart(hourSlots);
-
-    const datePicker = document.getElementById('datePicker');
-    datePicker.addEventListener('change', () => {
-        const selectedDate = datePicker.value;
-        updateSelectedDateBox(groupedData, selectedDate);
-    });
-}
-
-window.addEventListener('load', init);
+});
