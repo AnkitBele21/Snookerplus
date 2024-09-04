@@ -95,6 +95,27 @@ function populateAnalyticsTable(groupedData, totalTableMoney) {
     });
 }
 
+function updateSelectedDateBox(groupedData, selectedDate) {
+    const selectedDateBox = document.getElementById('selectedDateBox');
+    if (!selectedDateBox) {
+        console.error('Element with ID "selectedDateBox" not found.');
+        return;
+    }
+
+    const dateString = new Date(selectedDate).toISOString().split('T')[0];
+    const data = groupedData[dateString];
+
+    if (data) {
+        selectedDateBox.innerHTML = `
+            <h2>Details for ${dateString} (${data.dayOfWeek})</h2>
+            <p>Total Duration: ${data.duration.toFixed(2)} minutes</p>
+            <p>Total Money: ₹${data.totalMoney.toFixed(2)}</p>
+        `;
+    } else {
+        selectedDateBox.innerHTML = `<p>No data available for ${dateString}</p>`;
+    }
+}
+
 async function init() {
     const table = 'frames';  // Replace with your actual table name
     const Studio = 'Studio 111';  // Replace with your actual studio identifier
@@ -103,6 +124,15 @@ async function init() {
     const { groupedData, totalTableMoney } = groupDataByDate(frames);
 
     populateAnalyticsTable(groupedData, totalTableMoney);
+
+    // Add event listener for date selection
+    const datePicker = document.getElementById('datePicker');
+    if (datePicker) {
+        datePicker.addEventListener('change', (event) => {
+            const selectedDate = event.target.value;
+            updateSelectedDateBox(groupedData, selectedDate);
+        });
+    }
 }
 
 // Run the init function when the page loads
