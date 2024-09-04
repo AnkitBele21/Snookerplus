@@ -20,10 +20,13 @@ async function fetchData1(table, Studio) {
 }
 
 function convertToIST(date) {
+    if (!date) return null;  // Return null if date is undefined or invalid
+
     // Convert the date to IST (UTC+5:30)
     const utcDate = new Date(date);
     const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC + 5:30
     const istDate = new Date(utcDate.getTime() + istOffset);
+
     return istDate;
 }
 
@@ -33,13 +36,13 @@ function groupDataByDate(frames) {
 
     frames.forEach(frame => {
         const date = convertToIST(frame.StartTime);
-        const duration = parseInt(frame.Duration, 10) || 0;
-        const totalMoney = parseFloat(frame.TotalMoney) || 0;
-
-        if (isNaN(date.getTime())) {
+        if (!date || isNaN(date.getTime())) {  // Handle invalid dates
             console.error('Invalid date:', frame.StartTime);
             return;
         }
+
+        const duration = parseInt(frame.Duration, 10) || 0;
+        const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
         const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
 
@@ -55,9 +58,42 @@ function groupDataByDate(frames) {
     return { groupedData, totalTableMoney };
 }
 
+function populateFrameTable(frames) {
+    const frameTableBody = document.getElementById('frameTableBody');
+    if (!frameTableBody) {
+        console.error('Element with ID "frameTableBody" not found.');
+        return;
+    }
+
+    // Clear any existing rows
+    frameTableBody.innerHTML = '';
+
+    // Populate the frame details table
+    frames.forEach(frame => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${frame.FrameID || 'N/A'}</td>
+            <td>${parseInt(frame.Duration, 10) || 0}</td>
+            <td>${frame.Winner || 'N/A'}</td>
+            <td>${frame.Loser || 'N/A'}</td>
+            <td>₹${parseFloat(frame.TotalMoney || 0).toFixed(2)}</td>
+        `;
+        frameTableBody.appendChild(row);
+    });
+}
+
 function populateAnalyticsTable(groupedData, totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
+    if (!totalMoneyBox) {
+        console.error('Element with ID "totalMoneyBox" not found.');
+        return;
+    }
+
     const tableBody = document.getElementById('analyticsTableBody');
+    if (!tableBody) {
+        console.error('Element with ID "analyticsTableBody" not found.');
+        return;
+    }
 
     // Set the total table money in the box above the table
     totalMoneyBox.innerHTML = `Total Table Money: ₹${totalTableMoney.toFixed(2)}`;
@@ -65,22 +101,12 @@ function populateAnalyticsTable(groupedData, totalTableMoney) {
     // Clear any existing rows in the table
     tableBody.innerHTML = '';
 
-    // Set table headers
-    const tableHeader = `
-        <tr>
-            <th>Date</th>
-            <th>Minutes</th>
-            <th>Table Money</th>
-        </tr>
-    `;
-    tableBody.insertAdjacentHTML('beforeend', tableHeader);
-
     // Populate table rows with grouped data
     Object.keys(groupedData).forEach(date => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${date}</td>
-            <td>${groupedData[date].duration}</td>
+            <td>${(groupedData[date].duration / 60).toFixed(2)}</td> <!-- Convert seconds to minutes -->
             <td>₹${groupedData[date].totalMoney.toFixed(2)}</td>
         `;
         tableBody.appendChild(row);
@@ -91,9 +117,10 @@ async function init() {
     const table = 'frames';  // Replace with your actual table name
     const Studio = 'Studio 111';  // Replace with your actual studio identifier
 
-    const { groupedData, totalTableMoney } = await fetchData1(table, Studio)
-        .then(groupDataByDate);
+    const frames = await fetchData1(table, Studio);
+    const { groupedData, totalTableMoney } = groupDataByDate(frames);
 
+    populateFrameTable(frames);
     populateAnalyticsTable(groupedData, totalTableMoney);
 }
 
