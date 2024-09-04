@@ -23,10 +23,11 @@ function convertToIST(date) {
     if (!date) return null;  // Return null if date is undefined or invalid
 
     const utcDate = new Date(date);
-    const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC + 5:30
-    const istDate = new Date(utcDate.getTime() + istOffset);
 
-    return istDate;
+    // Convert UTC to IST using toLocaleString
+    const istDateString = utcDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+    return new Date(istDateString);
 }
 
 function getDayOfWeek(date) {
