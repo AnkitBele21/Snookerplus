@@ -193,22 +193,55 @@ function updateTotalMoneyBox(totalTableMoney) {
     totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
 }
 
-function populatePeakHoursTable(hourSlots) {
-    const peakHoursTable = document.getElementById('peakHoursTable');
-    if (!peakHoursTable) {
-        console.error('Element with ID "peakHoursTable" not found.');
-        return;
+function updatePeakHoursChart(hourSlots) {
+    const ctx = document.getElementById('peakHoursChart').getContext('2d');
+
+    // Adjust the hour labels to start from 05:00
+    const labels = [];
+    for (let i = 5; i < 24; i++) {
+        labels.push(`${i}:00 - ${i + 1}:00`);
+    }
+    for (let i = 0; i < 5; i++) {
+        labels.push(`${i}:00 - ${i + 1}:00`);
     }
 
-    peakHoursTable.innerHTML = '';  // Clear any existing rows
+    const adjustedHourSlots = [
+        ...hourSlots.slice(5, 24),
+        ...hourSlots.slice(0, 5)
+    ];
 
-    hourSlots.forEach((duration, index) => {
-        const row = peakHoursTable.insertRow();
-        const hourCell = row.insertCell(0);
-        const durationCell = row.insertCell(1);
+    if (window.peakHoursChart) {
+        window.peakHoursChart.destroy(); // Destroy existing chart instance if it exists
+    }
 
-        hourCell.textContent = `${index}:00 - ${index + 1}:00`;
-        durationCell.textContent = `${duration} minutes`;
+    window.peakHoursChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Duration (minutes)',
+                data: adjustedHourSlots,
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Duration (minutes)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
+                }
+            }
+        }
     });
 }
 
@@ -223,6 +256,7 @@ async function init() {
     updateChart(groupedData);
     updateTotalMoneyBox(totalTableMoney);
     populatePeakHoursTable(hourSlots);
+    updatePeakHoursChart(hourSlots);
 
     const datePicker = document.getElementById('datePicker');
     datePicker.addEventListener('change', () => {
