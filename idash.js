@@ -30,6 +30,11 @@ function convertToIST(date) {
     return istDate;
 }
 
+function getDayOfWeek(date) {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return daysOfWeek[date.getDay()];
+}
+
 function groupDataByDate(frames) {
     const groupedData = {};
     let totalTableMoney = 0;
@@ -45,9 +50,10 @@ function groupDataByDate(frames) {
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
         const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
+        const dayOfWeek = getDayOfWeek(date);
 
         if (!groupedData[dateString]) {
-            groupedData[dateString] = { duration: 0, totalMoney: 0 };
+            groupedData[dateString] = { duration: 0, totalMoney: 0, dayOfWeek };
         }
 
         groupedData[dateString].duration += duration;    // Sum the duration for each date
@@ -81,7 +87,7 @@ function populateAnalyticsTable(groupedData, totalTableMoney) {
     Object.keys(groupedData).forEach(date => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${date}</td>
+            <td>${date} (${groupedData[date].dayOfWeek})</td>
             <td>${groupedData[date].duration.toFixed(2)}</td> <!-- Duration is already in minutes -->
             <td>₹${groupedData[date].totalMoney.toFixed(2)}</td>
         `;
