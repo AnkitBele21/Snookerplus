@@ -49,15 +49,16 @@ function groupDataByDate(frames) {
         const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
-        const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
+        const dateString = date.toISOString().split('T')[0].split("-"); // Get the date in YYYY-MM-DD format
+        const newDate = ${dateString[0]}-${dateString[2]}-${dateString[1]}
         const dayOfWeek = getDayOfWeek(date);
 
-        if (!groupedData[dateString]) {
-            groupedData[dateString] = { duration: 0, totalMoney: 0, dayOfWeek };
+        if (!groupedData[newDate]) {
+            groupedData[newDate] = { duration: 0, totalMoney: 0, dayOfWeek };
         }
 
-        groupedData[dateString].duration += duration;    // Sum the duration for each date
-        groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
+        groupedData[newDate].duration += duration;    // Sum the duration for each date
+        groupedData[newDate].totalMoney += totalMoney; // Sum the total money for each date
         totalTableMoney += totalMoney; // Add to total table money
     });
 console.log(groupedData, totalTableMoney)
