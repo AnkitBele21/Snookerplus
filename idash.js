@@ -74,13 +74,20 @@ function groupDataByHour(frames) {
             return;
         }
 
-        const hour = startTime.getHours();
-        const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
+        const startHour = startTime.getHours();
+        const duration = parseInt(frame.Duration, 10) || 0; // Duration in minutes
+        let remainingDuration = duration;
+        let currentHour = startHour;
 
-        // Adjust slot for hours from 6 AM to 5 AM of the next day
-        const adjustedHour = (hour >= 6) ? hour - 6 : hour + 18;
+        // Distribute the duration across the hours it spans
+        while (remainingDuration > 0) {
+            const minutesInCurrentHour = Math.min(remainingDuration, 60 - startTime.getMinutes());
+            hourSlots[currentHour] += minutesInCurrentHour;
 
-        hourSlots[adjustedHour] += duration; // Sum the duration for each hour slot
+            remainingDuration -= minutesInCurrentHour;
+            currentHour = (currentHour + 1) % 24;
+            startTime.setMinutes(0);  // Reset minutes to 0 for subsequent hours
+        }
     });
 
     return hourSlots;
@@ -162,41 +169,6 @@ function updateChart(groupedData) {
     });
 }
 
-function groupDataByHour(frames) {
-    const hourSlots = Array(24).fill(0); // Initialize 24 slots for each hour
-
-    frames.forEach(frame => {
-        const startTime = convertToIST(frame.StartTime);
-        if (!startTime || isNaN(startTime.getTime())) {  // Handle invalid dates
-            console.error('Invalid date:', frame.StartTime);
-            return;
-        }
-
-        const startHour = startTime.getHours();
-        const duration = parseInt(frame.Duration, 10) || 0; // Duration in minutes
-        let remainingDuration = duration;
-        let currentHour = startHour;
-
-        // Distribute the duration across the hours it spans
-        while (remainingDuration > 0) {
-            const minutesInCurrentHour = Math.min(remainingDuration, 60 - startTime.getMinutes());
-            hourSlots[currentHour] += minutesInCurrentHour;
-
-            remainingDuration -= minutesInCurrentHour;
-            currentHour = (currentHour + 1) % 24;
-            startTime.setMinutes(0);  // Reset minutes to 0 for subsequent hours
-        }
-    });
-
-    return hourSlots;
-}
-
-function convertToIST(dateString) {
-    const date = new Date(dateString);
-    return new Date(date.getTime() + (330 * 60 * 1000)); // Convert UTC to IST (+5:30)
-}
-
-
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
     if (!totalMoneyBox) {
@@ -205,6 +177,27 @@ function updateTotalMoneyBox(totalTableMoney) {
     }
 
     totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
+}
+
+function populatePeakHoursTable(hourSlots) {
+    const peakHoursTable = document.getElementById('peakHoursTable');
+    if (!peakHoursTable) {
+        console.error('Element with ID "peakHoursTable" not found.');
+        return;
+    }
+
+    // Clear any existing rows
+    peakHoursTable.innerHTML = '';
+
+    // Populate the table with hour slots data
+    hourSlots.forEach((duration, index) => {
+        const row = peakHoursTable.insertRow();
+        const hourCell = row.insertCell(0);
+        const durationCell = row.insertCell(1);
+
+        hourCell.textContent = `${index}:00 - ${index + 1}:00`;
+        durationCell.textContent = `${duration} minutes`;
+    });
 }
 
 async function init() {
