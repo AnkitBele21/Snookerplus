@@ -33,6 +33,7 @@ function groupDataByDate(frames) {
     frames.forEach(frame => {
         const date = convertToIST(frame.StartTime);
         const duration = parseInt(frame.Duration, 10) || 0;
+        const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
         if (isNaN(date.getTime())) {
             console.error('Invalid date:', frame.StartTime);
@@ -42,10 +43,11 @@ function groupDataByDate(frames) {
         const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
 
         if (!groupedData[dateString]) {
-            groupedData[dateString] = 0;
+            groupedData[dateString] = { duration: 0, totalMoney: 0 };
         }
 
-        groupedData[dateString] += duration;  // Sum the duration for each date
+        groupedData[dateString].duration += duration;    // Sum the duration for each date
+        groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
     });
 
     return groupedData;
@@ -59,7 +61,8 @@ function populateAnalyticsTable(groupedData) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${date}</td>
-            <td>${groupedData[date]}</td>
+            <td>${groupedData[date].duration}</td>
+            <td>${groupedData[date].totalMoney.toFixed(2)}</td>
         `;
         tableBody.appendChild(row);
     });
