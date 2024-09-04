@@ -59,7 +59,7 @@ function groupDataByDate(frames) {
         groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
         totalTableMoney += totalMoney; // Add to total table money
     });
-
+console.log(groupedData, totalTableMoney)
     return { groupedData, totalTableMoney };
 }
 
@@ -100,6 +100,7 @@ function groupDataByHour(frames) {
         }
     });
 
+console.log(hourSlots)
     return hourSlots;
 }
 
