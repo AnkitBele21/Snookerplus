@@ -77,7 +77,10 @@ function groupDataByHour(frames) {
         const hour = startTime.getHours();
         const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
 
-        hourSlots[hour] += duration; // Sum the duration for each hour slot
+        // Adjust slot for hours from 6 AM to 5 AM of the next day
+        const adjustedHour = (hour >= 6) ? hour - 6 : hour + 18;
+
+        hourSlots[adjustedHour] += duration; // Sum the duration for each hour slot
     });
 
     return hourSlots;
@@ -163,7 +166,10 @@ function updateChart(groupedData) {
 function updatePeakHoursChart(hourSlots) {
     const ctx = document.getElementById('peakHoursChart').getContext('2d');
 
-    const hours = Array.from({ length: 24 }, (_, i) => `${i}:00 - ${i + 1}:00`);
+    const hours = Array.from({ length: 24 }, (_, i) => {
+        const hour = (i + 6) % 24; // Adjust for hours from 6 AM to 5 AM
+        return `${hour}:00 - ${hour + 1}:00`;
+    });
 
     if (peakHoursChart) {
         peakHoursChart.destroy(); // Destroy existing chart instance if it exists
