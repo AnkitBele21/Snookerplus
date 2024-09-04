@@ -163,10 +163,10 @@ function updateChart(groupedData) {
     });
 }
 
-function updatePeakHoursChart(hourSlots) {
-    const ctx = document.getElementById('peakHoursChart').getContext('2d');
+function populatePeakHoursTable(hourSlots) {
+    const tableBody = document.getElementById('peakHoursTableBody');
+    tableBody.innerHTML = ''; // Clear existing rows
 
-    // Create an array of labels representing 24 hourly slots, adjusted to start from 6 AM.
     const hours = Array.from({ length: 24 }, (_, i) => {
         const hour = (i + 6) % 24; // Adjust for hours from 6 AM to 5 AM
         const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour; // Convert to 12-hour format
@@ -174,49 +174,16 @@ function updatePeakHoursChart(hourSlots) {
         return `${displayHour} ${period} - ${displayHour === 11 ? 12 : (displayHour + 1) % 12} ${displayHour === 11 ? period === 'AM' ? 'PM' : 'AM' : period}`;
     });
 
-    if (peakHoursChart) {
-        peakHoursChart.destroy(); // Destroy existing chart instance if it exists
-    }
-
-    // Create new chart
-    peakHoursChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: hours,
-            datasets: [
-                {
-                    label: 'Total Duration (minutes)',
-                    data: hourSlots,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Duration (minutes)'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Time of Day'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true
-                }
-            }
-        }
+    hours.forEach((timeSlot, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${timeSlot}</td>
+            <td>${hourSlots[index]}</td>
+        `;
+        tableBody.appendChild(row);
     });
 }
+
 
 
 function updateTotalMoneyBox(totalTableMoney) {
