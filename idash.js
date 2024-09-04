@@ -113,7 +113,9 @@ function updateSelectedDateBox(groupedData, selectedDate) {
         return;
     }
 
-    const dateString = new Date(selectedDate).toISOString().split('T')[0];
+    const date = new Date(selectedDate); // Convert the selected date to a Date object
+    const dateString = date.toISOString().split('T')[0]; // Format the date to YYYY-MM-DD
+
     const data = groupedData[dateString];
 
     if (data) {
@@ -126,6 +128,7 @@ function updateSelectedDateBox(groupedData, selectedDate) {
         selectedDateBox.innerHTML = `<p>No data available for ${dateString}</p>`;
     }
 }
+
 
 let analyticsChart; // Define a variable to store the Chart.js instance
 
