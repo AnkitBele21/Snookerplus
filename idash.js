@@ -50,7 +50,7 @@ function groupDataByDate(frames) {
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
         const dateString = date.toISOString().split('T')[0].split("-"); // Get the date in YYYY-MM-DD format
-        const newDate =` ${dateString[0]}-${dateString[2]}-${dateString[1]}`
+        const newDate =`${dateString[0]}-${dateString[2]}-${dateString[1]}`
         const dayOfWeek = getDayOfWeek(date);
 
         if (!groupedData[newDate]) {
