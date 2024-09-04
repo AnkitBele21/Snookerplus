@@ -166,9 +166,12 @@ function updateChart(groupedData) {
 function updatePeakHoursChart(hourSlots) {
     const ctx = document.getElementById('peakHoursChart').getContext('2d');
 
+    // Create an array of labels representing 24 hourly slots, adjusted to start from 6 AM.
     const hours = Array.from({ length: 24 }, (_, i) => {
         const hour = (i + 6) % 24; // Adjust for hours from 6 AM to 5 AM
-        return `${hour}:00 - ${hour + 1}:00`;
+        const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour; // Convert to 12-hour format
+        const period = hour >= 12 ? 'PM' : 'AM';
+        return `${displayHour} ${period} - ${displayHour === 11 ? 12 : (displayHour + 1) % 12} ${displayHour === 11 ? period === 'AM' ? 'PM' : 'AM' : period}`;
     });
 
     if (peakHoursChart) {
@@ -198,6 +201,12 @@ function updatePeakHoursChart(hourSlots) {
                         display: true,
                         text: 'Duration (minutes)'
                     }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time of Day'
+                    }
                 }
             },
             plugins: {
@@ -208,6 +217,7 @@ function updatePeakHoursChart(hourSlots) {
         }
     });
 }
+
 
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
