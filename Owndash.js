@@ -128,22 +128,29 @@ function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
     topupData.forEach(topup => {
-        const date = new Date(topup.RecordDate).toISOString().split('T')[0];
+        const date = new Date(topup.RecordDate);
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date:', topup.RecordDate);
+            return; // Skip invalid dates
+        }
+
+        const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
         const amount = parseFloat(topup.Amount) || 0;
 
-        if (!groupedData[date]) {
-            groupedData[date] = { cash: 0, online: 0 };
+        if (!groupedData[dateString]) {
+            groupedData[dateString] = { cash: 0, online: 0 };
         }
 
         if (topup.Mode === 'cash') {
-            groupedData[date].cash += amount;
+            groupedData[dateString].cash += amount;
         } else if (topup.Mode === 'online') {
-            groupedData[date].online += amount;
+            groupedData[dateString].online += amount;
         }
     });
 
     return groupedData;
 }
+
 
 function updateTotalReceivedBox(cashAmount, onlineAmount) {
     const totalAmount = cashAmount + onlineAmount;
