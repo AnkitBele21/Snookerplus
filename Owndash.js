@@ -128,33 +128,34 @@ function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
     topupData.forEach(topup => {
-        if (!topup.RecordDate) {
-            console.error('RecordDate is undefined:', topup);
-            return; // Skip entries with undefined RecordDate
+        // Check if RecordDate exists and is valid
+        if (!topup.RecordDate || isNaN(new Date(topup.RecordDate).getTime())) {
+            console.error('Invalid or missing RecordDate:', topup);
+            return; // Skip entries with invalid or missing RecordDate
         }
 
         const date = new Date(topup.RecordDate);
-        if (isNaN(date.getTime())) {
-            console.error('Invalid date:', topup.RecordDate);
-            return; // Skip invalid dates
-        }
-
         const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
-        const amount = parseFloat(topup.Amount) || 0;
+        const amount = parseFloat(topup.Amount) || 0; // Parse Amount safely
 
+        // Initialize the date entry in groupedData if not already present
         if (!groupedData[dateString]) {
             groupedData[dateString] = { cash: 0, online: 0 };
         }
 
+        // Accumulate amounts based on the payment mode (cash or online)
         if (topup.Mode === 'cash') {
             groupedData[dateString].cash += amount;
         } else if (topup.Mode === 'online') {
             groupedData[dateString].online += amount;
+        } else {
+            console.error('Unknown payment mode:', topup.Mode, topup); // Log unknown payment modes
         }
     });
 
     return groupedData;
 }
+
 
 
 
