@@ -41,7 +41,7 @@ function groupDataByDate(frames) {
             return;
         }
 
-        const duration = parseInt(frame.Duration, 10) || 0;
+        const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
         const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
@@ -82,7 +82,7 @@ function populateAnalyticsTable(groupedData, totalTableMoney) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${date}</td>
-            <td>${(groupedData[date].duration / 60).toFixed(2)}</td> <!-- Convert seconds to minutes -->
+            <td>${groupedData[date].duration.toFixed(2)}</td> <!-- Duration is already in minutes -->
             <td>₹${groupedData[date].totalMoney.toFixed(2)}</td>
         `;
         tableBody.appendChild(row);
