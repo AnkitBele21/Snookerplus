@@ -127,14 +127,14 @@ function groupDataByHour(frames) {
 function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
-    topupData.forEach(topup => {
-        // Check if RecordDate exists and is valid
-        if (!topup.RecordDate || isNaN(new Date(topup.RecordDate).getTime())) {
-            console.error('Invalid or missing RecordDate:', topup);
+    topupData.forEach((topup, index) => {
+        const date = new Date(topup.RecordDate);
+
+        if (!topup.RecordDate || isNaN(date.getTime())) {
+            console.error(`Invalid or missing RecordDate at index ${index}:`, topup);
             return; // Skip entries with invalid or missing RecordDate
         }
 
-        const date = new Date(topup.RecordDate);
         const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
         const amount = parseFloat(topup.Amount) || 0; // Parse Amount safely
 
@@ -155,6 +155,7 @@ function groupTopupDataByDate(topupData) {
 
     return groupedData;
 }
+
 
 
 
