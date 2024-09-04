@@ -29,6 +29,7 @@ function convertToIST(date) {
 
 function groupDataByDate(frames) {
     const groupedData = {};
+    let totalTableMoney = 0;
 
     frames.forEach(frame => {
         const date = convertToIST(frame.StartTime);
@@ -48,21 +49,39 @@ function groupDataByDate(frames) {
 
         groupedData[dateString].duration += duration;    // Sum the duration for each date
         groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
+        totalTableMoney += totalMoney; // Add to total table money
     });
 
-    return groupedData;
+    return { groupedData, totalTableMoney };
 }
 
-function populateAnalyticsTable(groupedData) {
+function populateAnalyticsTable(groupedData, totalTableMoney) {
+    const totalMoneyBox = document.getElementById('totalMoneyBox');
     const tableBody = document.getElementById('analyticsTableBody');
-    tableBody.innerHTML = ''; // Clear any existing rows
 
+    // Set the total table money in the box above the table
+    totalMoneyBox.innerHTML = `Total Table Money: ₹${totalTableMoney.toFixed(2)}`;
+
+    // Clear any existing rows in the table
+    tableBody.innerHTML = '';
+
+    // Set table headers
+    const tableHeader = `
+        <tr>
+            <th>Date</th>
+            <th>Minutes</th>
+            <th>Table Money</th>
+        </tr>
+    `;
+    tableBody.insertAdjacentHTML('beforeend', tableHeader);
+
+    // Populate table rows with grouped data
     Object.keys(groupedData).forEach(date => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${date}</td>
             <td>${groupedData[date].duration}</td>
-            <td>${groupedData[date].totalMoney.toFixed(2)}</td>
+            <td>₹${groupedData[date].totalMoney.toFixed(2)}</td>
         `;
         tableBody.appendChild(row);
     });
@@ -72,9 +91,10 @@ async function init() {
     const table = 'frames';  // Replace with your actual table name
     const Studio = 'Studio 111';  // Replace with your actual studio identifier
 
-    const frames = await fetchData1(table, Studio);
-    const groupedData = groupDataByDate(frames);
-    populateAnalyticsTable(groupedData);
+    const { groupedData, totalTableMoney } = await fetchData1(table, Studio)
+        .then(groupDataByDate);
+
+    populateAnalyticsTable(groupedData, totalTableMoney);
 }
 
 // Run the init function when the page loads
