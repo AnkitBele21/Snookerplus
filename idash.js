@@ -19,6 +19,8 @@ async function fetchData1(table, Studio) {
     }
 }
 
+
+
 function groupDataByDate(frames) {
     const groupedData = {};
 
