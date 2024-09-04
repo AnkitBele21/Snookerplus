@@ -162,26 +162,40 @@ function updateChart(groupedData) {
     });
 }
 
-function populatePeakHoursTable(hourSlots) {
-    const tableBody = document.getElementById('peakHoursTableBody');
-    tableBody.innerHTML = ''; // Clear existing rows
+function groupDataByHour(frames) {
+    const hourSlots = Array(24).fill(0); // Initialize 24 slots for each hour
 
-    const hours = Array.from({ length: 24 }, (_, i) => {
-        const hour = (i + 6) % 24; // Adjust for hours from 6 AM to 5 AM
-        const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour; // Convert to 12-hour format
-        const period = hour >= 12 ? 'PM' : 'AM';
-        return `${displayHour} ${period} - ${displayHour === 11 ? 12 : (displayHour + 1) % 12} ${displayHour === 11 ? period === 'AM' ? 'PM' : 'AM' : period}`;
+    frames.forEach(frame => {
+        const startTime = convertToIST(frame.StartTime);
+        if (!startTime || isNaN(startTime.getTime())) {  // Handle invalid dates
+            console.error('Invalid date:', frame.StartTime);
+            return;
+        }
+
+        const startHour = startTime.getHours();
+        const duration = parseInt(frame.Duration, 10) || 0; // Duration in minutes
+        let remainingDuration = duration;
+        let currentHour = startHour;
+
+        // Distribute the duration across the hours it spans
+        while (remainingDuration > 0) {
+            const minutesInCurrentHour = Math.min(remainingDuration, 60 - startTime.getMinutes());
+            hourSlots[currentHour] += minutesInCurrentHour;
+
+            remainingDuration -= minutesInCurrentHour;
+            currentHour = (currentHour + 1) % 24;
+            startTime.setMinutes(0);  // Reset minutes to 0 for subsequent hours
+        }
     });
 
-    hours.forEach((timeSlot, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${timeSlot}</td>
-            <td>${hourSlots[index]}</td>
-        `;
-        tableBody.appendChild(row);
-    });
+    return hourSlots;
 }
+
+function convertToIST(dateString) {
+    const date = new Date(dateString);
+    return new Date(date.getTime() + (330 * 60 * 1000)); // Convert UTC to IST (+5:30)
+}
+
 
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
