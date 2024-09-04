@@ -40,11 +40,6 @@ function groupDataByDate(frames) {
             return;
         }
 
-        // Adjust the date for business hours (6 AM to 6 AM next day)
-        if (date.getHours() < 6) {
-            date.setDate(date.getDate() - 1); // Move to the previous day
-        }
-
         const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
 
         if (!groupedData[dateString]) {
