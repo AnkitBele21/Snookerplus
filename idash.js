@@ -1,6 +1,3 @@
-// Import Chart.js (if using module bundler)
-// import Chart from 'chart.js/auto';
-
 async function fetchData1(table, Studio) {
     const url = `https://v2api.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
@@ -122,6 +119,8 @@ function updateSelectedDateBox(groupedData, selectedDate) {
     }
 }
 
+let analyticsChart; // Define a variable to store the Chart.js instance
+
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
 
@@ -130,12 +129,12 @@ function updateChart(groupedData) {
     const durations = labels.map(date => groupedData[date].duration);
     const totalMoney = labels.map(date => groupedData[date].totalMoney);
 
-    if (window.analyticsChart) {
-        window.analyticsChart.destroy(); // Destroy existing chart instance if it exists
+    if (analyticsChart) {
+        analyticsChart.destroy(); // Destroy existing chart instance if it exists
     }
 
     // Create new chart
-    window.analyticsChart = new Chart(ctx, {
+    analyticsChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
