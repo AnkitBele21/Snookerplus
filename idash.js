@@ -58,30 +58,6 @@ function groupDataByDate(frames) {
     return { groupedData, totalTableMoney };
 }
 
-function populateFrameTable(frames) {
-    const frameTableBody = document.getElementById('frameTableBody');
-    if (!frameTableBody) {
-        console.error('Element with ID "frameTableBody" not found.');
-        return;
-    }
-
-    // Clear any existing rows
-    frameTableBody.innerHTML = '';
-
-    // Populate the frame details table
-    frames.forEach(frame => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${frame.FrameID || 'N/A'}</td>
-            <td>${parseInt(frame.Duration, 10) || 0}</td>
-            <td>${frame.Winner || 'N/A'}</td>
-            <td>${frame.Loser || 'N/A'}</td>
-            <td>₹${parseFloat(frame.TotalMoney || 0).toFixed(2)}</td>
-        `;
-        frameTableBody.appendChild(row);
-    });
-}
-
 function populateAnalyticsTable(groupedData, totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
     if (!totalMoneyBox) {
@@ -120,7 +96,6 @@ async function init() {
     const frames = await fetchData1(table, Studio);
     const { groupedData, totalTableMoney } = groupDataByDate(frames);
 
-    populateFrameTable(frames);
     populateAnalyticsTable(groupedData, totalTableMoney);
 }
 
