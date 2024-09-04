@@ -22,7 +22,6 @@ async function fetchData1(table, Studio) {
 function convertToIST(date) {
     if (!date) return null;  // Return null if date is undefined or invalid
 
-    // Convert the date to IST (UTC+5:30)
     const utcDate = new Date(date);
     const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC + 5:30
     const istDate = new Date(utcDate.getTime() + istOffset);
@@ -79,7 +78,6 @@ function groupDataByHour(frames) {
         let remainingDuration = duration;
         let currentHour = startHour;
 
-        // Distribute the duration across the hours it spans
         while (remainingDuration > 0) {
             const minutesInCurrentHour = Math.min(remainingDuration, 60 - startTime.getMinutes());
             hourSlots[currentHour] += minutesInCurrentHour;
@@ -119,7 +117,6 @@ let analyticsChart; // Define a variable to store the Chart.js instance
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
 
-    // Extract data for chart
     const labels = Object.keys(groupedData);
     const durations = labels.map(date => groupedData[date].duration);
     const totalMoney = labels.map(date => groupedData[date].totalMoney);
@@ -128,7 +125,6 @@ function updateChart(groupedData) {
         analyticsChart.destroy(); // Destroy existing chart instance if it exists
     }
 
-    // Create new chart
     analyticsChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -186,10 +182,8 @@ function populatePeakHoursTable(hourSlots) {
         return;
     }
 
-    // Clear any existing rows
-    peakHoursTable.innerHTML = '';
+    peakHoursTable.innerHTML = '';  // Clear any existing rows
 
-    // Populate the table with hour slots data
     hourSlots.forEach((duration, index) => {
         const row = peakHoursTable.insertRow();
         const hourCell = row.insertCell(0);
@@ -201,31 +195,22 @@ function populatePeakHoursTable(hourSlots) {
 }
 
 async function init() {
-    const table = 'frames';  // Replace with your actual table name
-    const Studio = 'Studio 111';  // Replace with your actual studio identifier
+    const table = 'frames';
+    const Studio = 'Studio 111';
 
     const frames = await fetchData1(table, Studio);
     const { groupedData, totalTableMoney } = groupDataByDate(frames);
     const hourSlots = groupDataByHour(frames);
 
-    // Update chart with the initial data
     updateChart(groupedData);
-
-    // Update the total money box
     updateTotalMoneyBox(totalTableMoney);
-
-    // Populate peak hours table instead of updating a chart
     populatePeakHoursTable(hourSlots);
 
-    // Add event listener for date selection
     const datePicker = document.getElementById('datePicker');
-    if (datePicker) {
-        datePicker.addEventListener('change', (event) => {
-            const selectedDate = event.target.value;
-            updateSelectedDateBox(groupedData, selectedDate);
-        });
-    }
+    datePicker.addEventListener('change', () => {
+        const selectedDate = datePicker.value;
+        updateSelectedDateBox(groupedData, selectedDate);
+    });
 }
 
-// Run the init function when the page loads
 window.addEventListener('load', init);
