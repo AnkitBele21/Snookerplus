@@ -75,21 +75,34 @@ function groupDataByHour(frames) {
 
         const startHour = startTime.getHours();
         const duration = parseInt(frame.Duration, 10) || 0; // Duration in minutes
-        let remainingDuration = duration;
-        let currentHour = startHour;
 
-        while (remainingDuration > 0) {
-            const minutesInCurrentHour = Math.min(remainingDuration, 60 - startTime.getMinutes());
-            hourSlots[currentHour] += minutesInCurrentHour;
+        // Calculate the end time
+        const endTime = new Date(startTime.getTime() + duration * 60000);
+        const endHour = endTime.getHours();
 
-            remainingDuration -= minutesInCurrentHour;
-            currentHour = (currentHour + 1) % 24;
-            startTime.setMinutes(0);  // Reset minutes to 0 for subsequent hours
+        if (startHour === endHour) {
+            // If the start and end time are within the same hour, add the duration to that hour
+            hourSlots[startHour] += duration;
+        } else {
+            // If the duration spans multiple hours, distribute the time accordingly
+            const minutesInStartHour = 60 - startTime.getMinutes();
+            hourSlots[startHour] += minutesInStartHour;
+
+            let remainingDuration = duration - minutesInStartHour;
+            let currentHour = (startHour + 1) % 24;
+
+            while (remainingDuration > 0) {
+                const minutesToAdd = Math.min(remainingDuration, 60);
+                hourSlots[currentHour] += minutesToAdd;
+                remainingDuration -= minutesToAdd;
+                currentHour = (currentHour + 1) % 24;
+            }
         }
     });
 
     return hourSlots;
 }
+
 
 function updateSelectedDateBox(groupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
