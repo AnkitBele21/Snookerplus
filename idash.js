@@ -101,6 +101,7 @@ function groupDataByHour(frames) {
         }
     });
 
+console.log(hourSlots)
     return hourSlots;
 }
 
@@ -112,9 +113,7 @@ function updateSelectedDateBox(groupedData, selectedDate) {
         return;
     }
 
-    const date = new Date(selectedDate); // Convert the selected date to a Date object
-    const dateString = date.toISOString().split('T')[0]; // Format the date to YYYY-MM-DD
-
+    const dateString = new Date(selectedDate).toISOString().split('T')[0];
     const data = groupedData[dateString];
 
     if (data) {
@@ -128,9 +127,7 @@ function updateSelectedDateBox(groupedData, selectedDate) {
     }
 }
 
-
 let analyticsChart; // Define a variable to store the Chart.js instance
-let peakHoursChart; // Define a variable to store the peak hours Chart.js instance
 
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
@@ -193,63 +190,42 @@ function updateTotalMoneyBox(totalTableMoney) {
     totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
 }
 
-function updatePeakHoursChart(hourSlots) {
-    const ctx = document.getElementById('peakHoursChart').getContext('2d');
-
-    // Shift the time slots to start from 5:00 AM
-    const labels = Array.from({ length: 24 }, (_, i) => `${(i + 5) % 24}:00 - ${(i + 6) % 24}:00`);
-    const shiftedSlots = [...hourSlots.slice(5), ...hourSlots.slice(0, 5)];
-
-    if (peakHoursChart) {
-        peakHoursChart.destroy(); // Destroy existing chart instance if it exists
+function populatePeakHoursTable(hourSlots) {
+    const peakHoursTable = document.getElementById('peakHoursTable');
+    if (!peakHoursTable) {
+        console.error('Element with ID "peakHoursTable" not found.');
+        return;
     }
 
-    peakHoursChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Total Duration (minutes)',
-                    data: shiftedSlots,
-                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                    borderColor: 'rgba(255, 159, 64, 1)',
-                    borderWidth: 2,
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Duration (minutes)'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true
-                }
-            }
-        }
+    peakHoursTable.innerHTML = '';  // Clear any existing rows
+
+    hourSlots.forEach((duration, index) => {
+        const row = peakHoursTable.insertRow();
+        const hourCell = row.insertCell(0);
+        const durationCell = row.insertCell(1);
+
+        hourCell.textContent = `${index}:00 - ${index + 1}:00`;
+        durationCell.textContent = `${duration} minutes`;
     });
 }
 
-async function handleDateSelection(event) {
-    const selectedDate = event.target.value;
+async function init() {
+    const table = 'frames';
+    const Studio = 'Studio 111';
 
-    const frames = await fetchData1('Frames', 'mss');
+    const frames = await fetchData1(table, Studio);
     const { groupedData, totalTableMoney } = groupDataByDate(frames);
     const hourSlots = groupDataByHour(frames);
 
-    updateSelectedDateBox(groupedData, selectedDate);
     updateChart(groupedData);
     updateTotalMoneyBox(totalTableMoney);
-    updatePeakHoursChart(hourSlots);
+    populatePeakHoursTable(hourSlots);
+
+    const datePicker = document.getElementById('datePicker');
+    datePicker.addEventListener('change', () => {
+        const selectedDate = datePicker.value;
+        updateSelectedDateBox(groupedData, selectedDate);
+    });
 }
 
-// Attach the event listener
-document.getElementById('datePicker').addEventListener('change', handleDateSelection);
+window.addEventListener('load', init);
