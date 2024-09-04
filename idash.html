@@ -21,7 +21,17 @@
     <canvas id="analyticsChart" width="400" height="200"></canvas> <!-- Chart.js canvas -->
 
     <h2>Peak Hours Analysis</h2>
-    <canvas id="peakHoursChart" width="400" height="200"></canvas> <!-- Canvas for peak hours chart -->
+    <table>
+        <thead>
+            <tr>
+                <th>Time Slot</th>
+                <th>Total Duration (minutes)</th>
+            </tr>
+        </thead>
+        <tbody id="peakHoursTable">
+            <!-- Rows will be added here by JavaScript -->
+        </tbody>
+    </table>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
     <script src="idash.js"></script>
