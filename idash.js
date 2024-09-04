@@ -60,7 +60,8 @@ function groupDataByDate(frames) {
         groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
         totalTableMoney += totalMoney; // Add to total table money
     });
-console.log(groupedData, totalTableMoney)
+
+    console.log(groupedData, totalTableMoney);
     return { groupedData, totalTableMoney };
 }
 
@@ -101,10 +102,9 @@ function groupDataByHour(frames) {
         }
     });
 
-console.log(hourSlots)
+    console.log(hourSlots);
     return hourSlots;
 }
-
 
 function updateSelectedDateBox(groupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
@@ -128,6 +128,7 @@ function updateSelectedDateBox(groupedData, selectedDate) {
 }
 
 let analyticsChart; // Define a variable to store the Chart.js instance
+let peakHoursChart; // Define a variable to store the peak hours Chart.js instance
 
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
@@ -180,52 +181,81 @@ function updateChart(groupedData) {
     });
 }
 
-function updateTotalMoneyBox(totalTableMoney) {
-    const totalMoneyBox = document.getElementById('totalMoneyBox');
-    if (!totalMoneyBox) {
-        console.error('Element with ID "totalMoneyBox" not found.');
-        return;
+function updatePeakHoursChart(hourSlots) {
+    const ctx = document.getElementById('peakHoursChart').getContext('2d');
+
+    // Reorder hour slots to start from 05:00 instead of 00:00
+    const reorderedHourSlots = [...hourSlots.slice(5), ...hourSlots.slice(0, 5)];
+    const labels = [
+        '05:00 - 06:00', '06:00 - 07:00', '07:00 - 08:00', '08:00 - 09:00',
+        '09:00 - 10:00', '10:00 - 11:00', '11:00 - 12:00', '12:00 - 13:00',
+        '13:00 - 14:00', '14:00 - 15:00', '15:00 - 16:00', '16:00 - 17:00',
+        '17:00 - 18:00', '18:00 - 19:00', '19:00 - 20:00', '20:00 - 21:00',
+        '21:00 - 22:00', '22:00 - 23:00', '23:00 - 00:00', '00:00 - 01:00',
+        '01:00 - 02:00', '02:00 - 03:00', '03:00 - 04:00', '04:00 - 05:00'
+    ];
+
+    if (peakHoursChart) {
+        peakHoursChart.destroy(); // Destroy existing chart instance if it exists
     }
 
-    totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
-}
-
-function populatePeakHoursTable(hourSlots) {
-    const peakHoursTable = document.getElementById('peakHoursTable');
-    if (!peakHoursTable) {
-        console.error('Element with ID "peakHoursTable" not found.');
-        return;
-    }
-
-    peakHoursTable.innerHTML = '';  // Clear any existing rows
-
-    hourSlots.forEach((duration, index) => {
-        const row = peakHoursTable.insertRow();
-        const hourCell = row.insertCell(0);
-        const durationCell = row.insertCell(1);
-
-        hourCell.textContent = `${index}:00 - ${index + 1}:00`;
-        durationCell.textContent = `${duration} minutes`;
+    peakHoursChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Duration (minutes)',
+                data: reorderedHourSlots,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Duration (minutes)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time of Day'
+                    }
+                }
+            }
+        }
     });
 }
 
 async function init() {
-    const table = 'frames';
-    const Studio = 'Studio 111';
-
-    const frames = await fetchData1(table, Studio);
-    const { groupedData, totalTableMoney } = groupDataByDate(frames);
-    const hourSlots = groupDataByHour(frames);
-
-    updateChart(groupedData);
-    updateTotalMoneyBox(totalTableMoney);
-    populatePeakHoursTable(hourSlots);
-
     const datePicker = document.getElementById('datePicker');
+    const totalMoneyBox = document.getElementById('totalMoneyBox');
+
+    const Studio = 'YourStudioName'; // Replace with the actual Studio value
+    const table = 'YourTableName'; // Replace with the actual table value
+
+    const data = await fetchData1(table, Studio);
+
+    const { groupedData, totalTableMoney } = groupDataByDate(data);
+    const hourSlots = groupDataByHour(data);
+
+    // Initialize the chart with the entire dataset
+    updateChart(groupedData);
+
+    // Initialize the peak hours chart
+    updatePeakHoursChart(hourSlots);
+
+    totalMoneyBox.innerHTML = `<h2>Total Table Money: ₹${totalTableMoney.toFixed(2)}</h2>`;
+
     datePicker.addEventListener('change', () => {
         const selectedDate = datePicker.value;
         updateSelectedDateBox(groupedData, selectedDate);
     });
 }
 
-window.addEventListener('load', init);
+document.addEventListener('DOMContentLoaded', init);
