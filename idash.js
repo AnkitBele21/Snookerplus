@@ -64,6 +64,25 @@ function groupDataByDate(frames) {
     return { groupedData, totalTableMoney };
 }
 
+function groupDataByHour(frames) {
+    const hourSlots = Array(24).fill(0); // Initialize 24 slots for each hour
+
+    frames.forEach(frame => {
+        const startTime = convertToIST(frame.StartTime);
+        if (!startTime || isNaN(startTime.getTime())) {  // Handle invalid dates
+            console.error('Invalid date:', frame.StartTime);
+            return;
+        }
+
+        const hour = startTime.getHours();
+        const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
+
+        hourSlots[hour] += duration; // Sum the duration for each hour slot
+    });
+
+    return hourSlots;
+}
+
 function updateSelectedDateBox(groupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
     if (!selectedDateBox) {
@@ -86,6 +105,7 @@ function updateSelectedDateBox(groupedData, selectedDate) {
 }
 
 let analyticsChart; // Define a variable to store the Chart.js instance
+let peakHoursChart;
 
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
@@ -140,6 +160,49 @@ function updateChart(groupedData) {
     });
 }
 
+function updatePeakHoursChart(hourSlots) {
+    const ctx = document.getElementById('peakHoursChart').getContext('2d');
+
+    const hours = Array.from({ length: 24 }, (_, i) => `${i}:00 - ${i + 1}:00`);
+
+    if (peakHoursChart) {
+        peakHoursChart.destroy(); // Destroy existing chart instance if it exists
+    }
+
+    // Create new chart
+    peakHoursChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: hours,
+            datasets: [
+                {
+                    label: 'Total Duration (minutes)',
+                    data: hourSlots,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Duration (minutes)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
+                }
+            }
+        }
+    });
+}
+
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
     if (!totalMoneyBox) {
@@ -156,12 +219,16 @@ async function init() {
 
     const frames = await fetchData1(table, Studio);
     const { groupedData, totalTableMoney } = groupDataByDate(frames);
+    const hourSlots = groupDataByHour(frames);
 
     // Update chart with the initial data
     updateChart(groupedData);
 
     // Update the total money box
     updateTotalMoneyBox(totalTableMoney);
+
+    // Update peak hours chart
+    updatePeakHoursChart(hourSlots);
 
     // Add event listener for date selection
     const datePicker = document.getElementById('datePicker');
