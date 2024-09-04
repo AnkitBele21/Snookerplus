@@ -64,40 +64,6 @@ function groupDataByDate(frames) {
     return { groupedData, totalTableMoney };
 }
 
-function populateAnalyticsTable(groupedData, totalTableMoney) {
-    const totalMoneyBox = document.getElementById('totalMoneyBox');
-    if (!totalMoneyBox) {
-        console.error('Element with ID "totalMoneyBox" not found.');
-        return;
-    }
-
-    const tableBody = document.getElementById('analyticsTableBody');
-    if (!tableBody) {
-        console.error('Element with ID "analyticsTableBody" not found.');
-        return;
-    }
-
-    // Set the total table money in the box above the table
-    totalMoneyBox.innerHTML = `Total Table Money: ₹${totalTableMoney.toFixed(2)}`;
-
-    // Clear any existing rows in the table
-    tableBody.innerHTML = '';
-
-    // Populate table rows with grouped data
-    Object.keys(groupedData).forEach(date => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${date} (${groupedData[date].dayOfWeek})</td>
-            <td>${groupedData[date].duration.toFixed(2)}</td> <!-- Duration is already in minutes -->
-            <td>₹${groupedData[date].totalMoney.toFixed(2)}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-
-    // Update the chart with the new data
-    updateChart(groupedData);
-}
-
 function updateSelectedDateBox(groupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
     if (!selectedDateBox) {
@@ -179,9 +145,10 @@ async function init() {
     const Studio = 'Studio 111';  // Replace with your actual studio identifier
 
     const frames = await fetchData1(table, Studio);
-    const { groupedData, totalTableMoney } = groupDataByDate(frames);
+    const { groupedData } = groupDataByDate(frames);
 
-    populateAnalyticsTable(groupedData, totalTableMoney);
+    // Update chart with the initial data
+    updateChart(groupedData);
 
     // Add event listener for date selection
     const datePicker = document.getElementById('datePicker');
