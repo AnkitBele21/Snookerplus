@@ -108,7 +108,6 @@ function updateSelectedDateBox(groupedData, selectedDate) {
 }
 
 let analyticsChart; // Define a variable to store the Chart.js instance
-let peakHoursChart;
 
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
@@ -184,8 +183,6 @@ function populatePeakHoursTable(hourSlots) {
     });
 }
 
-
-
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
     if (!totalMoneyBox) {
@@ -210,8 +207,8 @@ async function init() {
     // Update the total money box
     updateTotalMoneyBox(totalTableMoney);
 
-    // Update peak hours chart
-    updatePeakHoursChart(hourSlots);
+    // Populate peak hours table instead of updating a chart
+    populatePeakHoursTable(hourSlots);
 
     // Add event listener for date selection
     const datePicker = document.getElementById('datePicker');
