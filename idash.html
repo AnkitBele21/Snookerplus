@@ -3,18 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Duration & Table Money Analytics</title>
+    <title>Snooker Frames Review & Analytics Dashboard</title>
     <link rel="stylesheet" href="idash.css">
 </head>
 <body>
     <h1>Daily Duration & Table Money Analytics</h1>
-    <div id="totalMoneyBox" style="font-weight: bold; margin-bottom: 10px;">Total Table Money: ₹0.00</div>
+
+    <div id="totalMoneyBox">
+        <!-- Total table money will be displayed here -->
+    </div>
+
+    <div>
+        <label for="datePicker">Select Date:</label>
+        <input type="date" id="datePicker">
+    </div>
+
+    <div id="selectedDateBox">
+        <!-- Details of the selected date will be displayed here -->
+    </div>
+
     <table>
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Total Duration (Minutes)</th>
-                <th>Total Table Money (₹)</th>
+                <th>Total Duration (minutes)</th>
+                <th>Total Money</th>
             </tr>
         </thead>
         <tbody id="analyticsTableBody">
