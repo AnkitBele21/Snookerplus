@@ -1,3 +1,6 @@
+// Import Chart.js (if using module bundler)
+// import Chart from 'chart.js/auto';
+
 async function fetchData1(table, Studio) {
     const url = `https://v2api.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
@@ -93,6 +96,9 @@ function populateAnalyticsTable(groupedData, totalTableMoney) {
         `;
         tableBody.appendChild(row);
     });
+
+    // Update the chart with the new data
+    updateChart(groupedData);
 }
 
 function updateSelectedDateBox(groupedData, selectedDate) {
@@ -114,6 +120,59 @@ function updateSelectedDateBox(groupedData, selectedDate) {
     } else {
         selectedDateBox.innerHTML = `<p>No data available for ${dateString}</p>`;
     }
+}
+
+function updateChart(groupedData) {
+    const ctx = document.getElementById('analyticsChart').getContext('2d');
+
+    // Extract data for chart
+    const labels = Object.keys(groupedData);
+    const durations = labels.map(date => groupedData[date].duration);
+    const totalMoney = labels.map(date => groupedData[date].totalMoney);
+
+    if (window.analyticsChart) {
+        window.analyticsChart.destroy(); // Destroy existing chart instance if it exists
+    }
+
+    // Create new chart
+    window.analyticsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Total Duration (minutes)',
+                    data: durations,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Total Money',
+                    data: totalMoney,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Values'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
+                }
+            }
+        }
+    });
 }
 
 async function init() {
