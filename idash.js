@@ -60,7 +60,7 @@ function groupDataByDate(frames) {
         groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
         totalTableMoney += totalMoney; // Add to total table money
     });
-    console.log(groupedData, totalTableMoney);
+console.log(groupedData, totalTableMoney)
     return { groupedData, totalTableMoney };
 }
 
@@ -101,9 +101,9 @@ function groupDataByHour(frames) {
         }
     });
 
-    console.log(hourSlots);
     return hourSlots;
 }
+
 
 function updateSelectedDateBox(groupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
@@ -127,6 +127,7 @@ function updateSelectedDateBox(groupedData, selectedDate) {
         selectedDateBox.innerHTML = `<p>No data available for ${dateString}</p>`;
     }
 }
+
 
 let analyticsChart; // Define a variable to store the Chart.js instance
 let peakHoursChart; // Define a variable to store the peak hours Chart.js instance
@@ -192,50 +193,31 @@ function updateTotalMoneyBox(totalTableMoney) {
     totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
 }
 
-function populatePeakHoursTable(hourSlots) {
-    const peakHoursTable = document.getElementById('peakHoursTable');
-    const peakHoursChartCtx = document.getElementById('peakHoursChart').getContext('2d');
+function updatePeakHoursChart(hourSlots) {
+    const ctx = document.getElementById('peakHoursChart').getContext('2d');
 
-    if (!peakHoursTable || !peakHoursChartCtx) {
-        console.error('Element with ID "peakHoursTable" or "peakHoursChart" not found.');
-        return;
-    }
-
-    peakHoursTable.innerHTML = '';  // Clear any existing rows
-
-    // Shift the hours to start from 05:00
-    const shiftedHourSlots = [...hourSlots.slice(5), ...hourSlots.slice(0, 5)];
-    const labels = [];
-    const data = [];
-
-    shiftedHourSlots.forEach((duration, index) => {
-        const hour = (index + 5) % 24; // Adjust index to start from 05:00
-        const row = peakHoursTable.insertRow();
-        const hourCell = row.insertCell(0);
-        const durationCell = row.insertCell(1);
-
-        hourCell.textContent = `${hour.toString().padStart(2, '0')}:00 - ${((hour + 1) % 24).toString().padStart(2, '0')}:00`;
-        durationCell.textContent = duration.toFixed(2);
-
-        labels.push(`${hour.toString().padStart(2, '0')}:00`);
-        data.push(duration);
-    });
+    // Shift the time slots to start from 5:00 AM
+    const labels = Array.from({ length: 24 }, (_, i) => `${(i + 5) % 24}:00 - ${(i + 6) % 24}:00`);
+    const shiftedSlots = [...hourSlots.slice(5), ...hourSlots.slice(0, 5)];
 
     if (peakHoursChart) {
         peakHoursChart.destroy(); // Destroy existing chart instance if it exists
     }
 
-    peakHoursChart = new Chart(peakHoursChartCtx, {
+    peakHoursChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Total Duration (minutes)',
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
+            datasets: [
+                {
+                    label: 'Total Duration (minutes)',
+                    data: shiftedSlots,
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 2,
+                    fill: true
+                }
+            ]
         },
         options: {
             scales: {
@@ -243,28 +225,31 @@ function populatePeakHoursTable(hourSlots) {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Total Duration (minutes)'
+                        text: 'Duration (minutes)'
                     }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Time Slot'
-                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
                 }
             }
         }
     });
 }
 
-document.getElementById('datePicker').addEventListener('change', async function () {
-    const selectedDate = this.value;
-    const data = await fetchData1('tableName', 'studioName');
-    const { groupedData, totalTableMoney } = groupDataByDate(data);
-    const hourSlots = groupDataByHour(data);
+async function handleDateSelection(event) {
+    const selectedDate = event.target.value;
+
+    const frames = await fetchData1('Frames', 'mss');
+    const { groupedData, totalTableMoney } = groupDataByDate(frames);
+    const hourSlots = groupDataByHour(frames);
 
     updateSelectedDateBox(groupedData, selectedDate);
-    updateTotalMoneyBox(totalTableMoney);
     updateChart(groupedData);
-    populatePeakHoursTable(hourSlots);
-});
+    updateTotalMoneyBox(totalTableMoney);
+    updatePeakHoursChart(hourSlots);
+}
+
+// Attach the event listener
+document.getElementById('datePicker').addEventListener('change', handleDateSelection);
