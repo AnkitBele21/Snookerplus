@@ -1,29 +1,28 @@
-/* General body styling */
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
     background-color: #f4f4f4;
-}
-
-/* Container for the main content */
-.container {
-    width: 80%;
-    margin: 0 auto;
+    margin: 0;
     padding: 20px;
 }
 
-/* Table styling */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Top-up Table Styles */
 #topupTable {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin-bottom: 20px;
+    background-color: #fff;
 }
 
 #topupTable th, #topupTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    padding: 12px;
     text-align: center;
+    border: 1px solid #ddd;
 }
 
 #topupTable th {
@@ -32,26 +31,77 @@ body {
 }
 
 #topupTable tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #f9f9f9;
 }
 
 #topupTable tr:hover {
-    background-color: #ddd;
+    background-color: #f1f1f1;
 }
 
-/* Table heading styling */
-#topupTable th {
-    font-size: 1.1em;
-}
-
-/* Table data styling */
 #topupTable td {
-    font-size: 1em;
+    color: #333;
 }
 
-/* Heading styling */
-h1 {
-    color: #333;
-    text-align: center;
+/* Summary Box Styles */
+#summaryBox {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
     margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+#summaryBox div {
+    text-align: center;
+}
+
+#summaryBox div span {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Date Selector Styles */
+#dateSelectorWrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#dateSelector {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+/* Button Styles */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    #summaryBox {
+        flex-direction: column;
+    }
+
+    #topupTable {
+        font-size: 14px;
+    }
+
+    #summaryBox div span {
+        font-size: 20px;
+    }
 }
