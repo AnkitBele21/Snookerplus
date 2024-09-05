@@ -4,25 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Topup Data</title>
-    <link rel="stylesheet" href="topup.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Topup Data</h1>
-        <table id="topupTable">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Total Topup</th>
-                    <th>Online</th>
-                    <th>Cash</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Table rows will be inserted here by JavaScript -->
-            </tbody>
-        </table>
+    <h1>Topup Data</h1>
+
+    <!-- Summary Box -->
+    <div id="summaryBox">
+        <h2>Summary</h2>
+        <p>Total Topup: <span id="totalTopup">0.00</span></p>
+        <p>Online Total: <span id="onlineTotal">0.00</span></p>
+        <p>Cash Total: <span id="cashTotal">0.00</span></p>
     </div>
+
+    <!-- Date Selector -->
+    <div>
+        <label for="dateSelector">Select Date:</label>
+        <input type="date" id="dateSelector">
+    </div>
+
+    <!-- Topup Table -->
+    <table id="topupTable">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Total Topup</th>
+                <th>Online</th>
+                <th>Cash</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
     <script src="topup.js"></script>
 </body>
 </html>
