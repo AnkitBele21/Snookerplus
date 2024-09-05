@@ -33,9 +33,6 @@ function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
     topupData.forEach(topup => {
-        // Debugging: Log the topup data
-        console.log('Topup entry:', topup);
-
         if (!topup.RecordDate) {
             console.error('RecordDate is undefined:', topup);
             return; // Skip entries with undefined RecordDate
@@ -55,7 +52,6 @@ function groupTopupDataByDate(topupData) {
         }
 
         const mode = topup.Mode.trim().toLowerCase();
-        console.log('Processing Mode:', mode);
 
         if (mode === 'cash') {
             groupedData[businessDay].cash += amount;
@@ -74,7 +70,7 @@ function populateTopupTable(groupedData) {
     const totalTopupElem = document.querySelector('#totalTopup');
     const onlineTotalElem = document.querySelector('#onlineTotal');
     const cashTotalElem = document.querySelector('#cashTotal');
-    
+
     if (!topupTableBody) {
         console.error('Element with ID "topupTable" not found.');
         return;
@@ -129,13 +125,27 @@ function filterByDate(groupedData, selectedDate) {
     return filteredData;
 }
 
+function setDefaultDate() {
+    const dateSelector = document.querySelector('#dateSelector');
+    const today = new Date().toISOString().split('T')[0];
+    dateSelector.value = today;
+}
 
 async function init() {
     const studio = 'Studio 111';
     const topupData = await fetchTopupData(studio);
     console.log('Data received for processing:', topupData);
+    
+    if (!topupData.length) {
+        console.error('No data available for processing.');
+        return;
+    }
+
     const groupedData = groupTopupDataByDate(topupData);
     populateTopupTable(groupedData);
+
+    // Set default date to today
+    setDefaultDate();
 
     // Date Selector Event Listener
     document.querySelector('#dateSelector').addEventListener('change', (event) => {
