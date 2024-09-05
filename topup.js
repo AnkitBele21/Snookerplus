@@ -23,7 +23,6 @@ function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
     topupData.forEach(topup => {
-        // Debugging: Log the topup data
         console.log('Topup entry:', topup);
 
         if (!topup.RecordDate) {
@@ -48,6 +47,8 @@ function groupTopupDataByDate(topupData) {
             groupedData[dateString].cash += amount;
         } else if (topup.Mode === 'online') {
             groupedData[dateString].online += amount;
+        } else {
+            console.error('Unknown mode:', topup.Mode);
         }
     });
 
