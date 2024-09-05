@@ -84,46 +84,6 @@ function groupDataByDate(frames) {
     return { groupedData, totalTableMoney };
 }
 
-function groupDataByHour(frames) {
-    const hourSlots = Array(24).fill(0); // Initialize 24 slots for each hour
-
-    frames.forEach(frame => {
-        const startTime = convertToIST(frame.StartTime);
-        if (!startTime || isNaN(startTime.getTime())) {  // Handle invalid dates
-            console.error('Invalid date:', frame.StartTime);
-            return;
-        }
-
-        const startHour = startTime.getHours();
-        const duration = parseInt(frame.Duration, 10) || 0; // Duration in minutes
-
-        // Calculate the end time
-        const endTime = new Date(startTime.getTime() + duration * 60000);
-        const endHour = endTime.getHours();
-
-        if (startHour === endHour) {
-            // If the start and end time are within the same hour, add the duration to that hour
-            hourSlots[startHour] += duration;
-        } else {
-            // If the duration spans multiple hours, distribute the time accordingly
-            const minutesInStartHour = 60 - startTime.getMinutes();
-            hourSlots[startHour] += minutesInStartHour;
-
-            let remainingDuration = duration - minutesInStartHour;
-            let currentHour = (startHour + 1) % 24;
-
-            while (remainingDuration > 0) {
-                const minutesToAdd = Math.min(remainingDuration, 60);
-                hourSlots[currentHour] += minutesToAdd;
-                remainingDuration -= minutesToAdd;
-                currentHour = (currentHour + 1) % 24;
-            }
-        }
-    });
-
-    return hourSlots;
-}
-
 function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
@@ -154,16 +114,6 @@ function groupTopupDataByDate(topupData) {
     });
 
     return groupedData;
-}
-
-
-
-function updateTotalReceivedBox(cashAmount, onlineAmount) {
-    const totalAmount = cashAmount + onlineAmount;
-
-    document.getElementById('cashAmount').textContent = cashAmount.toFixed(2);
-    document.getElementById('onlineAmount').textContent = onlineAmount.toFixed(2);
-    document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
 }
 
 function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
@@ -247,7 +197,6 @@ function updateChart(groupedData) {
     });
 }
 
-
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
     if (!totalMoneyBox) {
@@ -256,25 +205,6 @@ function updateTotalMoneyBox(totalTableMoney) {
     }
 
     totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
-}
-
-function populatePeakHoursTable(hourSlots) {
-    const peakHoursTable = document.getElementById('peakHoursTable');
-    if (!peakHoursTable) {
-        console.error('Element with ID "peakHoursTable" not found.');
-        return;
-    }
-
-    peakHoursTable.innerHTML = '';  // Clear any existing rows
-
-    hourSlots.forEach((duration, index) => {
-        const row = peakHoursTable.insertRow();
-        const hourCell = row.insertCell(0);
-        const durationCell = row.insertCell(1);
-
-        hourCell.textContent = `${index}:00 - ${index + 1}:00`;
-        durationCell.textContent = `${duration} minutes`;
-    });
 }
 
 async function init() {
@@ -286,15 +216,9 @@ async function init() {
 
     const { groupedData, totalTableMoney } = groupDataByDate(frames);
     const topupGroupedData = groupTopupDataByDate(topupData);
-    const hourSlots = groupDataByHour(frames);
 
     updateChart(groupedData);
     updateTotalMoneyBox(totalTableMoney);
-    updateTotalReceivedBox(
-        Object.values(topupGroupedData).reduce((sum, { cash }) => sum + cash, 0),
-        Object.values(topupGroupedData).reduce((sum, { online }) => sum + online, 0)
-    );
-    populatePeakHoursTable(hourSlots);
 
     const datePicker = document.getElementById('datePicker');
     datePicker.addEventListener('change', () => {
