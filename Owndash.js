@@ -76,30 +76,31 @@ function groupDataByDate(frames) {
 function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
-    topupData.forEach((topup, index) => {
-        // Ensure RecordDate is a valid date string
-        const date = new Date(topup.RecordDate);
-        
-        if (!topup.RecordDate || isNaN(date.getTime())) {
-            console.error(`Invalid or missing RecordDate at index ${index}:`, topup);
-            return; // Skip entries with invalid or missing RecordDate
+    topupData.forEach((record, index) => {
+        const recordDate = record.RecordDate;
+
+        // Check if RecordDate is valid
+        if (!recordDate || isNaN(new Date(recordDate).getTime())) {
+            console.error(`Invalid or missing RecordDate at index ${index}:`, record);
+            return; // Skip this record
         }
 
-        const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
-        const amount = parseFloat(topup.Amount) || 0; // Parse Amount safely
+        const date = new Date(recordDate).toISOString().split('T')[0]; // Get only the date part (YYYY-MM-DD)
+        const paymentMode = record.PaymentMode; // Assuming the field is 'PaymentMode'
+        const amount = record.Amount || 0;
 
-        // Initialize the date entry in groupedData if not already present
-        if (!groupedData[dateString]) {
-            groupedData[dateString] = { cash: 0, online: 0 };
+        // Initialize the date entry if it doesn't exist
+        if (!groupedData[date]) {
+            groupedData[date] = { cash: 0, online: 0 };
         }
 
-        // Accumulate amounts based on the payment mode (cash or online)
-        if (topup.Mode === 'cash') {
-            groupedData[dateString].cash += amount;
-        } else if (topup.Mode === 'online') {
-            groupedData[dateString].online += amount;
+        // Group by payment mode
+        if (paymentMode === 'cash') {
+            groupedData[date].cash += amount;
+        } else if (paymentMode === 'online') {
+            groupedData[date].online += amount;
         } else {
-            console.error('Unknown payment mode:', topup.Mode, topup); // Log unknown payment modes
+            console.error(`Unknown PaymentMode at index ${index}:`, paymentMode);
         }
     });
 
@@ -107,27 +108,39 @@ function groupTopupDataByDate(topupData) {
 }
 
 
-function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
-    const selectedDateBox = document.getElementById('selectedDateBox');
-    const dateString = new Date(selectedDate).toISOString().split('T')[0];
-    const data = groupedData[dateString];
-    const topupData = topupGroupedData[dateString];
 
-    if (data) {
-        selectedDateBox.innerHTML = `
-            <h2>Details for ${dateString}</h2>
-            <p>Total Duration: ${data.duration.toFixed(2)} minutes</p>
-            <p>Total Money: ₹${data.totalMoney.toFixed(2)}</p>
-        `;
-    } else {
-        selectedDateBox.innerHTML = `<p>No data available for ${dateString}</p>`;
-    }
+function groupTopupDataByDate(topupData) {
+    const groupedData = {};
 
-    if (topupData) {
-        updateTotalReceivedBox(topupData.cash, topupData.online);
-    } else {
-        updateTotalReceivedBox(0, 0);
-    }
+    topupData.forEach((record, index) => {
+        const recordDate = record.RecordDate;
+
+        // Check if RecordDate is valid
+        if (!recordDate || isNaN(new Date(recordDate).getTime())) {
+            console.error(`Invalid or missing RecordDate at index ${index}:`, record);
+            return; // Skip this record
+        }
+
+        const date = new Date(recordDate).toISOString().split('T')[0]; // Get only the date part (YYYY-MM-DD)
+        const paymentMode = record.PaymentMode; // Assuming the field is 'PaymentMode'
+        const amount = record.Amount || 0;
+
+        // Initialize the date entry if it doesn't exist
+        if (!groupedData[date]) {
+            groupedData[date] = { cash: 0, online: 0 };
+        }
+
+        // Group by payment mode
+        if (paymentMode === 'cash') {
+            groupedData[date].cash += amount;
+        } else if (paymentMode === 'online') {
+            groupedData[date].online += amount;
+        } else {
+            console.error(`Unknown PaymentMode at index ${index}:`, paymentMode);
+        }
+    });
+
+    return groupedData;
 }
 
 function updateTotalReceivedBox(cashAmount, onlineAmount) {
