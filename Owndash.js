@@ -1,12 +1,12 @@
 async function fetchData1(table, Studio) {
-    const url = `https://v2api.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
+    const url = https://v2api.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)};
     console.log('Fetching data from:', url);
 
     try {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(HTTP error! Status: ${response.status});
         }
 
         const data = await response.json();
@@ -20,14 +20,14 @@ async function fetchData1(table, Studio) {
 }
 
 async function fetchData2(table, Studio) {
-    const url = `https://v2api.snookerplus.in/apis/data/topup/${encodeURIComponent(Studio)}`;
+    const url = https://v2api.snookerplus.in/apis/data/topup/${encodeURIComponent(Studio)};
     console.log('Fetching data from:', url);
 
     try {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(HTTP error! Status: ${response.status});
         }
 
         const data = await response.json();
@@ -131,7 +131,7 @@ function groupTopupDataByDate(topupData) {
         const date = new Date(topup.RecordDate);
 
         if (!topup.RecordDate || isNaN(date.getTime())) {
-            console.error(`Invalid or missing RecordDate at index ${index}:`, topup);
+            console.error(Invalid or missing RecordDate at index ${index}:, topup);
             return; // Skip entries with invalid or missing RecordDate
         }
 
@@ -156,6 +156,10 @@ function groupTopupDataByDate(topupData) {
     return groupedData;
 }
 
+
+
+
+
 function updateTotalReceivedBox(cashAmount, onlineAmount) {
     const totalAmount = cashAmount + onlineAmount;
 
@@ -177,11 +181,12 @@ function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
 
     if (data) {
         selectedDateBox.innerHTML = 
-            `<h2>Details for ${dateString} (${data.dayOfWeek})</h2>
+            <h2>Details for ${dateString} (${data.dayOfWeek})</h2>
             <p>Total Duration: ${data.duration.toFixed(2)} minutes</p>
-            <p>Total Money: ₹${data.totalMoney.toFixed(2)}</p>`;
+            <p>Total Money: ₹${data.totalMoney.toFixed(2)}</p>
+        ;
     } else {
-        selectedDateBox.innerHTML = `<p>No data available for ${dateString}</p>`;
+        selectedDateBox.innerHTML = <p>No data available for ${dateString}</p>;
     }
 
     if (topupData) {
@@ -191,33 +196,35 @@ function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     }
 }
 
-function updateTotalMoneyBox(totalTableMoney) {
-    const totalMoneyBox = document.getElementById('totalMoneyBox');
-    totalMoneyBox.innerHTML = `<p>Total Money: ₹${totalTableMoney.toFixed(2)}</p>`;
-}
+let analyticsChart = null; // Initialize as null
 
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
+
     const labels = Object.keys(groupedData);
-    const totalDurations = labels.map(date => groupedData[date].duration);
+    const durations = labels.map(date => groupedData[date].duration);
     const totalMoney = labels.map(date => groupedData[date].totalMoney);
 
-    new Chart(ctx, {
+    if (analyticsChart) {
+        analyticsChart.destroy(); // Destroy existing chart instance if it exists
+    }
+
+    analyticsChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels,
+            labels: labels,
             datasets: [
                 {
                     label: 'Total Duration (minutes)',
-                    data: totalDurations,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    data: durations,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 },
                 {
-                    label: 'Total Money (₹)',
+                    label: 'Total Money',
                     data: totalMoney,
-                    backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
                     borderColor: 'rgba(153, 102, 255, 1)',
                     borderWidth: 1
                 }
@@ -226,41 +233,76 @@ function updateChart(groupedData) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Values'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true
                 }
             }
         }
     });
 }
 
+
+function updateTotalMoneyBox(totalTableMoney) {
+    const totalMoneyBox = document.getElementById('totalMoneyBox');
+    if (!totalMoneyBox) {
+        console.error('Element with ID "totalMoneyBox" not found.');
+        return;
+    }
+
+    totalMoneyBox.innerHTML = <p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>;
+}
+
 function populatePeakHoursTable(hourSlots) {
     const peakHoursTable = document.getElementById('peakHoursTable');
-    peakHoursTable.innerHTML = '';
+    if (!peakHoursTable) {
+        console.error('Element with ID "peakHoursTable" not found.');
+        return;
+    }
 
-    hourSlots.forEach((duration, hour) => {
-        if (duration > 0) {
-            const timeSlot = `${hour}:00 - ${hour + 1}:00`;
-            peakHoursTable.innerHTML += `<tr><td>${timeSlot}</td><td>${duration} minutes</td></tr>`;
-        }
+    peakHoursTable.innerHTML = '';  // Clear any existing rows
+
+    hourSlots.forEach((duration, index) => {
+        const row = peakHoursTable.insertRow();
+        const hourCell = row.insertCell(0);
+        const durationCell = row.insertCell(1);
+
+        hourCell.textContent = ${index}:00 - ${index + 1}:00;
+        durationCell.textContent = ${duration} minutes;
     });
 }
 
-async function loadData(table, Studio) {
+async function init() {
+    const table = 'frames';
+    const Studio = 'Studio 111';
+
     const frames = await fetchData1(table, Studio);
     const topupData = await fetchData2(table, Studio);
 
     const { groupedData, totalTableMoney } = groupDataByDate(frames);
-    const hourSlots = groupDataByHour(frames);
     const topupGroupedData = groupTopupDataByDate(topupData);
+    const hourSlots = groupDataByHour(frames);
+
+    updateChart(groupedData);
+    updateTotalMoneyBox(totalTableMoney);
+    updateTotalReceivedBox(
+        Object.values(topupGroupedData).reduce((sum, { cash }) => sum + cash, 0),
+        Object.values(topupGroupedData).reduce((sum, { online }) => sum + online, 0)
+    );
+    populatePeakHoursTable(hourSlots);
 
     const datePicker = document.getElementById('datePicker');
     datePicker.addEventListener('change', () => {
-        updateSelectedDateBox(groupedData, topupGroupedData, datePicker.value);
+        const selectedDate = datePicker.value;
+        updateSelectedDateBox(groupedData, topupGroupedData, selectedDate);
     });
-
-    updateTotalMoneyBox(totalTableMoney);
-    updateChart(groupedData);
-    populatePeakHoursTable(hourSlots);
 }
 
-loadData('table_name', 'Studio_name');  // Replace with actual table and Studio name
+window.addEventListener('load', init);
