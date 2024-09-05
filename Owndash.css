@@ -1,38 +1,18 @@
 body {
     font-family: Arial, sans-serif;
+    margin: 20px;
     background-color: #f4f4f4;
-    padding: 20px;
-    color: #333;
 }
 
-h1, h2 {
-    color: #2c3e50;
-}
-
-input[type="date"] {
-    padding: 10px;
-    margin-bottom: 20px;
-    font-size: 16px;
-}
-
-#selectedDateBox {
-    background-color: #fff;
-    padding: 20px;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-}
-
-#totalMoneyBox, #totalReceivedBox {
-    background-color: #ecf0f1;
-    padding: 20px;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
+h1 {
+    text-align: center;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin: 20px 0;
+    background-color: #ffffff;
 }
 
 table, th, td {
@@ -40,15 +20,22 @@ table, th, td {
 }
 
 th, td {
-    padding: 10px;
+    padding: 12px;
     text-align: left;
 }
 
-thead {
-    background-color: #3498db;
-    color: white;
+th {
+    background-color: #f2f2f2;
 }
 
-canvas {
-    margin-bottom: 20px;
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+#analyticsTableBody td, #analyticsTableBody th {
+    text-align: center;
 }
