@@ -19,22 +19,19 @@ async function fetchTopupData(studio) {
     }
 }
 
-// Function to adjust the date to Indian Standard Time (IST) 
-function adjustToIST(date) {
-    const utcOffsetMinutes = date.getTimezoneOffset(); // Get the difference from UTC in minutes
-    const istOffsetMinutes = 330; // IST is UTC+5:30, which is 330 minutes ahead of UTC
-    const totalOffsetMinutes = istOffsetMinutes - utcOffsetMinutes;
-    
-    // Create a new Date object with the IST-adjusted time
-    return new Date(date.getTime() + totalOffsetMinutes * 60 * 1000);
-}
-
 function getBusinessDay(date) {
-    // Adjust the date to Indian Standard Time (UTC+05:30)
-    const istDate = adjustToIST(date);
-    
-    // Use full calendar day in IST
-    return istDate.toISOString().split('T')[0];  // Return the date in YYYY-MM-DD format
+    // Adjust the time to Indian Standard Time (IST) by adding 5.5 hours
+    const ISTOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+    const ISTDate = new Date(date.getTime() + ISTOffset);
+    const hours = ISTDate.getUTCHours();
+
+    // If time is before 6 AM IST, consider the previous day as the business day
+    if (hours < 6) {
+        ISTDate.setUTCDate(ISTDate.getUTCDate() - 1);
+    }
+
+    // Return the business day in YYYY-MM-DD format
+    return ISTDate.toISOString().split('T')[0];
 }
 
 function groupTopupDataByDate(topupData) {
@@ -53,7 +50,7 @@ function groupTopupDataByDate(topupData) {
             return; // Skip invalid dates
         }
 
-        // Get the business day based on the full calendar day logic in IST
+        // Get the business day based on the 6 AM to 6 AM logic
         const businessDay = getBusinessDay(date);
         const amount = parseFloat(topup.Amount) || 0;
 
@@ -122,7 +119,7 @@ function populateTopupTable(groupedData) {
 function filterByDate(groupedData, selectedDate) {
     const selectedDateObj = new Date(selectedDate);
     
-    // Get the business day for the selected date in IST
+    // Adjust the selected date according to business hours (6 AM to 6 AM next day)
     const businessDay = getBusinessDay(selectedDateObj);
 
     const filteredData = {};
