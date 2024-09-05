@@ -25,7 +25,7 @@ function getBusinessDay(date) {
         // If time is before 6 AM, consider the date as the previous day
         date.setDate(date.getDate() - 1);
     }
-    // Convert to YYYY-MM-DD format
+    // Return date in YYYY-MM-DD format
     return date.toISOString().split('T')[0];
 }
 
@@ -38,21 +38,24 @@ function groupTopupDataByDate(topupData) {
             return; // Skip entries with undefined RecordDate
         }
 
+        // Parse the RecordDate and create a JavaScript Date object
         const date = new Date(topup.RecordDate);
         if (isNaN(date.getTime())) {
             console.error('Invalid date:', topup.RecordDate, 'Date:', date);
             return; // Skip invalid dates
         }
 
+        // Get the business day based on the 6 AM to 6 AM logic
         const businessDay = getBusinessDay(date);
         const amount = parseFloat(topup.Amount) || 0;
 
+        // Initialize the date group if it doesn't exist
         if (!groupedData[businessDay]) {
             groupedData[businessDay] = { cash: 0, online: 0 };
         }
 
+        // Determine the mode (cash or online) and update the amount accordingly
         const mode = topup.Mode.trim().toLowerCase();
-
         if (mode === 'cash') {
             groupedData[businessDay].cash += amount;
         } else if (mode === 'online') {
@@ -64,6 +67,7 @@ function groupTopupDataByDate(topupData) {
 
     return groupedData;
 }
+
 
 function populateTopupTable(groupedData) {
     const topupTableBody = document.querySelector('#topupTable tbody');
