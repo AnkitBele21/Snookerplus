@@ -19,9 +19,22 @@ async function fetchTopupData(studio) {
     }
 }
 
+// Function to adjust the date to Indian Standard Time (IST) 
+function adjustToIST(date) {
+    const utcOffsetMinutes = date.getTimezoneOffset(); // Get the difference from UTC in minutes
+    const istOffsetMinutes = 330; // IST is UTC+5:30, which is 330 minutes ahead of UTC
+    const totalOffsetMinutes = istOffsetMinutes - utcOffsetMinutes;
+    
+    // Create a new Date object with the IST-adjusted time
+    return new Date(date.getTime() + totalOffsetMinutes * 60 * 1000);
+}
+
 function getBusinessDay(date) {
-    // We now use the full calendar day (00:00 to 24:00), so no adjustment is needed.
-    return date.toISOString().split('T')[0];
+    // Adjust the date to Indian Standard Time (UTC+05:30)
+    const istDate = adjustToIST(date);
+    
+    // Use full calendar day in IST
+    return istDate.toISOString().split('T')[0];  // Return the date in YYYY-MM-DD format
 }
 
 function groupTopupDataByDate(topupData) {
@@ -40,7 +53,7 @@ function groupTopupDataByDate(topupData) {
             return; // Skip invalid dates
         }
 
-        // Get the business day based on full calendar day logic (00:00 to 24:00)
+        // Get the business day based on the full calendar day logic in IST
         const businessDay = getBusinessDay(date);
         const amount = parseFloat(topup.Amount) || 0;
 
@@ -62,7 +75,6 @@ function groupTopupDataByDate(topupData) {
 
     return groupedData;
 }
-
 
 function populateTopupTable(groupedData) {
     const topupTableBody = document.querySelector('#topupTable tbody');
@@ -110,7 +122,7 @@ function populateTopupTable(groupedData) {
 function filterByDate(groupedData, selectedDate) {
     const selectedDateObj = new Date(selectedDate);
     
-    // Get the business day for the selected date
+    // Get the business day for the selected date in IST
     const businessDay = getBusinessDay(selectedDateObj);
 
     const filteredData = {};
