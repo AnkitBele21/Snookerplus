@@ -3,25 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Frames Analytics Dashboard</title>
-    <link rel="stylesheet" href="Owndash.css">
+    <title>Snooker Dashboard</title>
+    <style>
+        /* Add some basic styles for the layout */
+        .dashboard-container {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .dashboard-section {
+            margin-bottom: 20px;
+        }
+
+        .total-box {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Snooker Frames Analytics Dashboard</h1>
+    <div class="dashboard-container">
+        <div class="dashboard-section">
+            <label for="datePicker">Select Date: </label>
+            <input type="date" id="datePicker">
+        </div>
 
-    <h2>Select Date</h2>
-    <input type="date" id="datePicker" />
+        <div class="dashboard-section">
+            <h3>Total Table Money:</h3>
+            <div id="totalMoneyBox" class="total-box">₹0.00</div>
+        </div>
 
-    <div id="selectedDateBox"></div> <!-- Display details for selected date -->
-
-    <h2>Total Table Money</h2>
-    <div id="totalMoneyBox"></div> <!-- Display total table money -->
-
-    <h2>Total Received (Cash/Online)</h2>
-    <div>
-        <p>Cash: ₹<span id="cashAmount">0.00</span></p>
-        <p>Online: ₹<span id="onlineAmount">0.00</span></p>
-        <p>Total: ₹<span id="totalAmount">0.00</span></p>
+        <div class="dashboard-section">
+            <h3>Total Received (Cash/Online):</h3>
+            <div>Cash: ₹<span id="cashAmount">0.00</span></div>
+            <div>Online: ₹<span id="onlineAmount">0.00</span></div>
+            <div>Total: ₹<span id="totalAmount">0.00</span></div>
+        </div>
     </div>
 
     <script src="Owndash.js"></script>
