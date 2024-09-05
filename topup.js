@@ -113,16 +113,22 @@ function populateTopupTable(groupedData) {
 }
 
 function filterByDate(groupedData, selectedDate) {
-    const filteredData = {};
+    const selectedDateObj = new Date(selectedDate);
+    
+    // Adjust the selected date according to business hours (6 AM to 6 AM next day)
+    const businessDay = getBusinessDay(selectedDateObj);
 
-    const businessDay = getBusinessDay(new Date(selectedDate));
+    const filteredData = {};
 
     if (groupedData[businessDay]) {
         filteredData[businessDay] = groupedData[businessDay];
+    } else {
+        console.warn(`No data found for business day: ${businessDay}`);
     }
 
     return filteredData;
 }
+
 
 async function init() {
     const studio = 'Studio 111';
