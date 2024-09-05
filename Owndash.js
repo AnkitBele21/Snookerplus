@@ -156,10 +156,6 @@ function groupTopupDataByDate(topupData) {
     return groupedData;
 }
 
-
-
-
-
 function updateTotalReceivedBox(cashAmount, onlineAmount) {
     const totalAmount = cashAmount + onlineAmount;
 
@@ -196,113 +192,90 @@ function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     }
 }
 
-let analyticsChart = null; // Initialize as null
-
-function updateChart(groupedData) {
-    const ctx = document.getElementById('analyticsChart').getContext('2d');
-
-    const labels = Object.keys(groupedData);
-    const durations = labels.map(date => groupedData[date].duration);
-    const totalMoney = labels.map(date => groupedData[date].totalMoney);
-
-    if (analyticsChart) {
-        analyticsChart.destroy(); // Destroy existing chart instance if it exists
-    }
-
-    analyticsChart = new Chart(ctx, {
+function renderChart(ctx, labels, data) {
+    new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
-            datasets: [
-                {
-                    label: 'Total Duration (minutes)',
-                    data: durations,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Total Money',
-                    data: totalMoney,
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    borderWidth: 1
-                }
-            ]
+            datasets: [{
+                label: 'Total Duration (minutes)',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+            }],
         },
         options: {
             scales: {
                 y: {
                     beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Values'
-                    }
-                }
+                },
             },
-            plugins: {
-                legend: {
-                    display: true
-                }
-            }
-        }
+        },
     });
 }
 
-
-function updateTotalMoneyBox(totalTableMoney) {
-    const totalMoneyBox = document.getElementById('totalMoneyBox');
-    if (!totalMoneyBox) {
-        console.error('Element with ID "totalMoneyBox" not found.');
-        return;
-    }
-
-    totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
-}
-
 function populatePeakHoursTable(hourSlots) {
-    const peakHoursTable = document.getElementById('peakHoursTable');
-    if (!peakHoursTable) {
+    const tableBody = document.getElementById('peakHoursTable');
+    if (!tableBody) {
         console.error('Element with ID "peakHoursTable" not found.');
         return;
     }
 
-    peakHoursTable.innerHTML = '';  // Clear any existing rows
+    tableBody.innerHTML = ''; // Clear any existing rows
 
-    hourSlots.forEach((duration, index) => {
-        const row = peakHoursTable.insertRow();
-        const hourCell = row.insertCell(0);
-        const durationCell = row.insertCell(1);
+    for (let hour = 0; hour < 24; hour++) {
+        const row = document.createElement('tr');
+        const timeSlotCell = document.createElement('td');
+        const durationCell = document.createElement('td');
 
-        hourCell.textContent = `${index}:00 - ${index + 1}:00`;
-        durationCell.textContent = `${duration} minutes`;
-    });
+        timeSlotCell.textContent = `${hour}:00 - ${hour + 1}:00`;
+        durationCell.textContent = `${hourSlots[hour].toFixed(2)} minutes`;
+
+        row.appendChild(timeSlotCell);
+        row.appendChild(durationCell);
+        tableBody.appendChild(row);
+    }
 }
 
-async function init() {
-    const table = 'frames';
-    const Studio = 'Studio 111';
+document.getElementById('datePicker').addEventListener('change', async (event) => {
+    const selectedDate = event.target.value;
+    console.log('Selected Date:', selectedDate);
 
-    const frames = await fetchData1(table, Studio);
-    const topupData = await fetchData2(table, Studio);
-
-    const { groupedData, totalTableMoney } = groupDataByDate(frames);
-    const topupGroupedData = groupTopupDataByDate(topupData);
+    const frames = await fetchData1('frames', 'Studio 111');
+    const { groupedData } = groupDataByDate(frames);
     const hourSlots = groupDataByHour(frames);
 
-    updateChart(groupedData);
-    updateTotalMoneyBox(totalTableMoney);
-    updateTotalReceivedBox(
-        Object.values(topupGroupedData).reduce((sum, { cash }) => sum + cash, 0),
-        Object.values(topupGroupedData).reduce((sum, { online }) => sum + online, 0)
-    );
+    const topupData = await fetchData2('topup', 'Studio 111');
+    const topupGroupedData = groupTopupDataByDate(topupData);
+
+    const ctx = document.getElementById('analyticsChart').getContext('2d');
+    const labels = Object.keys(groupedData);
+    const data = Object.values(groupedData).map(d => d.duration);
+
+    renderChart(ctx, labels, data);
     populatePeakHoursTable(hourSlots);
+    updateSelectedDateBox(groupedData, topupGroupedData, selectedDate);
+});
 
-    const datePicker = document.getElementById('datePicker');
-    datePicker.addEventListener('change', () => {
-        const selectedDate = datePicker.value;
+(async function initializeDashboard() {
+    const frames = await fetchData1('frames', 'Studio 111');
+    const { groupedData, totalTableMoney } = groupDataByDate(frames);
+    const hourSlots = groupDataByHour(frames);
+
+    const topupData = await fetchData2('topup', 'Studio 111');
+    const topupGroupedData = groupTopupDataByDate(topupData);
+
+    const ctx = document.getElementById('analyticsChart').getContext('2d');
+    const labels = Object.keys(groupedData);
+    const data = Object.values(groupedData).map(d => d.duration);
+
+    renderChart(ctx, labels, data);
+    populatePeakHoursTable(hourSlots);
+    document.getElementById('totalMoneyBox').textContent = `₹${totalTableMoney.toFixed(2)}`;
+
+    const selectedDate = document.getElementById('datePicker').value;
+    if (selectedDate) {
         updateSelectedDateBox(groupedData, topupGroupedData, selectedDate);
-    });
-}
-
-window.addEventListener('load', init);
+    }
+})();
