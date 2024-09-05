@@ -121,13 +121,12 @@ function updateTotalMoneyBox(totalTableMoney) {
 
 function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     // Validate selectedDate
-    const validDate = new Date(selectedDate);
-    if (isNaN(validDate.getTime())) {
+    if (!selectedDate || isNaN(new Date(selectedDate).getTime())) {
         console.error("Invalid selected date:", selectedDate);
         return;
     }
 
-    const dateKey = validDate.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+    const dateKey = new Date(selectedDate).toISOString().split('T')[0]; // Convert to YYYY-MM-DD
 
     const dateData = groupedData[dateKey];
     const topupData = topupGroupedData[dateKey];
@@ -160,7 +159,9 @@ async function init() {
     });
 
     updateTotalMoneyBox(totalTableMoney);
-    updateSelectedDateBox(groupedData, topupGroupedData, datePicker.value); // Initial load
+    if (datePicker.value) {
+        updateSelectedDateBox(groupedData, topupGroupedData, datePicker.value); // Initial load
+    }
 }
 
 window.addEventListener('load', init);
