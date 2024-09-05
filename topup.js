@@ -23,16 +23,17 @@ function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
     topupData.forEach(topup => {
+        // Debugging: Log the topup data
         console.log('Topup entry:', topup);
 
         if (!topup.RecordDate) {
-            console.error('RecordDate is undefined or invalid:', topup);
-            return; // Skip entries with undefined or invalid RecordDate
+            console.error('RecordDate is undefined:', topup);
+            return; // Skip entries with undefined RecordDate
         }
 
         const date = new Date(topup.RecordDate);
         if (isNaN(date.getTime())) {
-            console.error('Invalid date:', topup.RecordDate);
+            console.error('Invalid date:', topup.RecordDate, 'Date:', date);
             return; // Skip invalid dates
         }
 
