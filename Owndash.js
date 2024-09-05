@@ -6,7 +6,7 @@ async function fetchData1(table, Studio) {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(HTTP error! Status: ${response.status});
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
