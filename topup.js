@@ -44,6 +44,8 @@ function groupTopupDataByDate(topupData) {
             groupedData[dateString] = { cash: 0, online: 0 };
         }
 
+        console.log('Processing Mode:', topup.Mode); // Add this line
+
         if (topup.Mode === 'cash') {
             groupedData[dateString].cash += amount;
         } else if (topup.Mode === 'online') {
