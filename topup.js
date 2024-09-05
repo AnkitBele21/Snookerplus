@@ -85,6 +85,7 @@ function populateTopupTable(groupedData) {
 async function init() {
     const studio = 'Studio 111';
     const topupData = await fetchTopupData(studio);
+    console.log('Data received for processing:', topupData);
     const groupedData = groupTopupDataByDate(topupData);
     populateTopupTable(groupedData);
 }
