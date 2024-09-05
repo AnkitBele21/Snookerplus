@@ -12,7 +12,7 @@ async function fetchTopupData(studio) {
         const data = await response.json();
         console.log('Fetched topup data:', data);
 
-        return data[0];
+        return data;
     } catch (error) {
         console.error('Error fetching topup data:', error);
         return [];
@@ -59,9 +59,12 @@ function groupTopupDataByDate(topupData) {
     return groupedData;
 }
 
-
 function populateTopupTable(groupedData) {
     const topupTableBody = document.querySelector('#topupTable tbody');
+    const totalTopupElem = document.querySelector('#totalTopup');
+    const onlineTotalElem = document.querySelector('#onlineTotal');
+    const cashTotalElem = document.querySelector('#cashTotal');
+    
     if (!topupTableBody) {
         console.error('Element with ID "topupTable" not found.');
         return;
@@ -69,9 +72,17 @@ function populateTopupTable(groupedData) {
 
     topupTableBody.innerHTML = '';  // Clear any existing rows
 
+    let totalTopup = 0;
+    let onlineTotal = 0;
+    let cashTotal = 0;
+
     Object.keys(groupedData).forEach(date => {
         const { cash, online } = groupedData[date];
-        const totalTopup = cash + online;
+        const total = cash + online;
+
+        totalTopup += total;
+        onlineTotal += online;
+        cashTotal += cash;
 
         const row = topupTableBody.insertRow();
         const dateCell = row.insertCell(0);
@@ -80,10 +91,27 @@ function populateTopupTable(groupedData) {
         const cashCell = row.insertCell(3);
 
         dateCell.textContent = date;
-        totalCell.textContent = totalTopup.toFixed(2);
+        totalCell.textContent = total.toFixed(2);
         onlineCell.textContent = online.toFixed(2);
         cashCell.textContent = cash.toFixed(2);
     });
+
+    // Update the summary box
+    totalTopupElem.textContent = totalTopup.toFixed(2);
+    onlineTotalElem.textContent = onlineTotal.toFixed(2);
+    cashTotalElem.textContent = cashTotal.toFixed(2);
+}
+
+function filterByDate(groupedData, selectedDate) {
+    const filteredData = {};
+
+    Object.keys(groupedData).forEach(date => {
+        if (date === selectedDate) {
+            filteredData[date] = groupedData[date];
+        }
+    });
+
+    return filteredData;
 }
 
 async function init() {
@@ -92,6 +120,17 @@ async function init() {
     console.log('Data received for processing:', topupData);
     const groupedData = groupTopupDataByDate(topupData);
     populateTopupTable(groupedData);
+
+    // Date Selector Event Listener
+    document.querySelector('#dateSelector').addEventListener('change', (event) => {
+        const selectedDate = event.target.value;
+        if (selectedDate) {
+            const filteredData = filterByDate(groupedData, selectedDate);
+            populateTopupTable(filteredData);
+        } else {
+            populateTopupTable(groupedData); // Show all data if no date is selected
+        }
+    });
 }
 
 window.addEventListener('load', init);
