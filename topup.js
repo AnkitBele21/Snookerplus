@@ -44,11 +44,12 @@ function groupTopupDataByDate(topupData) {
             groupedData[dateString] = { cash: 0, online: 0 };
         }
 
-        console.log('Processing Mode:', topup.Mode); // Add this line
+        const mode = topup.Mode.trim().toLowerCase();
+        console.log('Processing Mode:', mode); // Add this line
 
-        if (topup.Mode === 'cash') {
+        if (mode === 'cash') {
             groupedData[dateString].cash += amount;
-        } else if (topup.Mode === 'online') {
+        } else if (mode === 'online') {
             groupedData[dateString].online += amount;
         } else {
             console.error('Unknown mode:', topup.Mode);
@@ -57,6 +58,7 @@ function groupTopupDataByDate(topupData) {
 
     return groupedData;
 }
+
 
 function populateTopupTable(groupedData) {
     const topupTableBody = document.querySelector('#topupTable tbody');
