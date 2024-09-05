@@ -19,6 +19,16 @@ async function fetchTopupData(studio) {
     }
 }
 
+function getBusinessDay(date) {
+    const hours = date.getHours();
+    if (hours < 6) {
+        // If time is before 6 AM, consider the date as the previous day
+        date.setDate(date.getDate() - 1);
+    }
+    // Convert to YYYY-MM-DD format
+    return date.toISOString().split('T')[0];
+}
+
 function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
@@ -37,20 +47,20 @@ function groupTopupDataByDate(topupData) {
             return; // Skip invalid dates
         }
 
-        const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+        const businessDay = getBusinessDay(date);
         const amount = parseFloat(topup.Amount) || 0;
 
-        if (!groupedData[dateString]) {
-            groupedData[dateString] = { cash: 0, online: 0 };
+        if (!groupedData[businessDay]) {
+            groupedData[businessDay] = { cash: 0, online: 0 };
         }
 
         const mode = topup.Mode.trim().toLowerCase();
-        console.log('Processing Mode:', mode); // Add this line
+        console.log('Processing Mode:', mode);
 
         if (mode === 'cash') {
-            groupedData[dateString].cash += amount;
+            groupedData[businessDay].cash += amount;
         } else if (mode === 'online') {
-            groupedData[dateString].online += amount;
+            groupedData[businessDay].online += amount;
         } else {
             console.error('Unknown mode:', topup.Mode);
         }
@@ -105,11 +115,11 @@ function populateTopupTable(groupedData) {
 function filterByDate(groupedData, selectedDate) {
     const filteredData = {};
 
-    Object.keys(groupedData).forEach(date => {
-        if (date === selectedDate) {
-            filteredData[date] = groupedData[date];
-        }
-    });
+    const businessDay = getBusinessDay(new Date(selectedDate));
+
+    if (groupedData[businessDay]) {
+        filteredData[businessDay] = groupedData[businessDay];
+    }
 
     return filteredData;
 }
