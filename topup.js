@@ -20,12 +20,7 @@ async function fetchTopupData(studio) {
 }
 
 function getBusinessDay(date) {
-    const hours = date.getHours();
-    if (hours < 6) {
-        // If time is before 6 AM, consider the date as the previous day
-        date.setDate(date.getDate() - 1);
-    }
-    // Return date in YYYY-MM-DD format
+    // We now use the full calendar day (00:00 to 24:00), so no adjustment is needed.
     return date.toISOString().split('T')[0];
 }
 
@@ -45,7 +40,7 @@ function groupTopupDataByDate(topupData) {
             return; // Skip invalid dates
         }
 
-        // Get the business day based on the 6 AM to 6 AM logic
+        // Get the business day based on full calendar day logic (00:00 to 24:00)
         const businessDay = getBusinessDay(date);
         const amount = parseFloat(topup.Amount) || 0;
 
@@ -115,7 +110,7 @@ function populateTopupTable(groupedData) {
 function filterByDate(groupedData, selectedDate) {
     const selectedDateObj = new Date(selectedDate);
     
-    // Adjust the selected date according to business hours (6 AM to 6 AM next day)
+    // Get the business day for the selected date
     const businessDay = getBusinessDay(selectedDateObj);
 
     const filteredData = {};
