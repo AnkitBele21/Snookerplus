@@ -15,7 +15,7 @@ async function fetchTopupData(studio) {
         return data;
     } catch (error) {
         console.error('Error fetching topup data:', error);
-        return [];
+        return [0];
     }
 }
 
