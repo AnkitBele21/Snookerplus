@@ -1,5 +1,5 @@
 async function fetchData1(table, Studio) {
-    const url = `https://v2api.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;  // Correct
+    const url = `https://v2api.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
 
     try {
@@ -20,14 +20,14 @@ async function fetchData1(table, Studio) {
 }
 
 async function fetchData2(table, Studio) {
-    const url = https://v2api.snookerplus.in/apis/data/topup/${encodeURIComponent(Studio)};
+    const url = `https://v2api.snookerplus.in/apis/data/topup/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
 
     try {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(HTTP error! Status: ${response.status});
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -127,36 +127,34 @@ function groupDataByHour(frames) {
 function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
-    topupData.forEach((topup, index) => {
-        const date = new Date(topup.RecordDate);
+    topupData.forEach(topup => {
+        if (!topup.RecordDate) {
+            console.error('RecordDate is undefined:', topup);
+            return; // Skip entries with undefined RecordDate
+        }
 
-        if (!topup.RecordDate || isNaN(date.getTime())) {
-            console.error(Invalid or missing RecordDate at index ${index}:, topup);
-            return; // Skip entries with invalid or missing RecordDate
+        const date = new Date(topup.RecordDate);
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date:', topup.RecordDate);
+            return; // Skip invalid dates
         }
 
         const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
-        const amount = parseFloat(topup.Amount) || 0; // Parse Amount safely
+        const amount = parseFloat(topup.Amount) || 0;
 
-        // Initialize the date entry in groupedData if not already present
         if (!groupedData[dateString]) {
             groupedData[dateString] = { cash: 0, online: 0 };
         }
 
-        // Accumulate amounts based on the payment mode (cash or online)
         if (topup.Mode === 'cash') {
             groupedData[dateString].cash += amount;
         } else if (topup.Mode === 'online') {
             groupedData[dateString].online += amount;
-        } else {
-            console.error('Unknown payment mode:', topup.Mode, topup); // Log unknown payment modes
         }
     });
 
     return groupedData;
 }
-
-
 
 
 
@@ -180,13 +178,13 @@ function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     const topupData = topupGroupedData[dateString];
 
     if (data) {
-        selectedDateBox.innerHTML = 
+        selectedDateBox.innerHTML = `
             <h2>Details for ${dateString} (${data.dayOfWeek})</h2>
             <p>Total Duration: ${data.duration.toFixed(2)} minutes</p>
             <p>Total Money: ₹${data.totalMoney.toFixed(2)}</p>
-        ;
+        `;
     } else {
-        selectedDateBox.innerHTML = <p>No data available for ${dateString}</p>;
+        selectedDateBox.innerHTML = `<p>No data available for ${dateString}</p>`;
     }
 
     if (topupData) {
@@ -257,7 +255,7 @@ function updateTotalMoneyBox(totalTableMoney) {
         return;
     }
 
-    totalMoneyBox.innerHTML = <p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>;
+    totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
 }
 
 function populatePeakHoursTable(hourSlots) {
@@ -274,8 +272,8 @@ function populatePeakHoursTable(hourSlots) {
         const hourCell = row.insertCell(0);
         const durationCell = row.insertCell(1);
 
-        hourCell.textContent = ${index}:00 - ${index + 1}:00;
-        durationCell.textContent = ${duration} minutes;
+        hourCell.textContent = `${index}:00 - ${index + 1}:00`;
+        durationCell.textContent = `${duration} minutes`;
     });
 }
 
