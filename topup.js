@@ -12,7 +12,7 @@ async function fetchTopupData(studio) {
         const data = await response.json();
         console.log('Fetched topup data:', data);
 
-        return data;
+        return data[0];
     } catch (error) {
         console.error('Error fetching topup data:', error);
         return [];
