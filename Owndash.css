@@ -1,41 +1,66 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f4f4f4;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #333;
 }
 
-h1 {
+h1, h2 {
     text-align: center;
+    margin-top: 20px;
+}
+
+input[type="date"] {
+    display: block;
+    margin: 20px auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+#selectedDateBox, #totalMoneyBox, #totalReceivedBox {
+    text-align: center;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    max-width: 500px;
+}
+
+#analyticsChart {
+    display: block;
+    margin: 20px auto;
+    max-width: 600px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
 }
 
 table {
-    width: 100%;
+    width: 80%;
+    margin: 20px auto;
     border-collapse: collapse;
-    margin: 20px 0;
-    background-color: #ffffff;
 }
 
-table, th, td {
-    border: 1px solid #ddd;
+table thead th {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
 }
 
-th, td {
-    padding: 12px;
-    text-align: left;
+table tbody td {
+    padding: 10px;
+    text-align: center;
 }
 
-th {
+table tbody tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #f1f1f1;
-}
-
-#analyticsTableBody td, #analyticsTableBody th {
-    text-align: center;
+table tbody tr:hover {
+    background-color: #ddd;
 }
