@@ -23,9 +23,12 @@ function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
     topupData.forEach(topup => {
+        // Debugging: Log the topup data
+        console.log('Topup entry:', topup);
+
         if (!topup.RecordDate) {
-            console.error('RecordDate is undefined:', topup);
-            return; // Skip entries with undefined RecordDate
+            console.error('RecordDate is undefined or invalid:', topup);
+            return; // Skip entries with undefined or invalid RecordDate
         }
 
         const date = new Date(topup.RecordDate);
