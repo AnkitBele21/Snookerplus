@@ -13,7 +13,7 @@ async function fetchData1(table, Studio) {
         const data = await response.json();
         console.log('Fetched data:', data);
 
-        return data[0];  // Flatten the nested arrays into a single array
+        return data[0];  // Assuming data[0] contains relevant data
     } catch (error) {
         console.error('Error fetching data:', error);
         return []; // Return an empty array or handle the error as needed
@@ -107,42 +107,6 @@ function groupTopupDataByDate(topupData) {
     return groupedData;
 }
 
-
-
-function groupTopupDataByDate(topupData) {
-    const groupedData = {};
-
-    topupData.forEach((record, index) => {
-        const recordDate = record.RecordDate;
-
-        // Check if RecordDate is valid
-        if (!recordDate || isNaN(new Date(recordDate).getTime())) {
-            console.error(`Invalid or missing RecordDate at index ${index}:`, record);
-            return; // Skip this record
-        }
-
-        const date = new Date(recordDate).toISOString().split('T')[0]; // Get only the date part (YYYY-MM-DD)
-        const paymentMode = record.PaymentMode; // Assuming the field is 'PaymentMode'
-        const amount = record.Amount || 0;
-
-        // Initialize the date entry if it doesn't exist
-        if (!groupedData[date]) {
-            groupedData[date] = { cash: 0, online: 0 };
-        }
-
-        // Group by payment mode
-        if (paymentMode === 'cash') {
-            groupedData[date].cash += amount;
-        } else if (paymentMode === 'online') {
-            groupedData[date].online += amount;
-        } else {
-            console.error(`Unknown PaymentMode at index ${index}:`, paymentMode);
-        }
-    });
-
-    return groupedData;
-}
-
 function updateTotalReceivedBox(cashAmount, onlineAmount) {
     const totalAmount = cashAmount + onlineAmount;
 
@@ -153,6 +117,33 @@ function updateTotalReceivedBox(cashAmount, onlineAmount) {
 
 function updateTotalMoneyBox(totalTableMoney) {
     document.getElementById('totalMoneyBox').textContent = `₹${totalTableMoney.toFixed(2)}`;
+}
+
+function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
+    // Validate selectedDate
+    const validDate = new Date(selectedDate);
+    if (isNaN(validDate.getTime())) {
+        console.error("Invalid selected date:", selectedDate);
+        return;
+    }
+
+    const dateKey = validDate.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+
+    const dateData = groupedData[dateKey];
+    const topupData = topupGroupedData[dateKey];
+
+    if (dateData) {
+        updateTotalMoneyBox(dateData.totalMoney);
+    } else {
+        console.warn(`No data found for selected date: ${selectedDate}`);
+    }
+
+    if (topupData) {
+        updateTotalReceivedBox(topupData.cash, topupData.online);
+    } else {
+        console.warn(`No top-up data found for selected date: ${selectedDate}`);
+        updateTotalReceivedBox(0, 0); // Set to zero if no data is found
+    }
 }
 
 async function init() {
@@ -169,7 +160,7 @@ async function init() {
     });
 
     updateTotalMoneyBox(totalTableMoney);
-    updateSelectedDateBox(groupedData, topupGroupedData, datePicker.value);
+    updateSelectedDateBox(groupedData, topupGroupedData, datePicker.value); // Initial load
 }
 
 window.addEventListener('load', init);
