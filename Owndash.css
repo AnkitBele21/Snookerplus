@@ -1,29 +1,41 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
-    color: #333;
-    padding: 20px;
-    margin: 0;
+    margin: 20px;
+    background-color: #f4f4f4;
 }
 
-h1, h2 {
-    color: #2c3e50;
+h1 {
+    text-align: center;
 }
 
-#datePicker {
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 20px;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #ffffff;
 }
 
-#selectedDateBox, #totalMoneyBox {
-    background-color: #ecf0f1;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+table, th, td {
+    border: 1px solid #ddd;
 }
 
-#cashAmount, #onlineAmount, #totalAmount {
-    font-weight: bold;
-    font-size: 1.2em;
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+#analyticsTableBody td, #analyticsTableBody th {
+    text-align: center;
 }
