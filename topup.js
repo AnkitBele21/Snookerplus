@@ -1,3 +1,9 @@
+// Function to get 'studio' from the URL query parameter
+function getStudioFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('studio') || 'defaultStudio'; // Fallback to 'defaultStudio' if not provided
+}
+
 async function fetchTopupData(studio) {
     const url = `https://v2api.snookerplus.in/apis/data/topup/${encodeURIComponent(studio)}`;
     console.log('Fetching data from:', url);
@@ -20,17 +26,14 @@ async function fetchTopupData(studio) {
 }
 
 function getBusinessDay(date) {
-    // Adjust the time to Indian Standard Time (IST) by adding 5.5 hours
     const ISTOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
     const ISTDate = new Date(date.getTime() + ISTOffset);
     const hours = ISTDate.getUTCHours();
 
-    // If time is before 6 AM IST, consider the previous day as the business day
     if (hours < 6) {
         ISTDate.setUTCDate(ISTDate.getUTCDate() - 1);
     }
 
-    // Return the business day in YYYY-MM-DD format
     return ISTDate.toISOString().split('T')[0];
 }
 
@@ -40,26 +43,22 @@ function groupTopupDataByDate(topupData) {
     topupData.forEach(topup => {
         if (!topup.RecordDate) {
             console.error('RecordDate is undefined:', topup);
-            return; // Skip entries with undefined RecordDate
+            return;
         }
 
-        // Parse the RecordDate and create a JavaScript Date object
         const date = new Date(topup.RecordDate);
         if (isNaN(date.getTime())) {
             console.error('Invalid date:', topup.RecordDate, 'Date:', date);
-            return; // Skip invalid dates
+            return;
         }
 
-        // Get the business day based on the 6 AM to 6 AM logic
         const businessDay = getBusinessDay(date);
         const amount = parseFloat(topup.Amount) || 0;
 
-        // Initialize the date group if it doesn't exist
         if (!groupedData[businessDay]) {
             groupedData[businessDay] = { cash: 0, online: 0 };
         }
 
-        // Determine the mode (cash or online) and update the amount accordingly
         const mode = topup.Mode.trim().toLowerCase();
         if (mode === 'cash') {
             groupedData[businessDay].cash += amount;
@@ -118,8 +117,6 @@ function populateTopupTable(groupedData) {
 
 function filterByDate(groupedData, selectedDate) {
     const selectedDateObj = new Date(selectedDate);
-    
-    // Adjust the selected date according to business hours (6 AM to 6 AM next day)
     const businessDay = getBusinessDay(selectedDateObj);
 
     const filteredData = {};
@@ -140,10 +137,13 @@ function setDefaultDate() {
 }
 
 async function init() {
-    const studio = 'Studio 111';
+    // Get studio name from the URL
+    const studio = getStudioFromUrl();
+    console.log('Studio:', studio);
+    
     const topupData = await fetchTopupData(studio);
     console.log('Data received for processing:', topupData);
-    
+
     if (!topupData.length) {
         console.error('No data available for processing.');
         return;
@@ -152,17 +152,15 @@ async function init() {
     const groupedData = groupTopupDataByDate(topupData);
     populateTopupTable(groupedData);
 
-    // Set default date to today
     setDefaultDate();
 
-    // Date Selector Event Listener
     document.querySelector('#dateSelector').addEventListener('change', (event) => {
         const selectedDate = event.target.value;
         if (selectedDate) {
             const filteredData = filterByDate(groupedData, selectedDate);
             populateTopupTable(filteredData);
         } else {
-            populateTopupTable(groupedData); // Show all data if no date is selected
+            populateTopupTable(groupedData);
         }
     });
 }
