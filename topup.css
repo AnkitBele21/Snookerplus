@@ -59,30 +59,31 @@ h1 {
 #summaryBox {
     display: flex;
     justify-content: space-around;
-    padding: 20px;
+    padding: 15px; /* Reduced padding */
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Softer shadow */
+    margin-bottom: 30px; /* Reduced margin */
 }
 
 #summaryBox div {
     text-align: center;
-    padding: 15px;
+    padding: 10px; /* Reduced padding */
 }
 
 #summaryBox div span {
-    font-size: 28px;
+    font-size: 22px; /* Smaller font */
     font-weight: bold;
     color: #34495e;
     display: block;
 }
 
 #summaryBox div p {
-    margin-top: 10px;
-    font-size: 18px;
+    margin-top: 5px; /* Reduced margin */
+    font-size: 16px; /* Smaller font */
     color: #7f8c8d;
 }
+
 
 /* Date Selector Styles */
 #dateSelectorWrapper {
