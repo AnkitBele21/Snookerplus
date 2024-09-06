@@ -1,3 +1,13 @@
+// Helper function to get URL parameters
+function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`, 'i');
+    const results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 async function fetchData1(table, Studio) {
     const url = `https://v2api.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
@@ -209,7 +219,10 @@ function updateTotalMoneyBox(totalTableMoney) {
 
 async function init() {
     const table = 'frames';
-    const Studio = 'Studio 111';
+
+    // Get the Studio parameter from the URL
+    const Studio = getParameterByName('Studio') || 'Default Studio';
+    console.log('Studio:', Studio);
 
     const frames = await fetchData1(table, Studio);
     const topupData = await fetchData2(table, Studio);
