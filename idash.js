@@ -19,15 +19,35 @@ async function fetchData1(table, Studio) {
     }
 }
 
+async function fetchData2(table, Studio) {
+    const url = `https://v2api.snookerplus.in/apis/data/topup/${encodeURIComponent(Studio)}`;
+    console.log('Fetching data from:', url);
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Fetched topup data:', data);
+
+        return data[0];
+    } catch (error) {
+        console.error('Error fetching topup data:', error);
+        return [];
+    }
+}
+
 function convertToIST(date) {
     if (!date) return null;  // Return null if date is undefined or invalid
 
     const utcDate = new Date(date);
+    const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC + 5:30
+    const istDate = new Date(utcDate.getTime() + istOffset);
 
-    // Convert UTC to IST using toLocaleString
-    const istDateString = utcDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-
-    return new Date(istDateString);
+    return istDate;
 }
 
 function getDayOfWeek(date) {
@@ -49,65 +69,54 @@ function groupDataByDate(frames) {
         const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
-        const dateString = date.toISOString().split('T')[0].split("-"); // Get the date in YYYY-MM-DD format
-        const newDate =`${dateString[0]}-${dateString[2]}-${dateString[1]}`
+        const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
         const dayOfWeek = getDayOfWeek(date);
 
-        if (!groupedData[newDate]) {
-            groupedData[newDate] = { duration: 0, totalMoney: 0, dayOfWeek };
+        if (!groupedData[dateString]) {
+            groupedData[dateString] = { duration: 0, totalMoney: 0, dayOfWeek };
         }
 
-        groupedData[newDate].duration += duration;    // Sum the duration for each date
-        groupedData[newDate].totalMoney += totalMoney; // Sum the total money for each date
+        groupedData[dateString].duration += duration;    // Sum the duration for each date
+        groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
         totalTableMoney += totalMoney; // Add to total table money
     });
-console.log(groupedData, totalTableMoney)
+
     return { groupedData, totalTableMoney };
 }
 
-function groupDataByHour(frames) {
-    const hourSlots = Array(24).fill(0); // Initialize 24 slots for each hour
+function groupTopupDataByDate(topupData) {
+    const groupedData = {};
 
-    frames.forEach(frame => {
-        const startTime = convertToIST(frame.StartTime);
-        if (!startTime || isNaN(startTime.getTime())) {  // Handle invalid dates
-            console.error('Invalid date:', frame.StartTime);
-            return;
+    topupData.forEach(topup => {
+        if (!topup.RecordDate) {
+            console.error('RecordDate is undefined:', topup);
+            return; // Skip entries with undefined RecordDate
         }
 
-        const startHour = startTime.getHours();
-        const duration = parseInt(frame.Duration, 10) || 0; // Duration in minutes
+        const date = new Date(topup.RecordDate);
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date:', topup.RecordDate);
+            return; // Skip invalid dates
+        }
 
-        // Calculate the end time
-        const endTime = new Date(startTime.getTime() + duration * 60000);
-        const endHour = endTime.getHours();
+        const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+        const amount = parseFloat(topup.Amount) || 0;
 
-        if (startHour === endHour) {
-            // If the start and end time are within the same hour, add the duration to that hour
-            hourSlots[startHour] += duration;
-        } else {
-            // If the duration spans multiple hours, distribute the time accordingly
-            const minutesInStartHour = 60 - startTime.getMinutes();
-            hourSlots[startHour] += minutesInStartHour;
+        if (!groupedData[dateString]) {
+            groupedData[dateString] = { cash: 0, online: 0 };
+        }
 
-            let remainingDuration = duration - minutesInStartHour;
-            let currentHour = (startHour + 1) % 24;
-
-            while (remainingDuration > 0) {
-                const minutesToAdd = Math.min(remainingDuration, 60);
-                hourSlots[currentHour] += minutesToAdd;
-                remainingDuration -= minutesToAdd;
-                currentHour = (currentHour + 1) % 24;
-            }
+        if (topup.Mode === 'cash') {
+            groupedData[dateString].cash += amount;
+        } else if (topup.Mode === 'online') {
+            groupedData[dateString].online += amount;
         }
     });
 
-console.log(hourSlots)
-    return hourSlots;
+    return groupedData;
 }
 
-
-function updateSelectedDateBox(groupedData, selectedDate) {
+function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
     if (!selectedDateBox) {
         console.error('Element with ID "selectedDateBox" not found.');
@@ -116,6 +125,7 @@ function updateSelectedDateBox(groupedData, selectedDate) {
 
     const dateString = new Date(selectedDate).toISOString().split('T')[0];
     const data = groupedData[dateString];
+    const topupData = topupGroupedData[dateString];
 
     if (data) {
         selectedDateBox.innerHTML = `
@@ -126,9 +136,15 @@ function updateSelectedDateBox(groupedData, selectedDate) {
     } else {
         selectedDateBox.innerHTML = `<p>No data available for ${dateString}</p>`;
     }
+
+    if (topupData) {
+        updateTotalReceivedBox(topupData.cash, topupData.online);
+    } else {
+        updateTotalReceivedBox(0, 0);
+    }
 }
 
-let analyticsChart; // Define a variable to store the Chart.js instance
+let analyticsChart = null; // Initialize as null
 
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
@@ -191,41 +207,23 @@ function updateTotalMoneyBox(totalTableMoney) {
     totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
 }
 
-function populatePeakHoursTable(hourSlots) {
-    const peakHoursTable = document.getElementById('peakHoursTable');
-    if (!peakHoursTable) {
-        console.error('Element with ID "peakHoursTable" not found.');
-        return;
-    }
-
-    peakHoursTable.innerHTML = '';  // Clear any existing rows
-
-    hourSlots.forEach((duration, index) => {
-        const row = peakHoursTable.insertRow();
-        const hourCell = row.insertCell(0);
-        const durationCell = row.insertCell(1);
-
-        hourCell.textContent = `${index}:00 - ${index + 1}:00`;
-        durationCell.textContent = `${duration} minutes`;
-    });
-}
-
 async function init() {
     const table = 'frames';
     const Studio = 'Studio 111';
 
     const frames = await fetchData1(table, Studio);
+    const topupData = await fetchData2(table, Studio);
+
     const { groupedData, totalTableMoney } = groupDataByDate(frames);
-    const hourSlots = groupDataByHour(frames);
+    const topupGroupedData = groupTopupDataByDate(topupData);
 
     updateChart(groupedData);
     updateTotalMoneyBox(totalTableMoney);
-    populatePeakHoursTable(hourSlots);
 
     const datePicker = document.getElementById('datePicker');
     datePicker.addEventListener('change', () => {
         const selectedDate = datePicker.value;
-        updateSelectedDateBox(groupedData, selectedDate);
+        updateSelectedDateBox(groupedData, topupGroupedData, selectedDate);
     });
 }
 
