@@ -9,7 +9,7 @@ function getParameterByName(name, url = window.location.href) {
 }
 
 async function fetchData1(table, Studio) {
-    const url = `https://v2api.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
+    const url = `https://app.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
 
     try {
