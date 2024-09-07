@@ -20,7 +20,7 @@ async function fetchData1(table, Studio) {
 }
 
 async function fetchData2(table, Studio) {
-    const url = `https://v2api.snookerplus.in/apis/data/topup/${encodeURIComponent(Studio)}`;
+    const url = `https://app.snookerplus.in/apis/data/topup/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
 
     try {
