@@ -5,7 +5,7 @@ function getStudioFromUrl() {
 }
 
 async function fetchTopupData(studio) {
-    const url = `https://v2api.snookerplus.in/apis/data/topup/${encodeURIComponent(studio)}`;
+    const url = `https://app.snookerplus.in/apis/data/topup/${encodeURIComponent(studio)}`;
     console.log('Fetching data from:', url);
 
     try {
