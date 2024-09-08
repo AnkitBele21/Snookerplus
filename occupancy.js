@@ -11,7 +11,7 @@ async function fetchTableData(studio, date) {
         const data = await response.json();
         console.log('Fetched table data:', data);
 
-        return data;
+        return data [0];
     } catch (error) {
         console.error('Error fetching table data:', error);
         return [];
@@ -21,10 +21,18 @@ async function fetchTableData(studio, date) {
 function filterDataByDate(tableData, targetDate) {
     return tableData.filter(entry => {
         const startDate = new Date(entry.StartTime);
+        
+        // Check if the startDate is a valid date
+        if (isNaN(startDate.getTime())) {
+            console.error('Invalid StartTime:', entry.StartTime);
+            return false;
+        }
+
         const formattedStartDate = startDate.toISOString().split('T')[0];
         return formattedStartDate === targetDate;
     });
 }
+
 
 function getTableOccupancy(filteredData) {
     const occupancyData = {};
