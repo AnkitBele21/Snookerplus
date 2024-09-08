@@ -11,7 +11,7 @@ async function fetchTableData(studio, date) {
         const data = await response.json();
         console.log('Fetched table data:', data);
 
-        return data [0];
+        return data[0];
     } catch (error) {
         console.error('Error fetching table data:', error);
         return [];
