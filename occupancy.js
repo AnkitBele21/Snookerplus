@@ -9,9 +9,14 @@ async function fetchTableData(studio) {
         }
 
         const data = await response.json();
-        console.log('Fetched table data:', data);
+        console.log('Full API response:', data); // Log the full API response
 
-        return data[0]; // Return the full data, not just data[0]
+        if (!data || data.length === 0) {
+            console.warn('API returned empty data or invalid structure:', data);
+            return [];
+        }
+
+        return data[0];
     } catch (error) {
         console.error('Error fetching table data:', error);
         return [];
@@ -75,6 +80,11 @@ function displayTableOccupancy(occupancyData) {
     const tableOccupancyDiv = document.getElementById('tableOccupancy');
     tableOccupancyDiv.innerHTML = '';
 
+    if (Object.keys(occupancyData).length === 0) {
+        tableOccupancyDiv.textContent = 'No occupancy data available for the selected table and date.';
+        return;
+    }
+
     Object.keys(occupancyData).forEach(tableId => {
         const tableDiv = document.createElement('div');
         tableDiv.classList.add('table-occupancy');
@@ -101,7 +111,7 @@ async function init() {
     const targetDate = '2024-09-08'; // The date you're filtering for
 
     console.log('Initializing...');
-    
+
     const tableData = await fetchTableData(studio);
 
     if (!tableData || tableData.length === 0) {
