@@ -1,4 +1,4 @@
-async function fetchTableData(studio, date) {
+async function fetchTableData(studio) {
     const url = `https://app.snookerplus.in/apis/data/frames/studio=${encodeURIComponent(studio)}`;
     console.log('Fetching data from:', url);
 
@@ -11,18 +11,26 @@ async function fetchTableData(studio, date) {
         const data = await response.json();
         console.log('Fetched table data:', data);
 
-        return data[0];
+        return data; // Return the full data, not just data[0]
     } catch (error) {
         console.error('Error fetching table data:', error);
         return [];
     }
 }
 
-function filterDataByDate(tableData, targetDate) {
-    return tableData.filter(entry => {
+function filterDataByTableAndDate(tableData, targetTableId, targetDate) {
+    console.log('Filtering data for table:', targetTableId, 'and target date:', targetDate);
+
+    const filtered = tableData.filter(entry => {
+        const tableId = entry.TableId;
+
+        // Check if this entry is for the target table
+        if (tableId !== targetTableId) {
+            return false;
+        }
+
         const startDate = new Date(entry.StartTime);
         
-        // Check if the startDate is a valid date
         if (isNaN(startDate.getTime())) {
             console.error('Invalid StartTime:', entry.StartTime);
             return false;
@@ -31,10 +39,14 @@ function filterDataByDate(tableData, targetDate) {
         const formattedStartDate = startDate.toISOString().split('T')[0];
         return formattedStartDate === targetDate;
     });
+
+    console.log('Filtered data:', filtered);
+    return filtered;
 }
 
-
 function getTableOccupancy(filteredData) {
+    console.log('Generating table occupancy data from filtered data:', filteredData);
+
     const occupancyData = {};
 
     filteredData.forEach(entry => {
@@ -54,6 +66,7 @@ function getTableOccupancy(filteredData) {
         });
     });
 
+    console.log('Occupancy data:', occupancyData);
     return occupancyData;
 }
 
@@ -77,14 +90,31 @@ function displayTableOccupancy(occupancyData) {
 
         tableOccupancyDiv.appendChild(tableDiv);
     });
+
+    console.log('Displayed table occupancy.');
 }
 
 async function init() {
     const studio = 'studio 111';
-    const targetDate = '2024-08-31';
+    const targetTableId = 'T1Studio 111'; // The table you're filtering for
+    const targetDate = '2024-09-08'; // The date you're filtering for
+
+    console.log('Initializing...');
+    
     const tableData = await fetchTableData(studio);
 
-    const filteredData = filterDataByDate(tableData, targetDate);
+    if (!tableData || tableData.length === 0) {
+        console.error('No table data found.');
+        return;
+    }
+
+    const filteredData = filterDataByTableAndDate(tableData, targetTableId, targetDate);
+
+    if (filteredData.length === 0) {
+        console.log('No data for the specified table and date.');
+        return;
+    }
+
     const occupancyData = getTableOccupancy(filteredData);
 
     displayTableOccupancy(occupancyData);
