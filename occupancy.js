@@ -11,7 +11,7 @@ async function fetchTableData(studio) {
         const data = await response.json();
         console.log('Fetched table data:', data);
 
-        return data[0]; // Return the full data, not just data[0]
+        return data; // Return the full data, not just data[0]
     } catch (error) {
         console.error('Error fetching table data:', error);
         return [];
@@ -61,8 +61,9 @@ function getTableOccupancy(filteredData) {
         }
 
         occupancyData[cleanTableId].push({
-            startTime: startTime.toLocaleTimeString(),
-            offTime: offTime.toLocaleTimeString(),
+            date: startTime.toISOString().split('T')[0], // Store date separately
+            startTime: startTime.toLocaleTimeString(),    // Get time from StartTime
+            offTime: offTime.toLocaleTimeString()         // Get time from OffTime
         });
     });
 
@@ -84,7 +85,7 @@ function displayTableOccupancy(occupancyData) {
 
         occupancyData[tableId].forEach(occupancy => {
             const occupancyText = document.createElement('p');
-            occupancyText.textContent = `Occupied: ${occupancy.startTime} to ${occupancy.offTime}`;
+            occupancyText.textContent = `Occupied: ${occupancy.startTime} to ${occupancy.offTime} on ${occupancy.date}`;
             tableDiv.appendChild(occupancyText);
         });
 
