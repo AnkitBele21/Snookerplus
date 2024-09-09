@@ -80,30 +80,75 @@ function displayTableOccupancy(occupancyData) {
     const tableOccupancyDiv = document.getElementById('tableOccupancy');
     tableOccupancyDiv.innerHTML = '';
 
-    if (Object.keys(occupancyData).length === 0) {
-        tableOccupancyDiv.textContent = 'No occupancy data available for the selected table and date.';
-        return;
-    }
+    const canvas = document.createElement('canvas');
+    tableOccupancyDiv.appendChild(canvas);
+    
+    const datasets = [];
 
-    Object.keys(occupancyData).forEach(tableId => {
-        const tableDiv = document.createElement('div');
-        tableDiv.classList.add('table-occupancy');
+    // Loop through each table and prepare data for Chart.js
+    Object.keys(occupancyData).forEach((tableId, index) => {
+        const tableOccupancy = occupancyData[tableId];
 
-        const tableTitle = document.createElement('h3');
-        tableTitle.textContent = `Table ${tableId}`;
-        tableDiv.appendChild(tableTitle);
+        const data = [];
+        tableOccupancy.forEach((occupancy) => {
+            const startTime = new Date(`${occupancy.date} ${occupancy.startTime}`);
+            const offTime = new Date(`${occupancy.date} ${occupancy.offTime}`);
 
-        occupancyData[tableId].forEach(occupancy => {
-            const occupancyText = document.createElement('p');
-            occupancyText.textContent = `Occupied: ${occupancy.startTime} to ${occupancy.offTime} on ${occupancy.date}`;
-            tableDiv.appendChild(occupancyText);
+            // Convert times to hours (on a 24-hour scale)
+            const startHour = startTime.getHours() + startTime.getMinutes() / 60;
+            const endHour = offTime.getHours() + offTime.getMinutes() / 60;
+
+            data.push({
+                x: occupancy.date,
+                y: [startHour, endHour]
+            });
         });
 
-        tableOccupancyDiv.appendChild(tableDiv);
+        datasets.push({
+            label: `Table ${tableId}`,
+            data: data,
+            backgroundColor: `rgba(${(index * 50) % 255}, 99, 132, 0.5)`, // Use different colors for each table
+            borderColor: `rgba(${(index * 50) % 255}, 99, 132, 1)`,
+            borderWidth: 1
+        });
     });
 
-    console.log('Displayed table occupancy.');
+    // Create the chart
+    new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels: occupancyData[Object.keys(occupancyData)[0]].map(o => o.date),
+            datasets: datasets
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 24,
+                    ticks: {
+                        callback: function(value) {
+                            // Display times in "HH:mm" format
+                            const hours = Math.floor(value);
+                            const minutes = Math.floor((value - hours) * 60);
+                            return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Time (24-hour scale)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                }
+            }
+        }
+    });
 }
+
 
 async function init() {
     const studio = 'Studio 111';
