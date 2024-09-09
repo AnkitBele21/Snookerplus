@@ -53,34 +53,21 @@ function getTableOccupancy(filteredData) {
         const startDate = startTime.toISOString().split('T')[0];
         const offDate = offTime.toISOString().split('T')[0];
 
+        // Ignore entries where OffTime crosses over to the next day
+        if (startDate !== offDate) {
+            console.warn(`Ignoring entry with OffTime crossing midnight: ${entry}`);
+            return;
+        }
+
         const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
 
-        // Handle the case when OffTime is the next day
-        if (startDate !== offDate) {
-            // Entry for the first day (until 23:59)
-            occupancyData.push({
-                tableId: entry.TableId,
-                date: startDate,
-                startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: '23:59:59'
-            });
-
-            // Entry for the second day (starting from 00:00)
-            occupancyData.push({
-                tableId: entry.TableId,
-                date: offDate,
-                startTime: '00:00:00',
-                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
-            });
-        } else {
-            // If StartTime and OffTime are on the same date, keep the entry as is
-            occupancyData.push({
-                tableId: entry.TableId,
-                date: startDate,
-                startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
-            });
-        }
+        // Add entry if it does not cross midnight
+        occupancyData.push({
+            tableId: entry.TableId,
+            date: startDate,
+            startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
+            offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
+        });
     });
 
     // Sort the occupancyData by date and startTime
