@@ -99,7 +99,7 @@ function displayTableOccupancyChart(occupancyData) {
         }
 
         const dateKey = entry.date;
-        
+
         if (!tableOccupancy[dateKey]) {
             tableOccupancy[dateKey] = {
                 label: entry.date,
@@ -162,7 +162,6 @@ function displayTableOccupancyChart(occupancyData) {
         }
     });
 }
-
 
 
 
