@@ -94,78 +94,36 @@ function getTableOccupancy(filteredData) {
     return occupancyData;
 }
 
-
 function displayTableOccupancyTable(occupancyData) {
-    const tableOccupancyDiv = document.getElementById('tableOccupancy');
-    tableOccupancyDiv.innerHTML = '';
+    const tableContainer = document.getElementById('tableOccupancyTable');
+    tableContainer.innerHTML = '';
 
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
 
     const headerRow = document.createElement('tr');
-    ['Table ID', 'Date', 'Start Time', 'Off Time'].forEach(text => {
+    ['Table ID', 'Date', 'Start Time', 'End Time'].forEach(headerText => {
         const th = document.createElement('th');
-        th.textContent = text;
+        th.textContent = headerText;
         headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
 
-    occupancyData.forEach(occupancy => {
+    occupancyData.forEach(entry => {
         const row = document.createElement('tr');
-
-        ['tableId', 'date', 'startTime', 'offTime'].forEach(key => {
+        [entry.tableId, entry.date, entry.startTime, entry.offTime].forEach(cellText => {
             const td = document.createElement('td');
-            td.textContent = occupancy[key];
+            td.textContent = cellText;
             row.appendChild(td);
         });
-
         tbody.appendChild(row);
     });
 
     table.appendChild(thead);
     table.appendChild(tbody);
-    tableOccupancyDiv.appendChild(table);
+    tableContainer.appendChild(table);
 }
-
-async function init() {
-    const studio = 'Studio 111';
-    const targetTableId = 'T1Studio 111'; // The table you're filtering for
-    const targetDate = '2024-09-08'; // The date you're filtering for
-
-    const tableData = await fetchTableData(studio);
-
-    if (!tableData || tableData.length === 0) {
-        console.error('No table data found.');
-        return;
-    }
-
-    const filteredData = filterDataByTableAndDate(tableData, targetTableId, targetDate);
-
-    if (filteredData.length === 0) {
-        console.log('No data for the specified table and date.');
-        return;
-    }
-
-    const occupancyData = getTableOccupancy(filteredData);
-
-    // Display as a table
-    displayTableOccupancyTable(occupancyData);
-}
-
-window.addEventListener('load', init);
-
-
-
-    const occupancyData = getTableOccupancy(filteredData);
-
-    // Display as a table
-    displayTableOccupancyTable(occupancyData);
-}
-
-window.addEventListener('load', init);
-
-
 
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
@@ -227,37 +185,6 @@ function displayTableOccupancyChart(occupancyData) {
             }
         }
     });
-}
-
-function displayTableOccupancyTable(occupancyData) {
-    const tableContainer = document.getElementById('tableOccupancyTable');
-    tableContainer.innerHTML = '';
-
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const tbody = document.createElement('tbody');
-
-    const headerRow = document.createElement('tr');
-    ['Table ID', 'Date', 'Start Time', 'End Time'].forEach(headerText => {
-        const th = document.createElement('th');
-        th.textContent = headerText;
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-
-    occupancyData.forEach(entry => {
-        const row = document.createElement('tr');
-        [entry.tableId, entry.date, entry.startTime, entry.offTime].forEach(cellText => {
-            const td = document.createElement('td');
-            td.textContent = cellText;
-            row.appendChild(td);
-        });
-        tbody.appendChild(row);
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    tableContainer.appendChild(table);
 }
 
 async function init() {
