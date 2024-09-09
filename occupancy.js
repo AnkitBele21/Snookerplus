@@ -44,12 +44,17 @@ function getTableOccupancy(filteredData) {
         const startTime = new Date(entry.StartTime);
         const offTime = new Date(entry.OffTime);
 
+        // Skip the entry if OffTime is less than StartTime
+        if (offTime < startTime) {
+            console.warn(`Skipping entry with StartTime: ${startTime.toISOString()} and OffTime: ${offTime.toISOString()}`);
+            return;
+        }
+
         const startDate = startTime.toISOString().split('T')[0];
         const offDate = offTime.toISOString().split('T')[0];
 
         const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
 
-        // Check if endTime is less than startTime (indicating next day)
         let endTimeString = offTime.toLocaleTimeString('en-GB', timeOptions);
         if (offTime < startTime) {
             endTimeString = '24:00:00'; // Set to end of the day if next day
@@ -93,6 +98,7 @@ function getTableOccupancy(filteredData) {
 
     return occupancyData;
 }
+
 
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
