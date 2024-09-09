@@ -84,37 +84,43 @@ function groupDataByDate(frames) {
     return { groupedData, totalTableMoney };
 }
 
-function groupTopupDataByDate(topupData) {
+function groupDataByDate(frames) {
     const groupedData = {};
+    let totalTableMoney = 0;
 
-    topupData.forEach(topup => {
-        if (!topup.RecordDate) {
-            console.error('RecordDate is undefined:', topup);
-            return; // Skip entries with undefined RecordDate
+    const excludedPlayers = ['Ganesh Kushwah', 'Vinod Jaiswal']; // List of players to exclude
+
+    frames.forEach(frame => {
+        const date = convertToIST(frame.StartTime);
+        if (!date || isNaN(date.getTime())) {  // Handle invalid dates
+            console.error('Invalid date:', frame.StartTime);
+            return;
         }
 
-        const date = new Date(topup.RecordDate);
-        if (isNaN(date.getTime())) {
-            console.error('Invalid date:', topup.RecordDate);
-            return; // Skip invalid dates
+        const looser = frame.Looser || '';  // Assuming the player's name is stored in "Looser"
+        if (excludedPlayers.includes(looser)) {
+            console.log(`Excluding table money for: ${looser}`);
+            return;  // Skip this frame if the looser's name is in the excluded list
         }
 
-        const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
-        const amount = parseFloat(topup.Amount) || 0;
+        const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
+        const totalMoney = parseFloat(frame.TotalMoney) || 0;
+
+        const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
+        const dayOfWeek = getDayOfWeek(date);
 
         if (!groupedData[dateString]) {
-            groupedData[dateString] = { cash: 0, online: 0 };
+            groupedData[dateString] = { duration: 0, totalMoney: 0, dayOfWeek };
         }
 
-        if (topup.Mode === 'cash') {
-            groupedData[dateString].cash += amount;
-        } else if (topup.Mode === 'online') {
-            groupedData[dateString].online += amount;
-        }
+        groupedData[dateString].duration += duration;    // Sum the duration for each date
+        groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
+        totalTableMoney += totalMoney; // Add to total table money
     });
 
-    return groupedData;
+    return { groupedData, totalTableMoney };
 }
+
 
 function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
