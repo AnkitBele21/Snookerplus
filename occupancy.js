@@ -55,26 +55,22 @@ function getTableOccupancy(filteredData) {
 
         const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
 
-        let endTimeString = offTime.toLocaleTimeString('en-GB', timeOptions);
-        if (offTime < startTime) {
-            endTimeString = '24:00:00'; // Set to end of the day if next day
-        }
-
+        // Handle the case when OffTime is the next day
         if (startDate !== offDate) {
             // Entry for the first day (until 23:59)
             occupancyData.push({
                 tableId: entry.TableId,
                 date: startDate,
                 startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: '23:59:59' // End of the first day
+                offTime: '23:59:59'
             });
 
             // Entry for the second day (starting from 00:00)
             occupancyData.push({
                 tableId: entry.TableId,
                 date: offDate,
-                startTime: '00:00:00', // Beginning of the next day
-                offTime: endTimeString
+                startTime: '00:00:00',
+                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
             });
         } else {
             // If StartTime and OffTime are on the same date, keep the entry as is
@@ -82,22 +78,20 @@ function getTableOccupancy(filteredData) {
                 tableId: entry.TableId,
                 date: startDate,
                 startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: endTimeString
+                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
             });
         }
     });
 
-    // Sort the occupancyData by startTime
+    // Sort the occupancyData by date and startTime
     occupancyData.sort((a, b) => {
-        const timeA = a.startTime.split(':').join(''); // Remove colons for comparison
-        const timeB = b.startTime.split(':').join('');
-        return timeA.localeCompare(timeB); // Compare the strings lexicographically
+        const dateA = new Date(`${a.date}T${a.startTime}`).getTime();
+        const dateB = new Date(`${b.date}T${b.startTime}`).getTime();
+        return dateA - dateB;
     });
 
     return occupancyData;
 }
-
-
 
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
