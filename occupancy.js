@@ -9,7 +9,7 @@ async function fetchTableData(studio) {
         }
 
         const data = await response.json();
-        console.log('Full API response:', data); // Log the full API response
+        console.log('Full API response:', data);
 
         if (!data || data.length === 0) {
             console.warn('API returned empty data or invalid structure:', data);
@@ -148,7 +148,6 @@ function displayTableOccupancy(occupancyData) {
         }
     });
 }
-
 
 async function init() {
     const studio = 'Studio 111';
