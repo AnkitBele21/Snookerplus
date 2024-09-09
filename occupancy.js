@@ -176,7 +176,7 @@ function displayTableOccupancyChart(occupancyData) {
 async function init() {
     const studio = 'Studio 111';
     const targetTableId = 'T1Studio 111';
-    const targetDate = '2024-09-08';
+    const targetDate = '2024-09-09';
 
     const tableData = await fetchTableData(studio);
     if (!tableData || tableData.length === 0) return;
