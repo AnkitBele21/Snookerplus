@@ -59,6 +59,7 @@ function getDayOfWeek(date) {
 function groupDataByDate(frames) {
     const groupedData = {};
     let totalTableMoney = 0;
+    const excludedPlayers = ['Ganesh Kushwah', 'Vinod Jaiswal'];  // Add players to exclude here
 
     frames.forEach(frame => {
         const date = convertToIST(frame.StartTime);
@@ -70,16 +71,23 @@ function groupDataByDate(frames) {
         const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
-        const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
-        const dayOfWeek = getDayOfWeek(date);
+        // Check if the player is in the exclusion list
+        const isExcluded = excludedPlayers.includes(frame.Looser); // Assuming 'Looser' is the key for the player's name
 
-        if (!groupedData[dateString]) {
-            groupedData[dateString] = { duration: 0, totalMoney: 0, dayOfWeek };
+        if (isExcluded) {
+            console.log(`Excluding table money of ${frame.Looser}: ₹${totalMoney}`);
+        } else {
+            const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
+            const dayOfWeek = getDayOfWeek(date);
+
+            if (!groupedData[dateString]) {
+                groupedData[dateString] = { duration: 0, totalMoney: 0, dayOfWeek };
+            }
+
+            groupedData[dateString].duration += duration;    // Sum the duration for each date
+            groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
+            totalTableMoney += totalMoney; // Add to total table money
         }
-
-        groupedData[dateString].duration += duration;    // Sum the duration for each date
-        groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
-        totalTableMoney += totalMoney; // Add to total table money
     });
 
     return { groupedData, totalTableMoney };
