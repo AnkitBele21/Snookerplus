@@ -59,7 +59,7 @@ function getDayOfWeek(date) {
 function groupDataByDate(frames) {
     const groupedData = {};
     let totalTableMoney = 0;
-    const excludedPlayers = ['Ganesh Kushwah', 'Vinod Jaiswal'];  // Add players to exclude here
+    const excludedPlayers = ['Ganesh Kushwah', 'Vinod Jaiswal', 'BeleBoss', 'Dipu'];  // Add players to exclude here
 
     frames.forEach(frame => {
         const date = convertToIST(frame.StartTime);
