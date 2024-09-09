@@ -93,6 +93,7 @@ function getTableOccupancy(filteredData) {
     return occupancyData;
 }
 
+
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
     tableContainer.innerHTML = '';
