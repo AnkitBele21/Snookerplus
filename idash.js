@@ -1,3 +1,4 @@
+
 async function fetchData1(table, Studio) {
     const url = `https://app.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
     console.log('Fetching data from:', url);
@@ -84,43 +85,37 @@ function groupDataByDate(frames) {
     return { groupedData, totalTableMoney };
 }
 
-function groupDataByDate(frames) {
+function groupTopupDataByDate(topupData) {
     const groupedData = {};
-    let totalTableMoney = 0;
 
-    const excludedPlayers = ['Ganesh Kushwah', 'Vinod Jaiswal']; // List of players to exclude
-
-    frames.forEach(frame => {
-        const date = convertToIST(frame.StartTime);
-        if (!date || isNaN(date.getTime())) {  // Handle invalid dates
-            console.error('Invalid date:', frame.StartTime);
-            return;
+    topupData.forEach(topup => {
+        if (!topup.RecordDate) {
+            console.error('RecordDate is undefined:', topup);
+            return; // Skip entries with undefined RecordDate
         }
 
-        const looser = frame.Looser || '';  // Assuming the player's name is stored in "Looser"
-        if (excludedPlayers.includes(looser)) {
-            console.log(`Excluding table money for: ${looser}`);
-            return;  // Skip this frame if the looser's name is in the excluded list
+        const date = new Date(topup.RecordDate);
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date:', topup.RecordDate);
+            return; // Skip invalid dates
         }
 
-        const duration = parseInt(frame.Duration, 10) || 0; // Assuming duration is already in minutes
-        const totalMoney = parseFloat(frame.TotalMoney) || 0;
-
-        const dateString = date.toISOString().split('T')[0]; // Get the date in YYYY-MM-DD format
-        const dayOfWeek = getDayOfWeek(date);
+        const dateString = date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+        const amount = parseFloat(topup.Amount) || 0;
 
         if (!groupedData[dateString]) {
-            groupedData[dateString] = { duration: 0, totalMoney: 0, dayOfWeek };
+            groupedData[dateString] = { cash: 0, online: 0 };
         }
 
-        groupedData[dateString].duration += duration;    // Sum the duration for each date
-        groupedData[dateString].totalMoney += totalMoney; // Sum the total money for each date
-        totalTableMoney += totalMoney; // Add to total table money
+        if (topup.Mode === 'cash') {
+            groupedData[dateString].cash += amount;
+        } else if (topup.Mode === 'online') {
+            groupedData[dateString].online += amount;
+        }
     });
 
-    return { groupedData, totalTableMoney };
+    return groupedData;
 }
-
 
 function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
