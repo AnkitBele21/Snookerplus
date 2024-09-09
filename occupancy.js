@@ -51,56 +51,38 @@ function getTableOccupancy(filteredData) {
         const startTime = new Date(entry.StartTime);
         const offTime = new Date(entry.OffTime);
 
-        // If OffTime is less than StartTime, log a warning and skip this entry
         if (offTime < startTime) {
             console.warn(`Skipping entry with StartTime: ${startTime.toISOString()} and OffTime: ${offTime.toISOString()}`);
             return;
         }
 
-        // Split the entry if it crosses midnight
-        const startDate = startTime.toISOString().split('T')[0];
-        const offDate = offTime.toISOString().split('T')[0];
+        const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
-        const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
-
-        // If the entry doesn't cross midnight, add it as is
-        if (startDate === offDate) {
-            occupancyData.push({
-                tableId: entry.TableId,
-                date: startDate,
-                startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
-            });
-        } else {
-            // Handle the part of the entry before midnight
+        // Handle entries that cross midnight
+        while (startTime.getDate() !== offTime.getDate() || startTime.getMonth() !== offTime.getMonth()) {
+            // Create a split entry for the current day
             const endOfDay = new Date(startTime);
-            endOfDay.setHours(23, 59, 59, 999); // Set the time to the end of the day
+            endOfDay.setHours(23, 59, 59, 999);
 
             occupancyData.push({
                 tableId: entry.TableId,
-                date: startDate,
+                date: startTime.toISOString().split('T')[0],
                 startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
                 offTime: endOfDay.toLocaleTimeString('en-GB', timeOptions)
             });
 
-            // Handle the part of the entry after midnight
-            const startOfDay = new Date(offTime);
-            startOfDay.setHours(0, 0, 0, 0); // Set the time to the start of the next day
-
-            occupancyData.push({
-                tableId: entry.TableId,
-                date: offDate,
-                startTime: startOfDay.toLocaleTimeString('en-GB', timeOptions),
-                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
-            });
+            // Move the start time to the next day at 00:00:00
+            startTime.setDate(startTime.getDate() + 1);
+            startTime.setHours(0, 0, 0, 0);
         }
-    });
 
-    // Sort the occupancyData by date and startTime
-    occupancyData.sort((a, b) => {
-        const dateA = new Date(`${a.date}T${a.startTime}`).getTime();
-        const dateB = new Date(`${b.date}T${b.startTime}`).getTime();
-        return dateA - dateB;
+        // Add the final part of the entry
+        occupancyData.push({
+            tableId: entry.TableId,
+            date: startTime.toISOString().split('T')[0],
+            startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
+            offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
+        });
     });
 
     return occupancyData;
@@ -115,16 +97,7 @@ function displayTableOccupancyChart(occupancyData) {
 
     const tableOccupancy = {};
 
-    // Aggregate time periods for each date, excluding cross-date entries
     occupancyData.forEach(entry => {
-        const startTime = new Date(`${entry.date} ${entry.startTime}`);
-        const offTime = new Date(`${entry.date} ${entry.offTime}`);
-
-        // Skip the entry if startTime date and offTime date do not match
-        if (startTime.getDate() !== offTime.getDate() || startTime.getMonth() !== offTime.getMonth() || startTime.getFullYear() !== offTime.getFullYear()) {
-            return; // Exclude cross-date entries
-        }
-
         const dateKey = entry.date;
 
         if (!tableOccupancy[dateKey]) {
@@ -137,26 +110,22 @@ function displayTableOccupancyChart(occupancyData) {
             };
         }
 
-        const startHour = startTime.getHours() + startTime.getMinutes() / 60;
-        const endHour = offTime.getHours() + offTime.getMinutes() / 60;
+        const startTime = parseFloat(entry.startTime.split(':')[0]) + parseFloat(entry.startTime.split(':')[1]) / 60;
+        const offTime = parseFloat(entry.offTime.split(':')[0]) + parseFloat(entry.offTime.split(':')[1]) / 60;
 
         tableOccupancy[dateKey].data.push({
             x: entry.date,
-            y: [startHour, endHour]
+            y: [startTime, offTime]
         });
     });
 
-    // Create datasets from aggregated data
     const datasets = Object.values(tableOccupancy);
-
-    // Unique dates for X-axis labels
     const uniqueDates = [...new Set(occupancyData.map(entry => entry.date))];
 
-    // Create the chart
     new Chart(canvas, {
         type: 'bar',
         data: {
-            labels: uniqueDates, // Use unique dates for the X-axis labels
+            labels: uniqueDates,
             datasets: datasets
         },
         options: {
@@ -182,15 +151,13 @@ function displayTableOccupancyChart(occupancyData) {
                         text: 'Date'
                     },
                     ticks: {
-                        autoSkip: false // Make sure the dates don't repeat
+                        autoSkip: false
                     }
                 }
             }
         }
     });
 }
-
-
 
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
