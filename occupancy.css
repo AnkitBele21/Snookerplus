@@ -1,38 +1,76 @@
+/* General Page Styles */
 body {
     font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
+h1 {
     text-align: center;
-}
-
-#tableOccupancy {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    color: #333;
     margin-top: 20px;
 }
 
-.table-occupancy {
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#tableOccupancy {
     background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    margin: 20px auto;
+}
+
+#tableOccupancy canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: center;
     width: 80%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
 }
 
-.table-occupancy h3 {
-    margin-top: 0;
+.alert.success {
+    background-color: #d4edda;
+    color: #155724;
 }
 
-.table-occupancy p {
-    margin: 5px 0;
-    color: #333;
+/* ChartJS Styles */
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    #tableOccupancy {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
 }
