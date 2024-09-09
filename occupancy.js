@@ -1,5 +1,5 @@
 async function fetchTableData(studio) {
-    const url = `https://app.snookerplus.in/apis/data/frames/studio=${encodeURIComponent(studio)}`;
+    const url = `https://app.snookerplus.in/apis/data/frames/${encodeURIComponent(studio)}`;
     console.log('Fetching data from:', url);
 
     try {
@@ -106,7 +106,7 @@ function displayTableOccupancy(occupancyData) {
 }
 
 async function init() {
-    const studio = 'studio 111';
+    const studio = 'Studio 111';
     const targetTableId = 'T1Studio 111'; // The table you're filtering for
     const targetDate = '2024-09-08'; // The date you're filtering for
 
