@@ -78,8 +78,76 @@ function getTableOccupancy(filteredData) {
         }
     });
 
+    // Sort the occupancyData by startTime
+    occupancyData.sort((a, b) => {
+        const timeA = a.startTime.split(':').join(''); // Remove colons for comparison (e.g., "14:30:00" becomes "143000")
+        const timeB = b.startTime.split(':').join(''); 
+        return timeA.localeCompare(timeB); // Compare the strings lexicographically
+    });
+
     return occupancyData;
 }
+
+function displayTableOccupancyTable(occupancyData) {
+    const tableOccupancyDiv = document.getElementById('tableOccupancy');
+    tableOccupancyDiv.innerHTML = '';
+
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+
+    const headerRow = document.createElement('tr');
+    ['Table ID', 'Date', 'Start Time', 'Off Time'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+
+    occupancyData.forEach(occupancy => {
+        const row = document.createElement('tr');
+
+        ['tableId', 'date', 'startTime', 'offTime'].forEach(key => {
+            const td = document.createElement('td');
+            td.textContent = occupancy[key];
+            row.appendChild(td);
+        });
+
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableOccupancyDiv.appendChild(table);
+}
+
+async function init() {
+    const studio = 'Studio 111';
+    const targetTableId = 'T1Studio 111'; // The table you're filtering for
+    const targetDate = '2024-09-08'; // The date you're filtering for
+
+    const tableData = await fetchTableData(studio);
+
+    if (!tableData || tableData.length === 0) {
+        console.error('No table data found.');
+        return;
+    }
+
+    const filteredData = filterDataByTableAndDate(tableData, targetTableId, targetDate);
+
+    if (filteredData.length === 0) {
+        console.log('No data for the specified table and date.');
+        return;
+    }
+
+    const occupancyData = getTableOccupancy(filteredData);
+
+    // Display as a table
+    displayTableOccupancyTable(occupancyData);
+}
+
+window.addEventListener('load', init);
+
 
 function displayTableOccupancyTable(occupancyData) {
     const tableOccupancyDiv = document.getElementById('tableOccupancy');
