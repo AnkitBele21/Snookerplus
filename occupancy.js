@@ -90,15 +90,16 @@ function displayTableOccupancyChart(occupancyData) {
 
     // Aggregate time periods for each date, excluding cross-date entries
     occupancyData.forEach(entry => {
-        const dateKey = entry.date;
         const startTime = new Date(`${entry.date} ${entry.startTime}`);
         const offTime = new Date(`${entry.date} ${entry.offTime}`);
 
-        // Skip if the offTime is on the next day
-        if (offTime.getDate() !== startTime.getDate()) {
+        // Skip the entry if startTime date and offTime date do not match
+        if (startTime.getDate() !== offTime.getDate() || startTime.getMonth() !== offTime.getMonth() || startTime.getFullYear() !== offTime.getFullYear()) {
             return; // Exclude cross-date entries
         }
 
+        const dateKey = entry.date;
+        
         if (!tableOccupancy[dateKey]) {
             tableOccupancy[dateKey] = {
                 label: entry.date,
@@ -161,6 +162,7 @@ function displayTableOccupancyChart(occupancyData) {
         }
     });
 }
+
 
 
 
