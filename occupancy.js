@@ -11,7 +11,7 @@ async function fetchTableData(studio) {
         const data = await response.json();
         console.log('Full API response:', data); // Log the full API response
 
-        if (!Array.isArray(data) || data.length === 0) {
+        if (!data || data.length === 0) {
             console.warn('API returned empty data or invalid structure:', data);
             return [];
         }
@@ -26,12 +26,15 @@ async function fetchTableData(studio) {
 function filterDataByTableAndDate(tableData, targetTableId, targetDate) {
     console.log('Filtering data for table:', targetTableId, 'and target date:', targetDate);
 
-    return tableData.filter(entry => {
+    const filtered = tableData.filter(entry => {
         const tableId = entry.TableId;
         const startDate = new Date(entry.StartTime);
         const formattedStartDate = startDate.toISOString().split('T')[0];
         return tableId === targetTableId && formattedStartDate === targetDate;
     });
+
+    console.log('Filtered data:', filtered);
+    return filtered;
 }
 
 function getTableOccupancy(filteredData) {
@@ -76,57 +79,40 @@ function getTableOccupancy(filteredData) {
     return occupancyData;
 }
 
-function displayTableOccupancyTable(occupancyData) {
-    const tableContainer = document.getElementById('tableOccupancyTable');
-    tableContainer.innerHTML = '';
+function displayTableOccupancyChart(occupancyData) {
+    const chartContainer = document.getElementById('tableOccupancyChart');
+    chartContainer.innerHTML = '';
 
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const tbody = document.createElement('tbody');
+    const canvas = document.createElement('canvas');
+    chartContainer.appendChild(canvas);
 
-    const headerRow = document.createElement('tr');
-    ['Table ID', 'Date', 'Start Time', 'End Time'].forEach(headerText => {
-        const th = document.createElement('th');
-        th.textContent = headerText;
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
+    const tableOccupancy = {};
 
+    // Aggregate time periods for each table and date
     occupancyData.forEach(entry => {
-        const row = document.createElement('tr');
-        [entry.tableId, entry.date, entry.startTime, entry.offTime].forEach(cellText => {
-            const td = document.createElement('td');
-            td.textContent = cellText;
-            row.appendChild(td);
-        });
-        tbody.appendChild(row);
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    tableContainer.appendChild(table);
-}
-
-function createOccupancyChart(canvas, occupancyData) {
-    const datasets = occupancyData.map((entry, index) => {
+        const key = `${entry.tableId}-${entry.date}`;
+        if (!tableOccupancy[key]) {
+            tableOccupancy[key] = {
+                label: entry.tableId,
+                data: [],
+                backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
+                borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
+                borderWidth: 1
+            };
+        }
         const startTime = new Date(`${entry.date} ${entry.startTime}`);
         const offTime = new Date(`${entry.date} ${entry.offTime}`);
-
-        // Convert times to hours (on a 24-hour scale)
         const startHour = startTime.getHours() + startTime.getMinutes() / 60;
         const endHour = offTime.getHours() + offTime.getMinutes() / 60;
 
-        return {
-            label: `Table ${entry.tableId}`,
-            data: [{
-                x: entry.date,
-                y: [startHour, endHour]
-            }],
-            backgroundColor: `rgba(${(index * 50) % 255}, 99, 132, 0.5)`,
-            borderColor: `rgba(${(index * 50) % 255}, 99, 132, 1)`,
-            borderWidth: 1
-        };
+        tableOccupancy[key].data.push({
+            x: entry.date,
+            y: [startHour, endHour]
+        });
     });
+
+    // Create datasets from aggregated data
+    const datasets = Object.values(tableOccupancy);
 
     // Create the chart
     new Chart(canvas, {
@@ -163,14 +149,35 @@ function createOccupancyChart(canvas, occupancyData) {
     });
 }
 
-function displayTableOccupancyChart(occupancyData) {
-    const chartContainer = document.getElementById('tableOccupancyChart');
-    chartContainer.innerHTML = '';
+function displayTableOccupancyTable(occupancyData) {
+    const tableContainer = document.getElementById('tableOccupancyTable');
+    tableContainer.innerHTML = '';
 
-    const canvas = document.createElement('canvas');
-    chartContainer.appendChild(canvas);
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
 
-    createOccupancyChart(canvas, occupancyData);
+    const headerRow = document.createElement('tr');
+    ['Table ID', 'Date', 'Start Time', 'End Time'].forEach(headerText => {
+        const th = document.createElement('th');
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+
+    occupancyData.forEach(entry => {
+        const row = document.createElement('tr');
+        [entry.tableId, entry.date, entry.startTime, entry.offTime].forEach(cellText => {
+            const td = document.createElement('td');
+            td.textContent = cellText;
+            row.appendChild(td);
+        });
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
 }
 
 async function init() {
