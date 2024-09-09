@@ -49,6 +49,12 @@ function getTableOccupancy(filteredData) {
 
         const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
 
+        // Check if endTime is less than startTime (indicating next day)
+        let endTimeString = offTime.toLocaleTimeString('en-GB', timeOptions);
+        if (offTime < startTime) {
+            endTimeString = '24:00:00'; // Set to end of the day if next day
+        }
+
         if (startDate !== offDate) {
             // If StartTime and OffTime are on different dates, split the entry
 
@@ -57,7 +63,7 @@ function getTableOccupancy(filteredData) {
                 tableId: entry.TableId,
                 date: startDate,
                 startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: '23:59:59' // End of the first day
+                offTime: '24:00:00' // End of the first day
             });
 
             // Entry for the second day (starting from 00:00)
@@ -65,7 +71,7 @@ function getTableOccupancy(filteredData) {
                 tableId: entry.TableId,
                 date: offDate,
                 startTime: '00:00:00', // Beginning of the next day
-                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
+                offTime: endTimeString
             });
         } else {
             // If StartTime and OffTime are on the same date, keep the entry as is
@@ -73,7 +79,7 @@ function getTableOccupancy(filteredData) {
                 tableId: entry.TableId,
                 date: startDate,
                 startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
+                offTime: endTimeString
             });
         }
     });
@@ -87,6 +93,7 @@ function getTableOccupancy(filteredData) {
 
     return occupancyData;
 }
+
 
 function displayTableOccupancyTable(occupancyData) {
     const tableOccupancyDiv = document.getElementById('tableOccupancy');
