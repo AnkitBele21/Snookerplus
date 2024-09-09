@@ -3,15 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Table Occupancy</title>
+    <title>Snooker Table Occupancy for Studio 111</title>
     <link rel="stylesheet" href="occupancy.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Add Chart.js -->
 </head>
 <body>
     <header>
         <h1>Snooker Table Occupancy for Studio 111</h1>
     </header>
 
-    <div id="tableOccupancy"></div>
+    <section>
+        <h2>24-Hour Table Occupancy Chart</h2>
+        <!-- Canvas for Chart.js -->
+        <canvas id="tableOccupancyChart"></canvas>
+    </section>
+
+    <section id="tableOccupancy">
+        <h2>Occupancy Data</h2>
+        <!-- Occupancy details will be dynamically added here -->
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Snooker+ | All Rights Reserved</p>
+    </footer>
 
     <script src="occupancy.js"></script>
 </body>
