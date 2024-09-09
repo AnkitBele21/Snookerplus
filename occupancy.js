@@ -11,7 +11,7 @@ async function fetchTableData(studio) {
         const data = await response.json();
         console.log('Full API response:', data); // Log the full API response
 
-        if (!data || data.length === 0) {
+        if (!Array.isArray(data) || data.length === 0) {
             console.warn('API returned empty data or invalid structure:', data);
             return [];
         }
@@ -26,15 +26,12 @@ async function fetchTableData(studio) {
 function filterDataByTableAndDate(tableData, targetTableId, targetDate) {
     console.log('Filtering data for table:', targetTableId, 'and target date:', targetDate);
 
-    const filtered = tableData.filter(entry => {
+    return tableData.filter(entry => {
         const tableId = entry.TableId;
         const startDate = new Date(entry.StartTime);
         const formattedStartDate = startDate.toISOString().split('T')[0];
         return tableId === targetTableId && formattedStartDate === targetDate;
     });
-
-    console.log('Filtered data:', filtered);
-    return filtered;
 }
 
 function getTableOccupancy(filteredData) {
@@ -61,7 +58,6 @@ function getTableOccupancy(filteredData) {
 
         const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
 
-        // Add entry if it does not cross midnight
         occupancyData.push({
             tableId: entry.TableId,
             date: startDate,
@@ -79,7 +75,6 @@ function getTableOccupancy(filteredData) {
 
     return occupancyData;
 }
-
 
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
@@ -112,13 +107,7 @@ function displayTableOccupancyTable(occupancyData) {
     tableContainer.appendChild(table);
 }
 
-function displayTableOccupancyChart(occupancyData) {
-    const chartContainer = document.getElementById('tableOccupancyChart');
-    chartContainer.innerHTML = '';
-    
-    const canvas = document.createElement('canvas');
-    chartContainer.appendChild(canvas);
-
+function createOccupancyChart(canvas, occupancyData) {
     const datasets = occupancyData.map((entry, index) => {
         const startTime = new Date(`${entry.date} ${entry.startTime}`);
         const offTime = new Date(`${entry.date} ${entry.offTime}`);
@@ -172,6 +161,16 @@ function displayTableOccupancyChart(occupancyData) {
             }
         }
     });
+}
+
+function displayTableOccupancyChart(occupancyData) {
+    const chartContainer = document.getElementById('tableOccupancyChart');
+    chartContainer.innerHTML = '';
+
+    const canvas = document.createElement('canvas');
+    chartContainer.appendChild(canvas);
+
+    createOccupancyChart(canvas, occupancyData);
 }
 
 async function init() {
