@@ -44,7 +44,7 @@ function getTableOccupancy(filteredData) {
         const startTime = new Date(entry.StartTime);
         const offTime = new Date(entry.OffTime);
 
-        // Skip the entry if OffTime is less than StartTime
+        // Skip the entry if OffTime is less than StartTime (shouldn't happen with valid data)
         if (offTime < startTime) {
             console.warn(`Skipping entry with StartTime: ${startTime.toISOString()} and OffTime: ${offTime.toISOString()}`);
             return;
@@ -61,14 +61,12 @@ function getTableOccupancy(filteredData) {
         }
 
         if (startDate !== offDate) {
-            // If StartTime and OffTime are on different dates, split the entry
-
             // Entry for the first day (until 23:59)
             occupancyData.push({
                 tableId: entry.TableId,
                 date: startDate,
                 startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: '24:00:00' // End of the first day
+                offTime: '23:59:59' // End of the first day
             });
 
             // Entry for the second day (starting from 00:00)
@@ -91,13 +89,14 @@ function getTableOccupancy(filteredData) {
 
     // Sort the occupancyData by startTime
     occupancyData.sort((a, b) => {
-        const timeA = a.startTime.split(':').join(''); // Remove colons for comparison (e.g., "14:30:00" becomes "143000")
-        const timeB = b.startTime.split(':').join(''); 
+        const timeA = a.startTime.split(':').join(''); // Remove colons for comparison
+        const timeB = b.startTime.split(':').join('');
         return timeA.localeCompare(timeB); // Compare the strings lexicographically
     });
 
     return occupancyData;
 }
+
 
 
 function displayTableOccupancyTable(occupancyData) {
