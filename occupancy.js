@@ -29,13 +29,20 @@ function filterDataByTableAndDate(tableData, targetTableId, targetDate) {
     const filtered = tableData.filter(entry => {
         const tableId = entry.TableId;
         const startDate = new Date(entry.StartTime);
+        const offDate = new Date(entry.OffTime);
+
+        // Ensure both startDate and offDate are the same and match the target date
         const formattedStartDate = startDate.toISOString().split('T')[0];
-        return tableId === targetTableId && formattedStartDate === targetDate;
+        const formattedOffDate = offDate.toISOString().split('T')[0];
+
+        // Return true only if both start and off dates are the same as the targetDate
+        return tableId === targetTableId && formattedStartDate === targetDate && formattedOffDate === targetDate;
     });
 
     console.log('Filtered data:', filtered);
     return filtered;
 }
+
 
 function getTableOccupancy(filteredData) {
     const occupancyData = [];
