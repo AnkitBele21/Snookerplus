@@ -88,24 +88,25 @@ function displayTableOccupancyChart(occupancyData) {
 
     const tableOccupancy = {};
 
-    // Aggregate time periods for each table and date
+    // Aggregate time periods for each date
     occupancyData.forEach(entry => {
-        const key = `${entry.tableId}-${entry.date}`;
-        if (!tableOccupancy[key]) {
-            tableOccupancy[key] = {
-                label: entry.tableId,
+        const dateKey = entry.date;
+        if (!tableOccupancy[dateKey]) {
+            tableOccupancy[dateKey] = {
+                label: entry.date,
                 data: [],
                 backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
                 borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
                 borderWidth: 1
             };
         }
+
         const startTime = new Date(`${entry.date} ${entry.startTime}`);
         const offTime = new Date(`${entry.date} ${entry.offTime}`);
         const startHour = startTime.getHours() + startTime.getMinutes() / 60;
         const endHour = offTime.getHours() + offTime.getMinutes() / 60;
 
-        tableOccupancy[key].data.push({
+        tableOccupancy[dateKey].data.push({
             x: entry.date,
             y: [startHour, endHour]
         });
@@ -114,11 +115,14 @@ function displayTableOccupancyChart(occupancyData) {
     // Create datasets from aggregated data
     const datasets = Object.values(tableOccupancy);
 
+    // Unique dates for X-axis labels
+    const uniqueDates = [...new Set(occupancyData.map(entry => entry.date))];
+
     // Create the chart
     new Chart(canvas, {
         type: 'bar',
         data: {
-            labels: occupancyData.map(o => o.date),
+            labels: uniqueDates, // Use unique dates for the X-axis labels
             datasets: datasets
         },
         options: {
@@ -127,7 +131,7 @@ function displayTableOccupancyChart(occupancyData) {
                     beginAtZero: true,
                     max: 24,
                     ticks: {
-                        callback: function(value) {
+                        callback: function (value) {
                             const hours = Math.floor(value);
                             const minutes = Math.floor((value - hours) * 60);
                             return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
@@ -142,12 +146,16 @@ function displayTableOccupancyChart(occupancyData) {
                     title: {
                         display: true,
                         text: 'Date'
+                    },
+                    ticks: {
+                        autoSkip: false // Make sure the dates don't repeat
                     }
                 }
             }
         }
     });
 }
+
 
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
