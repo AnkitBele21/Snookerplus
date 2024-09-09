@@ -50,7 +50,7 @@ function getTableOccupancy(filteredData) {
         const startDate = startTime.toISOString().split('T')[0];
         const offDate = offTime.toISOString().split('T')[0];
 
-        // Ignore entries where OffTime crosses over to the next day
+        // Ensure OffTime does not cross over to the next day
         if (startDate !== offDate) {
             console.warn(`Ignoring entry with OffTime crossing midnight: ${entry}`);
             return;
