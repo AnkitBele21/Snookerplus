@@ -44,16 +44,41 @@ function getTableOccupancy(filteredData) {
         const startTime = new Date(entry.StartTime);
         const offTime = new Date(entry.OffTime);
 
-        occupancyData.push({
-            tableId: entry.TableId,
-            date: startTime.toISOString().split('T')[0], // Store date separately
-            startTime: startTime.toLocaleTimeString(),    // Get time from StartTime
-            offTime: offTime.toLocaleTimeString()         // Get time from OffTime
-        });
+        const startDate = startTime.toISOString().split('T')[0];
+        const offDate = offTime.toISOString().split('T')[0];
+
+        if (startDate !== offDate) {
+            // If StartTime and OffTime are on different dates, split the entry
+
+            // Entry for the first day
+            occupancyData.push({
+                tableId: entry.TableId,
+                date: startDate,
+                startTime: startTime.toLocaleTimeString(),
+                offTime: '23:59' // Till the end of the first day
+            });
+
+            // Entry for the second day
+            occupancyData.push({
+                tableId: entry.TableId,
+                date: offDate,
+                startTime: '00:00', // Start from the beginning of the second day
+                offTime: offTime.toLocaleTimeString()
+            });
+        } else {
+            // If StartTime and OffTime are on the same date, keep the entry as is
+            occupancyData.push({
+                tableId: entry.TableId,
+                date: startDate,
+                startTime: startTime.toLocaleTimeString(),
+                offTime: offTime.toLocaleTimeString()
+            });
+        }
     });
 
     return occupancyData;
 }
+
 
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
