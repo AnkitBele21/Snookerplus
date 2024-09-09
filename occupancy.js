@@ -44,29 +44,49 @@ function getTableOccupancy(filteredData) {
         const startTime = new Date(entry.StartTime);
         const offTime = new Date(entry.OffTime);
 
-        // Skip the entry if OffTime is less than StartTime (shouldn't happen with valid data)
+        // If OffTime is less than StartTime, log a warning and skip this entry
         if (offTime < startTime) {
             console.warn(`Skipping entry with StartTime: ${startTime.toISOString()} and OffTime: ${offTime.toISOString()}`);
             return;
         }
 
+        // Split the entry if it crosses midnight
         const startDate = startTime.toISOString().split('T')[0];
         const offDate = offTime.toISOString().split('T')[0];
 
-        // Ensure OffTime does not cross over to the next day
-        if (startDate !== offDate) {
-            console.warn(`Ignoring entry with OffTime crossing midnight: ${entry}`);
-            return;
-        }
-
         const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
 
-        occupancyData.push({
-            tableId: entry.TableId,
-            date: startDate,
-            startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-            offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
-        });
+        // If the entry doesn't cross midnight, add it as is
+        if (startDate === offDate) {
+            occupancyData.push({
+                tableId: entry.TableId,
+                date: startDate,
+                startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
+                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
+            });
+        } else {
+            // Handle the part of the entry before midnight
+            const endOfDay = new Date(startTime);
+            endOfDay.setHours(23, 59, 59, 999); // Set the time to the end of the day
+
+            occupancyData.push({
+                tableId: entry.TableId,
+                date: startDate,
+                startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
+                offTime: endOfDay.toLocaleTimeString('en-GB', timeOptions)
+            });
+
+            // Handle the part of the entry after midnight
+            const startOfDay = new Date(offTime);
+            startOfDay.setHours(0, 0, 0, 0); // Set the time to the start of the next day
+
+            occupancyData.push({
+                tableId: entry.TableId,
+                date: offDate,
+                startTime: startOfDay.toLocaleTimeString('en-GB', timeOptions),
+                offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
+            });
+        }
     });
 
     // Sort the occupancyData by date and startTime
