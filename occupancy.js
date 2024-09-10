@@ -102,7 +102,14 @@ function displayTableOccupancyChart(occupancyData) {
         'T4Studio 111': 'T4'
     };
 
-    const tableOccupancy = {};
+    const tableOccupancy = {
+        'T1': [],
+        'T2': [],
+        'T3': [],
+        'T4': []
+    };
+
+    const labels = new Set(); // To store unique dates for x-axis
 
     // Iterate through occupancy data and map to table + date combinations
     occupancyData.forEach(entry => {
@@ -118,39 +125,55 @@ function displayTableOccupancyChart(occupancyData) {
         const dateKey = startTime.toISOString().split('T')[0]; // Format date as 'YYYY-MM-DD'
         const tableKey = tableLabels[entry.TableId] || entry.TableId;
 
-        // Use 'dateKey tableKey' as the new identifier for the x-axis
-        const labelKey = `${dateKey} ${tableKey}`;
-
-        if (!tableOccupancy[labelKey]) {
-            tableOccupancy[labelKey] = {
-                label: labelKey,
-                data: [],
-                backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
-                borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
-                borderWidth: 1
-            };
-        }
-
-        const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
+        labels.add(dateKey); // Add date to the set of labels (x-axis)
 
         const startHour = startTime.getHours() + startTime.getMinutes() / 60;
         const endHour = offTime.getHours() + offTime.getMinutes() / 60;
 
-        // Add data to this label
-        tableOccupancy[labelKey].data.push({
-            x: labelKey, // Combine date and table for x-axis label
-            y: [startHour, endHour]
+        // Push occupancy data to corresponding table
+        tableOccupancy[tableKey].push({
+            x: dateKey, // x-axis is the date
+            y: [startHour, endHour] // y-axis is the start and end time
         });
     });
 
-    // Create datasets from aggregated data
-    const datasets = Object.values(tableOccupancy);
+    const datasets = [
+        {
+            label: 'T1',
+            data: tableOccupancy['T1'],
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'T2',
+            data: tableOccupancy['T2'],
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'T3',
+            data: tableOccupancy['T3'],
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'T4',
+            data: tableOccupancy['T4'],
+            backgroundColor: 'rgba(153, 102, 255, 0.5)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1
+        }
+    ];
 
     // Create the chart
     new Chart(canvas, {
         type: 'bar',
         data: {
-            datasets: datasets
+            labels: Array.from(labels), // Unique dates for the x-axis
+            datasets: datasets // Data for all tables
         },
         options: {
             scales: {
@@ -172,10 +195,23 @@ function displayTableOccupancyChart(occupancyData) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Date & Table'
-                    },
-                    ticks: {
-                        autoSkip: false // Make sure all table/date combinations are shown
+                        text: 'Date'
+                    }
+                }
+            },
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const range = context.raw.y;
+                            const start = range[0];
+                            const end = range[1];
+                            return `Start: ${Math.floor(start)}:${Math.floor((start - Math.floor(start)) * 60)} - End: ${Math.floor(end)}:${Math.floor((end - Math.floor(end)) * 60)}`;
+                        }
                     }
                 }
             }
