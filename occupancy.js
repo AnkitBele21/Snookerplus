@@ -151,6 +151,7 @@ function displayTableOccupancyTable(occupancyData) {
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
 
+    // Create header row
     const headerRow = document.createElement('tr');
     ['Table ID', 'Date', 'Start Time', 'End Time'].forEach(headerText => {
         const th = document.createElement('th');
@@ -159,29 +160,48 @@ function displayTableOccupancyTable(occupancyData) {
     });
     thead.appendChild(headerRow);
 
-    Object.keys(occupancyData).forEach(tableId => {
-        // Create a table row for the tableId, but only once
-        const tableRow = document.createElement('tr');
+    // Function to compare table IDs (assuming IDs are in format T1, T2, ...)
+    function compareTableIds(a, b) {
+        const numA = parseInt(a.replace('T', ''));
+        const numB = parseInt(b.replace('T', ''));
+        return numA - numB;
+    }
+
+    // Sort table IDs
+    const sortedTableIds = Object.keys(occupancyData).sort(compareTableIds);
+
+    // Create rows for each table
+    sortedTableIds.forEach(tableId => {
+        // Create a header row for the table
+        const tableHeaderRow = document.createElement('tr');
         const tdTable = document.createElement('td');
         tdTable.textContent = `Table ${tableId}`;
-        tdTable.colSpan = 4;  // Span across all columns to make it clear this is a table header row
+        tdTable.colSpan = 4;  // Span across all columns
         tdTable.style.fontWeight = 'bold';
-        tableRow.appendChild(tdTable);
-        tbody.appendChild(tableRow);
+        tableHeaderRow.appendChild(tdTable);
+        tbody.appendChild(tableHeaderRow);
 
-        // Now append the data for that table
+        // Add rows for each entry in the table
         occupancyData[tableId].forEach(entry => {
             const row = document.createElement('tr');
-            ['', entry.date, entry.startTime, entry.offTime].forEach((cellText, index) => {
-                const td = document.createElement('td');
-                if (index === 0) {
-                    // Empty cell for the table name (since it’s shown only once above)
-                    td.textContent = '';
-                } else {
-                    td.textContent = cellText;
-                }
-                row.appendChild(td);
-            });
+
+            // Add cells for each entry
+            const tdTableId = document.createElement('td');
+            tdTableId.textContent = '';  // Empty cell for the table name (already shown above)
+            row.appendChild(tdTableId);
+
+            const tdDate = document.createElement('td');
+            tdDate.textContent = entry.date;
+            row.appendChild(tdDate);
+
+            const tdStartTime = document.createElement('td');
+            tdStartTime.textContent = formatTime(entry.startTime);
+            row.appendChild(tdStartTime);
+
+            const tdEndTime = document.createElement('td');
+            tdEndTime.textContent = formatTime(entry.offTime);
+            row.appendChild(tdEndTime);
+
             tbody.appendChild(row);
         });
     });
@@ -190,6 +210,14 @@ function displayTableOccupancyTable(occupancyData) {
     table.appendChild(tbody);
     tableContainer.appendChild(table);
 }
+
+// Helper function to format time from fractional hours to HH:MM
+function formatTime(fractionalHour) {
+    const hours = Math.floor(fractionalHour);
+    const minutes = Math.floor((fractionalHour - hours) * 60);
+    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+}
+
 
 
 async function init() {
