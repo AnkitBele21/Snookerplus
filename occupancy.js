@@ -35,14 +35,24 @@ function filterDataByDate(tableData, targetDate) {
         const startDate = toIST(new Date(entry.StartTime));
         const offDate = toIST(new Date(entry.OffTime));
 
+        // Log the data for debugging
+        console.log(`Entry Start: ${startDate}, Entry End: ${offDate}`);
+
         // Format dates to 'YYYY-MM-DD'
         const formattedStartDate = startDate.toISOString().split('T')[0];
         const formattedOffDate = offDate.toISOString().split('T')[0];
 
+        // Log formatted dates
+        console.log(`Formatted Start: ${formattedStartDate}, Formatted End: ${formattedOffDate}`);
+
         // Include entries where either start or off date matches the target date
-        return formattedStartDate === targetDate || formattedOffDate === targetDate;
+        const isValid = formattedStartDate === targetDate || formattedOffDate === targetDate;
+        console.log(`Is valid for target date (${targetDate})?`, isValid);
+
+        return isValid;
     });
 }
+
 
 function getTableOccupancy(filteredData, targetDate) {
     const occupancyData = {};
@@ -243,10 +253,11 @@ async function init() {
     // Add event listener for date changes
     dateInput.addEventListener('change', async (event) => {
         const selectedDate = event.target.value;
-        console.log('Date selected:', selectedDate);
+        console.log('Date selected:', selectedDate); // Log the selected date
         await loadDataForDate(studio, selectedDate);
     });
 }
+
 
 async function loadDataForDate(studio, targetDate) {
     const tableData = await fetchTableData(studio);
