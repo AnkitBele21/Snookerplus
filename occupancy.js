@@ -21,7 +21,7 @@ async function fetchTableData(studio) {
             return [];
         }
 
-        return data[0];
+        return data[0]; // Log the full raw data for further inspection
     } catch (error) {
         console.error('Error fetching table data:', error);
         return [];
