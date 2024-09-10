@@ -35,12 +35,15 @@ function filterDataByDate(tableData, targetDate) {
         const startDate = new Date(entry.StartTime);
         const offDate = new Date(entry.OffTime);
 
+        // Format both dates to 'YYYY-MM-DD'
         const formattedStartDate = startDate.toISOString().split('T')[0];
         const formattedOffDate = offDate.toISOString().split('T')[0];
 
+        // Return entries where both the start and off dates match the target date
         return formattedStartDate === targetDate && formattedOffDate === targetDate;
     });
 }
+
 
 function getTableOccupancy(filteredData) {
     const occupancyData = {};
