@@ -237,7 +237,7 @@ function formatTime(fractionalHour) {
 
 async function init() {
     const studio = 'Studio 111';
-    const targetDate = '2024-09-09';
+    const targetDate = '2024-09-10';
 
     const tableData = await fetchTableData(studio);
     if (!tableData || tableData.length === 0) return;
