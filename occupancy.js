@@ -106,8 +106,15 @@ function displayTableOccupancyChart(occupancyData) {
 
     // Iterate through occupancy data and map to table + date combinations
     occupancyData.forEach(entry => {
+        // Ensure StartTime and OffTime are valid
         const startTime = new Date(entry.StartTime);
         const offTime = new Date(entry.OffTime);
+
+        if (isNaN(startTime.getTime()) || isNaN(offTime.getTime())) {
+            console.error(`Invalid StartTime or OffTime for entry:`, entry);
+            return; // Skip this entry if dates are invalid
+        }
+
         const dateKey = startTime.toISOString().split('T')[0]; // Format date as 'YYYY-MM-DD'
         const tableKey = tableLabels[entry.TableId] || entry.TableId;
 
@@ -175,6 +182,7 @@ function displayTableOccupancyChart(occupancyData) {
         }
     });
 }
+
 
 
 function displayTableOccupancyTable(occupancyData) {
