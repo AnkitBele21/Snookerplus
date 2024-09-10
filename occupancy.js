@@ -1,3 +1,4 @@
+// Convert UTC time to IST (Indian Standard Time)
 function toIST(date) {
     return date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 }
@@ -66,6 +67,11 @@ function getTableOccupancy(filteredData) {
             startTime: startHour,
             offTime: offHour,
         });
+    });
+
+    // Sort each table's entries by start time
+    Object.keys(occupancyData).forEach(tableId => {
+        occupancyData[tableId].sort((a, b) => a.startTime - b.startTime);
     });
 
     return occupancyData;
