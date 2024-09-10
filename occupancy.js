@@ -1,6 +1,6 @@
 // Convert UTC time to IST (Indian Standard Time)
 function toIST(date) {
-    return date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    return new Date(date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
 }
 
 async function fetchTableData(studio) {
@@ -32,8 +32,8 @@ function filterDataByDate(tableData, targetDate) {
     console.log('Filtering data for target date:', targetDate);
 
     return tableData.filter(entry => {
-        const startDate = new Date(entry.StartTime);
-        const offDate = new Date(entry.OffTime);
+        const startDate = toIST(new Date(entry.StartTime));
+        const offDate = toIST(new Date(entry.OffTime));
 
         // Format dates to 'YYYY-MM-DD'
         const formattedStartDate = startDate.toISOString().split('T')[0];
@@ -53,8 +53,8 @@ function getTableOccupancy(filteredData, targetDate) {
 
     filteredData.forEach(entry => {
         const tableId = entry.TableId;
-        let startTime = new Date(entry.StartTime);
-        let offTime = new Date(entry.OffTime);
+        let startTime = toIST(new Date(entry.StartTime));
+        let offTime = toIST(new Date(entry.OffTime));
 
         // Adjust times to be within the target date
         if (startTime < targetDateStart) {
@@ -89,7 +89,6 @@ function getTableOccupancy(filteredData, targetDate) {
     return occupancyData;
 }
 
-
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
     chartContainer.innerHTML = '';
@@ -116,8 +115,8 @@ function displayTableOccupancyChart(occupancyData) {
         const dataset = {
             label: `Table ${tableId}`, 
             data: dataPoints,
-            backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
-            borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
+            backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, 99, 132, 0.5)`,
+            borderColor: `rgba(${Math.floor(Math.random() * 255)}, 99, 132, 1)`,
             borderWidth: 1
         };
 
@@ -136,6 +135,7 @@ function displayTableOccupancyChart(occupancyData) {
                     beginAtZero: true,
                     max: 24,
                     ticks: {
+                        stepSize: 0.25,  // Increase y-axis detail with 15-minute intervals
                         callback: function (value) {
                             const hours = Math.floor(value);
                             const minutes = Math.floor((value - hours) * 60);
