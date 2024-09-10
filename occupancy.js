@@ -39,8 +39,8 @@ function filterDataByDate(tableData, targetDate) {
         const formattedStartDate = startDate.toISOString().split('T')[0];
         const formattedOffDate = offDate.toISOString().split('T')[0];
 
-        // Return entries where both the start and off dates match the target date
-        return formattedStartDate === targetDate && formattedOffDate === targetDate;
+        // Return entries where either the start or off dates match the target date
+        return formattedStartDate === targetDate || formattedOffDate === targetDate;
     });
 }
 
@@ -93,6 +93,7 @@ function getTableOccupancy(filteredData) {
 
     return occupancyData;
 }
+
 
 
 
