@@ -95,14 +95,28 @@ function displayTableOccupancyChart(occupancyData) {
     const canvas = document.createElement('canvas');
     chartContainer.appendChild(canvas);
 
+    const tableLabels = {
+        'T1Studio 111': 'T1',
+        'T2Studio 111': 'T2',
+        'T3Studio 111': 'T3',
+        'T4Studio 111': 'T4'
+    };
+
     const tableOccupancy = {};
 
+    // Iterate through occupancy data and map to table + date combinations
     occupancyData.forEach(entry => {
-        const dateKey = entry.date;
+        const startTime = new Date(entry.StartTime);
+        const offTime = new Date(entry.OffTime);
+        const dateKey = startTime.toISOString().split('T')[0]; // Format date as 'YYYY-MM-DD'
+        const tableKey = tableLabels[entry.TableId] || entry.TableId;
 
-        if (!tableOccupancy[dateKey]) {
-            tableOccupancy[dateKey] = {
-                label: entry.date,
+        // Use 'dateKey tableKey' as the new identifier for the x-axis
+        const labelKey = `${dateKey} ${tableKey}`;
+
+        if (!tableOccupancy[labelKey]) {
+            tableOccupancy[labelKey] = {
+                label: labelKey,
                 data: [],
                 backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
                 borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
@@ -110,22 +124,25 @@ function displayTableOccupancyChart(occupancyData) {
             };
         }
 
-        const startTime = parseFloat(entry.startTime.split(':')[0]) + parseFloat(entry.startTime.split(':')[1]) / 60;
-        const offTime = parseFloat(entry.offTime.split(':')[0]) + parseFloat(entry.offTime.split(':')[1]) / 60;
+        const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }; // 24-hour format
 
-        tableOccupancy[dateKey].data.push({
-            x: entry.date,
-            y: [startTime, offTime]
+        const startHour = startTime.getHours() + startTime.getMinutes() / 60;
+        const endHour = offTime.getHours() + offTime.getMinutes() / 60;
+
+        // Add data to this label
+        tableOccupancy[labelKey].data.push({
+            x: labelKey, // Combine date and table for x-axis label
+            y: [startHour, endHour]
         });
     });
 
+    // Create datasets from aggregated data
     const datasets = Object.values(tableOccupancy);
-    const uniqueDates = [...new Set(occupancyData.map(entry => entry.date))];
 
+    // Create the chart
     new Chart(canvas, {
         type: 'bar',
         data: {
-            labels: uniqueDates,
             datasets: datasets
         },
         options: {
@@ -148,16 +165,17 @@ function displayTableOccupancyChart(occupancyData) {
                 x: {
                     title: {
                         display: true,
-                        text: 'Date'
+                        text: 'Date & Table'
                     },
                     ticks: {
-                        autoSkip: false
+                        autoSkip: false // Make sure all table/date combinations are shown
                     }
                 }
             }
         }
     });
 }
+
 
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
