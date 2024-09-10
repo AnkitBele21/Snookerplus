@@ -30,11 +30,9 @@ function filterDataByDate(tableData, targetDate) {
         const startDate = new Date(entry.StartTime);
         const offDate = new Date(entry.OffTime);
 
-        // Ensure both startDate and offDate match the target date
         const formattedStartDate = startDate.toISOString().split('T')[0];
         const formattedOffDate = offDate.toISOString().split('T')[0];
 
-        // Return true only if both start and off dates are the same as the targetDate
         return formattedStartDate === targetDate && formattedOffDate === targetDate;
     });
 }
@@ -48,14 +46,12 @@ function getTableOccupancy(filteredData) {
         const offTime = new Date(entry.OffTime);
 
         if (offTime < startTime) {
-            console.warn(`Skipping entry with StartTime: ${startTime.toISOString()} and OffTime: ${offTime.toISOString()}`);
+            console.warn(`Skipping entry with StartTime: ${toIST(startTime)} and OffTime: ${toIST(offTime)}`);
             return;
         }
 
-        const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-
-        const startHour = parseFloat(entry.StartTime.split('T')[1].split(':')[0]) + parseFloat(entry.StartTime.split(':')[1]) / 60;
-        const offHour = parseFloat(entry.OffTime.split('T')[1].split(':')[0]) + parseFloat(entry.OffTime.split(':')[1]) / 60;
+        const startHour = startTime.getHours() + startTime.getMinutes() / 60;
+        const offHour = offTime.getHours() + offTime.getMinutes() / 60;
 
         if (!occupancyData[tableId]) {
             occupancyData[tableId] = [];
@@ -95,7 +91,7 @@ function displayTableOccupancyChart(occupancyData) {
         });
 
         const dataset = {
-            label: `Table ${tableId}`,  // Table name appears once per table
+            label: `Table ${tableId}`, 
             data: dataPoints,
             backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
             borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
@@ -120,7 +116,7 @@ function displayTableOccupancyChart(occupancyData) {
                         callback: function (value) {
                             const hours = Math.floor(value);
                             const minutes = Math.floor((value - hours) * 60);
-                            return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`; // Format back to HH:MM
+                            return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`; 
                         }
                     },
                     title: {
@@ -142,7 +138,6 @@ function displayTableOccupancyChart(occupancyData) {
     });
 }
 
-
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
     tableContainer.innerHTML = '';
@@ -151,7 +146,6 @@ function displayTableOccupancyTable(occupancyData) {
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
 
-    // Create header row
     const headerRow = document.createElement('tr');
     ['Table ID', 'Date', 'Start Time', 'End Time'].forEach(headerText => {
         const th = document.createElement('th');
@@ -160,34 +154,28 @@ function displayTableOccupancyTable(occupancyData) {
     });
     thead.appendChild(headerRow);
 
-    // Function to compare table IDs (assuming IDs are in format T1, T2, ...)
     function compareTableIds(a, b) {
         const numA = parseInt(a.replace('T', ''));
         const numB = parseInt(b.replace('T', ''));
         return numA - numB;
     }
 
-    // Sort table IDs
     const sortedTableIds = Object.keys(occupancyData).sort(compareTableIds);
 
-    // Create rows for each table
     sortedTableIds.forEach(tableId => {
-        // Create a header row for the table
         const tableHeaderRow = document.createElement('tr');
         const tdTable = document.createElement('td');
         tdTable.textContent = `Table ${tableId}`;
-        tdTable.colSpan = 4;  // Span across all columns
+        tdTable.colSpan = 4;
         tdTable.style.fontWeight = 'bold';
         tableHeaderRow.appendChild(tdTable);
         tbody.appendChild(tableHeaderRow);
 
-        // Add rows for each entry in the table
         occupancyData[tableId].forEach(entry => {
             const row = document.createElement('tr');
 
-            // Add cells for each entry
             const tdTableId = document.createElement('td');
-            tdTableId.textContent = '';  // Empty cell for the table name (already shown above)
+            tdTableId.textContent = ''; 
             row.appendChild(tdTableId);
 
             const tdDate = document.createElement('td');
@@ -211,14 +199,11 @@ function displayTableOccupancyTable(occupancyData) {
     tableContainer.appendChild(table);
 }
 
-// Helper function to format time from fractional hours to HH:MM
 function formatTime(fractionalHour) {
     const hours = Math.floor(fractionalHour);
     const minutes = Math.floor((fractionalHour - hours) * 60);
     return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
 }
-
-
 
 async function init() {
     const studio = 'Studio 111';
