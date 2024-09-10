@@ -35,67 +35,59 @@ function filterDataByDate(tableData, targetDate) {
         const startDate = new Date(entry.StartTime);
         const offDate = new Date(entry.OffTime);
 
-        // Format both dates to 'YYYY-MM-DD'
+        // Format dates to 'YYYY-MM-DD'
         const formattedStartDate = startDate.toISOString().split('T')[0];
         const formattedOffDate = offDate.toISOString().split('T')[0];
 
-        // Return entries where either the start or off dates match the target date
+        // Include entries where either start or off date matches the target date
         return formattedStartDate === targetDate || formattedOffDate === targetDate;
     });
 }
 
-
-function getTableOccupancy(filteredData) {
+function getTableOccupancy(filteredData, targetDate) {
     const occupancyData = {};
+
+    // Define target date range
+    const targetDateStart = new Date(`${targetDate}T00:00:00`);
+    const targetDateEnd = new Date(`${targetDate}T23:59:59`);
 
     filteredData.forEach(entry => {
         const tableId = entry.TableId;
-        const startTime = new Date(entry.StartTime);
-        const offTime = new Date(entry.OffTime);
+        let startTime = new Date(entry.StartTime);
+        let offTime = new Date(entry.OffTime);
 
-        // Initialize the occupancy structure if not done yet
+        // Adjust times to be within the target date
+        if (startTime < targetDateStart) {
+            startTime = targetDateStart;
+        }
+        if (offTime > targetDateEnd) {
+            offTime = targetDateEnd;
+        }
+
+        // Skip if no overlap with target date
+        if (offTime <= startTime) {
+            return;
+        }
+
+        // Initialize occupancy data for the table
         if (!occupancyData[tableId]) {
             occupancyData[tableId] = [];
         }
 
-        // If the entry crosses the date boundary (start and off dates are different)
-        if (startTime.toISOString().split('T')[0] !== offTime.toISOString().split('T')[0]) {
-            // Part 1: For the current day, from the start time to 23:59
-            const endOfDay = 23 + 59 / 60;  // Representing 23:59 as fractional hours
-
-            occupancyData[tableId].push({
-                date: startTime.toISOString().split('T')[0],  // Current day
-                startTime: startTime.getHours() + startTime.getMinutes() / 60,
-                offTime: endOfDay  // End at 23:59
-            });
-
-            // Part 2: For the next day, from 00:00 to the actual offTime
-            const offHour = offTime.getHours() + offTime.getMinutes() / 60;
-            occupancyData[tableId].push({
-                date: offTime.toISOString().split('T')[0],  // Next day
-                startTime: 0,  // Midnight (00:00)
-                offTime: offHour  // Actual off time on the next day
-            });
-        } else {
-            // If no date boundary is crossed, add the entry directly
-            occupancyData[tableId].push({
-                date: startTime.toISOString().split('T')[0],
-                startTime: startTime.getHours() + startTime.getMinutes() / 60,
-                offTime: offTime.getHours() + offTime.getMinutes() / 60
-            });
-        }
+        occupancyData[tableId].push({
+            date: targetDate,
+            startTime: startTime.getHours() + startTime.getMinutes() / 60,
+            offTime: offTime.getHours() + offTime.getMinutes() / 60,
+        });
     });
 
-    // Sort each table's entries by start time
+    // Sort entries for each table by start time
     Object.keys(occupancyData).forEach(tableId => {
         occupancyData[tableId].sort((a, b) => a.startTime - b.startTime);
     });
 
     return occupancyData;
 }
-
-
-
 
 
 function displayTableOccupancyChart(occupancyData) {
@@ -232,7 +224,7 @@ function displayTableOccupancyTable(occupancyData) {
 
 function formatTime(fractionalHour) {
     const hours = Math.floor(fractionalHour);
-    const minutes = Math.floor((fractionalHour - hours) * 60);
+    const minutes = Math.round((fractionalHour - hours) * 60);
     return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
 }
 
@@ -246,7 +238,7 @@ async function init() {
     const filteredData = filterDataByDate(tableData, targetDate);
     if (filteredData.length === 0) return;
 
-    const occupancyData = getTableOccupancy(filteredData);
+    const occupancyData = getTableOccupancy(filteredData, targetDate);
 
     displayTableOccupancyChart(occupancyData);
     displayTableOccupancyTable(occupancyData);
