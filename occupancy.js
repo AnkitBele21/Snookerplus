@@ -23,20 +23,20 @@ async function fetchTableData(studio) {
     }
 }
 
-function filterDataByTableAndDate(tableData, targetTableId, targetDate) {
-    console.log('Filtering data for table:', targetTableId, 'and target date:', targetDate);
+function filterDataByTablesAndDate(tableData, targetTableIds, targetDate) {
+    console.log('Filtering data for tables:', targetTableIds, 'and target date:', targetDate);
 
     const filtered = tableData.filter(entry => {
         const tableId = entry.TableId;
         const startDate = new Date(entry.StartTime);
         const offDate = new Date(entry.OffTime);
 
-        // Ensure both startDate and offDate are the same and match the target date
+        // Ensure both startDate and offDate match the target date
         const formattedStartDate = startDate.toISOString().split('T')[0];
         const formattedOffDate = offDate.toISOString().split('T')[0];
 
-        // Return true only if both start and off dates are the same as the targetDate
-        return tableId === targetTableId && formattedStartDate === targetDate && formattedOffDate === targetDate;
+        // Return true if the table ID is in the targetTableIds array and both start and off dates match the target date
+        return targetTableIds.includes(tableId) && formattedStartDate === targetDate && formattedOffDate === targetDate;
     });
 
     console.log('Filtered data:', filtered);
@@ -192,13 +192,13 @@ function displayTableOccupancyTable(occupancyData) {
 
 async function init() {
     const studio = 'Studio 111';
-    const targetTableId = 'T1Studio 111';
+    const targetTableIds = ['T1Studio 111', 'T2Studio 111', 'T3Studio 111', 'T4Studio 111'];
     const targetDate = '2024-09-09';
 
     const tableData = await fetchTableData(studio);
     if (!tableData || tableData.length === 0) return;
 
-    const filteredData = filterDataByTableAndDate(tableData, targetTableId, targetDate);
+    const filteredData = filterDataByTablesAndDate(tableData, targetTableIds, targetDate);
     if (filteredData.length === 0) return;
 
     const occupancyData = getTableOccupancy(filteredData);
