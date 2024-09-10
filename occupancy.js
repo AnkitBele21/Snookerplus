@@ -78,52 +78,41 @@ function displayTableOccupancyChart(occupancyData) {
     const canvas = document.createElement('canvas');
     chartContainer.appendChild(canvas);
 
-    const tableOccupancy = {};
+    const tableOccupancy = [];
 
-    occupancyData.forEach(entry => {
-        const dateKey = entry.date;
+    Object.keys(occupancyData).forEach(tableId => {
+        occupancyData[tableId].forEach(entry => {
+            // Parse start and end time into fractional hours for plotting
+            const startHour = entry.startTime;
+            const offHour = entry.offTime;
 
-        if (!tableOccupancy[dateKey]) {
-            tableOccupancy[dateKey] = [];
-        }
-
-        // Parse start and end time into hours and minutes
-        const startTimeParts = entry.startTime.split(':').map(Number);
-        const offTimeParts = entry.offTime.split(':').map(Number);
-
-        // Calculate start and end time as fractional hours
-        const startTime = startTimeParts[0] + startTimeParts[1] / 60;
-        const offTime = offTimeParts[0] + offTimeParts[1] / 60;
-
-        // Push data for each table with the respective start and off time
-        tableOccupancy[dateKey].push({
-            tableId: entry.tableId,
-            startTime: entry.startTime,
-            offTime: entry.offTime,
-            startFractionalTime: startTime,
-            offFractionalTime: offTime
+            // Push data for each table with the respective start and off time
+            tableOccupancy.push({
+                tableId: tableId,
+                date: entry.date,
+                startFractionalTime: startHour,
+                offFractionalTime: offHour
+            });
         });
     });
 
     // Create datasets for each table
     const datasets = [];
-    Object.keys(tableOccupancy).forEach(dateKey => {
-        tableOccupancy[dateKey].forEach(entry => {
-            const dataset = {
-                label: `Table ${entry.tableId} on ${entry.date}`,
-                data: [{
-                    x: entry.date,
-                    y: [entry.startFractionalTime, entry.offFractionalTime]
-                }],
-                backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
-                borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
-                borderWidth: 1
-            };
-            datasets.push(dataset);
-        });
+    tableOccupancy.forEach(entry => {
+        const dataset = {
+            label: `Table ${entry.tableId} on ${entry.date}`,
+            data: [{
+                x: entry.date,
+                y: [entry.startFractionalTime, entry.offFractionalTime]
+            }],
+            backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
+            borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
+            borderWidth: 1
+        };
+        datasets.push(dataset);
     });
 
-    const uniqueDates = [...new Set(occupancyData.map(entry => entry.date))];
+    const uniqueDates = [...new Set(tableOccupancy.map(entry => entry.date))];
 
     new Chart(canvas, {
         type: 'bar',
@@ -162,7 +151,6 @@ function displayTableOccupancyChart(occupancyData) {
     });
 }
 
-
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
     tableContainer.innerHTML = '';
@@ -195,6 +183,7 @@ function displayTableOccupancyTable(occupancyData) {
     table.appendChild(tbody);
     tableContainer.appendChild(table);
 }
+
 
 async function init() {
     const studio = 'Studio 111';
