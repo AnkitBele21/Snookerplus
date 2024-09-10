@@ -78,41 +78,32 @@ function displayTableOccupancyChart(occupancyData) {
     const canvas = document.createElement('canvas');
     chartContainer.appendChild(canvas);
 
-    const tableOccupancy = [];
+    const datasets = [];
+    const uniqueDates = [];
 
     Object.keys(occupancyData).forEach(tableId => {
-        occupancyData[tableId].forEach(entry => {
-            // Parse start and end time into fractional hours for plotting
+        const dataPoints = occupancyData[tableId].map(entry => {
             const startHour = entry.startTime;
             const offHour = entry.offTime;
-
-            // Push data for each table with the respective start and off time
-            tableOccupancy.push({
-                tableId: tableId,
-                date: entry.date,
-                startFractionalTime: startHour,
-                offFractionalTime: offHour
-            });
-        });
-    });
-
-    // Create datasets for each table
-    const datasets = [];
-    tableOccupancy.forEach(entry => {
-        const dataset = {
-            label: `Table ${entry.tableId} on ${entry.date}`,
-            data: [{
+            if (!uniqueDates.includes(entry.date)) {
+                uniqueDates.push(entry.date);
+            }
+            return {
                 x: entry.date,
-                y: [entry.startFractionalTime, entry.offFractionalTime]
-            }],
+                y: [startHour, offHour]
+            };
+        });
+
+        const dataset = {
+            label: `Table ${tableId}`,  // Table name appears once per table
+            data: dataPoints,
             backgroundColor: `rgba(${Math.random() * 255}, 99, 132, 0.5)`,
             borderColor: `rgba(${Math.random() * 255}, 99, 132, 1)`,
             borderWidth: 1
         };
+
         datasets.push(dataset);
     });
-
-    const uniqueDates = [...new Set(tableOccupancy.map(entry => entry.date))];
 
     new Chart(canvas, {
         type: 'bar',
@@ -151,6 +142,7 @@ function displayTableOccupancyChart(occupancyData) {
     });
 }
 
+
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
     tableContainer.innerHTML = '';
@@ -168,11 +160,26 @@ function displayTableOccupancyTable(occupancyData) {
     thead.appendChild(headerRow);
 
     Object.keys(occupancyData).forEach(tableId => {
+        // Create a table row for the tableId, but only once
+        const tableRow = document.createElement('tr');
+        const tdTable = document.createElement('td');
+        tdTable.textContent = `Table ${tableId}`;
+        tdTable.colSpan = 4;  // Span across all columns to make it clear this is a table header row
+        tdTable.style.fontWeight = 'bold';
+        tableRow.appendChild(tdTable);
+        tbody.appendChild(tableRow);
+
+        // Now append the data for that table
         occupancyData[tableId].forEach(entry => {
             const row = document.createElement('tr');
-            [tableId, entry.date, entry.startTime, entry.offTime].forEach(cellText => {
+            ['', entry.date, entry.startTime, entry.offTime].forEach((cellText, index) => {
                 const td = document.createElement('td');
-                td.textContent = cellText;
+                if (index === 0) {
+                    // Empty cell for the table name (since it’s shown only once above)
+                    td.textContent = '';
+                } else {
+                    td.textContent = cellText;
+                }
                 row.appendChild(td);
             });
             tbody.appendChild(row);
