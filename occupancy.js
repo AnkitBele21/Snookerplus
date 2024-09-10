@@ -61,21 +61,20 @@ function getTableOccupancy(filteredData) {
         // If the entry crosses the date boundary (start and off dates are different)
         if (startTime.toISOString().split('T')[0] !== offTime.toISOString().split('T')[0]) {
             // Part 1: For the current day, from the start time to 23:59
-            const endOfDay = new Date(startTime);
-            endOfDay.setHours(23, 59, 59, 999);  // Set time to the end of the day
-            const endHour = 24;  // For display purposes, treat 23:59 as 24:00
+            const endOfDay = 23.9833;  // Representing 23:59 in fractional hours (23 + 59/60)
 
             occupancyData[tableId].push({
                 date: startTime.toISOString().split('T')[0],  // Current day
                 startTime: startTime.getHours() + startTime.getMinutes() / 60,
-                offTime: endHour
+                offTime: endOfDay  // End at 23:59
             });
 
-            // Part 2: For the next day, from 00:00 to the offTime
+            // Part 2: For the next day, from 00:00 to 23:59 (capping at 23:59)
+            const offHour = offTime.getHours() + offTime.getMinutes() / 60;
             occupancyData[tableId].push({
                 date: offTime.toISOString().split('T')[0],  // Next day
                 startTime: 0,  // Midnight
-                offTime: offTime.getHours() + offTime.getMinutes() / 60
+                offTime: offHour > 0 ? endOfDay : offHour  // Cap to 23:59 if necessary
             });
         } else {
             // If no date boundary is crossed, add the entry directly
@@ -94,6 +93,7 @@ function getTableOccupancy(filteredData) {
 
     return occupancyData;
 }
+
 
 
 
