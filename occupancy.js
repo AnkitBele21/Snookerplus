@@ -1,3 +1,7 @@
+function toIST(date) {
+    return date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+}
+
 async function fetchTableData(studio) {
     const url = `https://app.snookerplus.in/apis/data/frames/${encodeURIComponent(studio)}`;
     console.log('Fetching data from:', url);
