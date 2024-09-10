@@ -228,20 +228,33 @@ function formatTime(fractionalHour) {
     return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
 }
 
+// Function to re-initialize based on date selection
 async function init() {
     const studio = 'Studio 111';
-    const targetDate = '2024-09-09';
+    const dateInput = document.getElementById('dateSelector');
 
+    // Initialize with today's date
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+
+    // Trigger loading for the default date (today)
+    await loadDataForDate(studio, today);
+
+    // Add event listener for date changes
+    dateInput.addEventListener('change', async (event) => {
+        const selectedDate = event.target.value;
+        console.log('Date selected:', selectedDate);
+        await loadDataForDate(studio, selectedDate);
+    });
+}
+
+async function loadDataForDate(studio, targetDate) {
     const tableData = await fetchTableData(studio);
-    if (!tableData || tableData.length === 0) return;
-
     const filteredData = filterDataByDate(tableData, targetDate);
-    if (filteredData.length === 0) return;
-
     const occupancyData = getTableOccupancy(filteredData, targetDate);
 
     displayTableOccupancyChart(occupancyData);
     displayTableOccupancyTable(occupancyData);
 }
 
-window.addEventListener('load', init);
+init();
