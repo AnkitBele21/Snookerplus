@@ -53,36 +53,36 @@ function getTableOccupancy(filteredData) {
         const startTime = new Date(entry.StartTime);
         const offTime = new Date(entry.OffTime);
 
-        // If offTime is earlier than startTime, it means the entry crosses the date boundary
-        const startHour = startTime.getHours() + startTime.getMinutes() / 60;
-        const offHour = offTime.getHours() + offTime.getMinutes() / 60;
-
-        // Ensure that occupancy data structure is initialized
+        // Initialize the occupancy structure if not done yet
         if (!occupancyData[tableId]) {
             occupancyData[tableId] = [];
         }
 
-        // If the entry crosses the date boundary
+        // If the entry crosses the date boundary (start and off dates are different)
         if (startTime.toISOString().split('T')[0] !== offTime.toISOString().split('T')[0]) {
-            // Part 1: Add the entry for the current day (ends at 24:00)
+            // Part 1: For the current day, from the start time to 23:59
+            const endOfDay = new Date(startTime);
+            endOfDay.setHours(23, 59, 59, 999);  // Set time to the end of the day
+            const endHour = 24;  // For display purposes, treat 23:59 as 24:00
+
             occupancyData[tableId].push({
-                date: startTime.toISOString().split('T')[0],  // Current date
-                startTime: startHour,
-                offTime: 24  // End at midnight (24:00)
+                date: startTime.toISOString().split('T')[0],  // Current day
+                startTime: startTime.getHours() + startTime.getMinutes() / 60,
+                offTime: endHour
             });
 
-            // Part 2: Add the entry for the next day (starts at 00:00)
+            // Part 2: For the next day, from 00:00 to the offTime
             occupancyData[tableId].push({
                 date: offTime.toISOString().split('T')[0],  // Next day
-                startTime: 0,  // Start at midnight (00:00)
-                offTime: offHour
+                startTime: 0,  // Midnight
+                offTime: offTime.getHours() + offTime.getMinutes() / 60
             });
         } else {
-            // If no date boundary is crossed, simply add the entry as is
+            // If no date boundary is crossed, add the entry directly
             occupancyData[tableId].push({
                 date: startTime.toISOString().split('T')[0],
-                startTime: startHour,
-                offTime: offHour
+                startTime: startTime.getHours() + startTime.getMinutes() / 60,
+                offTime: offTime.getHours() + offTime.getMinutes() / 60
             });
         }
     });
@@ -94,6 +94,7 @@ function getTableOccupancy(filteredData) {
 
     return occupancyData;
 }
+
 
 
 function displayTableOccupancyChart(occupancyData) {
