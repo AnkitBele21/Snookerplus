@@ -23,11 +23,10 @@ async function fetchTableData(studio) {
     }
 }
 
-function filterDataByTablesAndDate(tableData, targetTableIds, targetDate) {
-    console.log('Filtering data for tables:', targetTableIds, 'and target date:', targetDate);
+function filterDataByDate(tableData, targetDate) {
+    console.log('Filtering data for target date:', targetDate);
 
-    const filtered = tableData.filter(entry => {
-        const tableId = entry.TableId;
+    return tableData.filter(entry => {
         const startDate = new Date(entry.StartTime);
         const offDate = new Date(entry.OffTime);
 
@@ -35,19 +34,16 @@ function filterDataByTablesAndDate(tableData, targetTableIds, targetDate) {
         const formattedStartDate = startDate.toISOString().split('T')[0];
         const formattedOffDate = offDate.toISOString().split('T')[0];
 
-        // Return true if the table ID is in the targetTableIds array and both start and off dates match the target date
-        return targetTableIds.includes(tableId) && formattedStartDate === targetDate && formattedOffDate === targetDate;
+        // Return true only if both start and off dates are the same as the targetDate
+        return formattedStartDate === targetDate && formattedOffDate === targetDate;
     });
-
-    console.log('Filtered data:', filtered);
-    return filtered;
 }
 
-
 function getTableOccupancy(filteredData) {
-    const occupancyData = [];
+    const occupancyData = {};
 
     filteredData.forEach(entry => {
+        const tableId = entry.TableId;
         const startTime = new Date(entry.StartTime);
         const offTime = new Date(entry.OffTime);
 
@@ -58,30 +54,17 @@ function getTableOccupancy(filteredData) {
 
         const timeOptions = { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
-        // Handle entries that cross midnight
-        while (startTime.getDate() !== offTime.getDate() || startTime.getMonth() !== offTime.getMonth()) {
-            // Create a split entry for the current day
-            const endOfDay = new Date(startTime);
-            endOfDay.setHours(23, 59, 59, 999);
+        const startHour = parseFloat(entry.StartTime.split('T')[1].split(':')[0]) + parseFloat(entry.StartTime.split(':')[1]) / 60;
+        const offHour = parseFloat(entry.OffTime.split('T')[1].split(':')[0]) + parseFloat(entry.OffTime.split(':')[1]) / 60;
 
-            occupancyData.push({
-                tableId: entry.TableId,
-                date: startTime.toISOString().split('T')[0],
-                startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-                offTime: endOfDay.toLocaleTimeString('en-GB', timeOptions)
-            });
-
-            // Move the start time to the next day at 00:00:00
-            startTime.setDate(startTime.getDate() + 1);
-            startTime.setHours(0, 0, 0, 0);
+        if (!occupancyData[tableId]) {
+            occupancyData[tableId] = [];
         }
 
-        // Add the final part of the entry
-        occupancyData.push({
-            tableId: entry.TableId,
+        occupancyData[tableId].push({
             date: startTime.toISOString().split('T')[0],
-            startTime: startTime.toLocaleTimeString('en-GB', timeOptions),
-            offTime: offTime.toLocaleTimeString('en-GB', timeOptions)
+            startTime: startHour,
+            offTime: offHour,
         });
     });
 
@@ -95,85 +78,39 @@ function displayTableOccupancyChart(occupancyData) {
     const canvas = document.createElement('canvas');
     chartContainer.appendChild(canvas);
 
-    const tableLabels = {
-        'T1Studio 111': 'T1',
-        'T2Studio 111': 'T2',
-        'T3Studio 111': 'T3',
-        'T4Studio 111': 'T4'
-    };
+    const datasets = [];
+    const uniqueDates = [];
 
-    const tableOccupancy = {
-        'T1': [],
-        'T2': [],
-        'T3': [],
-        'T4': []
-    };
+    Object.keys(occupancyData).forEach(tableId => {
+        const tableEntries = occupancyData[tableId];
+        const data = [];
 
-    const labels = new Set(); // To store unique dates for x-axis
+        tableEntries.forEach(entry => {
+            if (!uniqueDates.includes(entry.date)) {
+                uniqueDates.push(entry.date);
+            }
+            data.push({
+                x: entry.date,
+                y: [entry.startTime, entry.offTime]
+            });
+        });
 
-    // Iterate through occupancy data and map to table + date combinations
-    occupancyData.forEach(entry => {
-        // Ensure StartTime and OffTime are valid
-        const startTime = new Date(entry.StartTime);
-        const offTime = new Date(entry.OffTime);
+        const randomColor = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 132, 0.5)`;
 
-        if (isNaN(startTime.getTime()) || isNaN(offTime.getTime())) {
-            console.error(`Invalid StartTime or OffTime for entry:`, entry);
-            return; // Skip this entry if dates are invalid
-        }
-
-        const dateKey = startTime.toISOString().split('T')[0]; // Format date as 'YYYY-MM-DD'
-        const tableKey = tableLabels[entry.TableId] || entry.TableId;
-
-        labels.add(dateKey); // Add date to the set of labels (x-axis)
-
-        const startHour = startTime.getHours() + startTime.getMinutes() / 60;
-        const endHour = offTime.getHours() + offTime.getMinutes() / 60;
-
-        // Push occupancy data to corresponding table
-        tableOccupancy[tableKey].push({
-            x: dateKey, // x-axis is the date
-            y: [startHour, endHour] // y-axis is the start and end time
+        datasets.push({
+            label: `Table ${tableId}`,
+            data: data,
+            backgroundColor: randomColor,
+            borderColor: randomColor.replace('0.5', '1'),
+            borderWidth: 1,
         });
     });
 
-    const datasets = [
-        {
-            label: 'T1',
-            data: tableOccupancy['T1'],
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-        },
-        {
-            label: 'T2',
-            data: tableOccupancy['T2'],
-            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        },
-        {
-            label: 'T3',
-            data: tableOccupancy['T3'],
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-        },
-        {
-            label: 'T4',
-            data: tableOccupancy['T4'],
-            backgroundColor: 'rgba(153, 102, 255, 0.5)',
-            borderColor: 'rgba(153, 102, 255, 1)',
-            borderWidth: 1
-        }
-    ];
-
-    // Create the chart
     new Chart(canvas, {
         type: 'bar',
         data: {
-            labels: Array.from(labels), // Unique dates for the x-axis
-            datasets: datasets // Data for all tables
+            labels: uniqueDates,
+            datasets: datasets
         },
         options: {
             scales: {
@@ -196,30 +133,15 @@ function displayTableOccupancyChart(occupancyData) {
                     title: {
                         display: true,
                         text: 'Date'
-                    }
-                }
-            },
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            const range = context.raw.y;
-                            const start = range[0];
-                            const end = range[1];
-                            return `Start: ${Math.floor(start)}:${Math.floor((start - Math.floor(start)) * 60)} - End: ${Math.floor(end)}:${Math.floor((end - Math.floor(end)) * 60)}`;
-                        }
+                    },
+                    ticks: {
+                        autoSkip: false
                     }
                 }
             }
         }
     });
 }
-
-
 
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
@@ -237,14 +159,16 @@ function displayTableOccupancyTable(occupancyData) {
     });
     thead.appendChild(headerRow);
 
-    occupancyData.forEach(entry => {
-        const row = document.createElement('tr');
-        [entry.tableId, entry.date, entry.startTime, entry.offTime].forEach(cellText => {
-            const td = document.createElement('td');
-            td.textContent = cellText;
-            row.appendChild(td);
+    Object.keys(occupancyData).forEach(tableId => {
+        occupancyData[tableId].forEach(entry => {
+            const row = document.createElement('tr');
+            [tableId, entry.date, entry.startTime, entry.offTime].forEach(cellText => {
+                const td = document.createElement('td');
+                td.textContent = cellText;
+                row.appendChild(td);
+            });
+            tbody.appendChild(row);
         });
-        tbody.appendChild(row);
     });
 
     table.appendChild(thead);
@@ -254,13 +178,12 @@ function displayTableOccupancyTable(occupancyData) {
 
 async function init() {
     const studio = 'Studio 111';
-    const targetTableIds = ['T1Studio 111', 'T2Studio 111', 'T3Studio 111', 'T4Studio 111'];
     const targetDate = '2024-09-09';
 
     const tableData = await fetchTableData(studio);
     if (!tableData || tableData.length === 0) return;
 
-    const filteredData = filterDataByTablesAndDate(tableData, targetTableIds, targetDate);
+    const filteredData = filterDataByDate(tableData, targetDate);
     if (filteredData.length === 0) return;
 
     const occupancyData = getTableOccupancy(filteredData);
