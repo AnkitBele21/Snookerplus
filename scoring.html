@@ -122,10 +122,12 @@
 <div class="message" id="messageStrip" style="display: none;"></div>
 
 <script>
-    const API_KEY = 'YOUR_API_KEY';
-    const SHEET_ID = 'YOUR_SHEET_ID';
-    const SHEET_NAME = 'Scoring';
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+    const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';  // Replace with actual sheet ID
+const SHEET_NAME = 'Scoring'; // Ensure the tab name is 'Scoring'
+const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
+
+const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+
 
     async function fetchData() {
         try {
