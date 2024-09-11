@@ -1,151 +1,23 @@
-/* General Styles */
+/* Custom Styles */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #f9fafb;
-    margin: 0;
-    padding: 20px;
-    color: #333;
 }
 
 h1 {
-    text-align: center;
-    margin-bottom: 30px;
     color: #2c3e50;
-    font-size: 2.5em;
-    letter-spacing: 1px;
     font-weight: 600;
 }
 
-/* Top-up Table Styles */
-#topupTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 40px;
+table {
     background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-    overflow: hidden;
 }
 
-#topupTable th, #topupTable td {
-    padding: 16px;
-    text-align: center;
-    border-bottom: 1px solid #ececec;
-    transition: background-color 0.3s ease;
-}
-
-#topupTable th {
-    background-color: #34495e;
-    color: white;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-#topupTable tr:nth-child(even) {
-    background-color: #f9fafb;
-}
-
-#topupTable tr:hover {
-    background-color: #eaeaea;
-}
-
-#topupTable td {
-    color: #2c3e50;
+input[type="date"] {
     font-size: 16px;
 }
 
-/* Summary Box Styles */
-#summaryBox {
-    display: flex;
-    justify-content: space-around;
-    padding: 15px; /* Reduced padding */
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Softer shadow */
-    margin-bottom: 30px; /* Reduced margin */
-}
-
-#summaryBox div {
-    text-align: center;
-    padding: 10px; /* Reduced padding */
-}
-
-#summaryBox div span {
-    font-size: 22px; /* Smaller font */
-    font-weight: bold;
-    color: #34495e;
-    display: block;
-}
-
-#summaryBox div p {
-    margin-top: 5px; /* Reduced margin */
-    font-size: 16px; /* Smaller font */
-    color: #7f8c8d;
-}
-
-
-/* Date Selector Styles */
-#dateSelectorWrapper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 40px;
-}
-
-#dateSelector {
-    padding: 12px;
-    font-size: 18px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fff;
-    color: #34495e;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-#dateSelector:focus {
-    border-color: #34495e;
-    outline: none;
-    box-shadow: 0 4px 12px rgba(52, 73, 94, 0.2);
-}
-
-/* Button Styles */
-button {
-    background-color: #2ecc71;
-    color: white;
-    padding: 12px 24px;
-    font-size: 18px;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
-}
-
-button:hover {
-    background-color: #27ae60;
-    transform: translateY(-2px);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    #summaryBox {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    #topupTable th, #topupTable td {
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    #summaryBox div span {
-        font-size: 24px;
-    }
-
-    button {
-        font-size: 16px;
-        padding: 10px 20px;
-    }
+/* Optional shadow effect */
+.shadow-sm {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
