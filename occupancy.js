@@ -35,41 +35,31 @@ function filterDataByDate(tableData, targetDate) {
         const startDate = toIST(new Date(entry.StartTime));
         const offDate = toIST(new Date(entry.OffTime));
 
-        // Log the data for debugging
         console.log(`Entry Start: ${startDate}, Entry End: ${offDate}`);
 
-        // Include entries where the time spans across midnight (or the target date)
-        const isSameDay = startDate.toDateString() === offDate.toDateString();
-        const targetDateObj = new Date(targetDate);
+        const formattedStartDate = startDate.toISOString().split('T')[0];
+        const formattedOffDate = offDate.toISOString().split('T')[0];
 
-        const isValid = (
-            // Check if the entry starts or ends on the target date
-            (startDate.toDateString() === targetDateObj.toDateString()) ||
-            (offDate.toDateString() === targetDateObj.toDateString()) ||
-            // Check if the entry spans across the target date
-            (startDate < targetDateObj && offDate > targetDateObj)
-        );
+        console.log(`Formatted Start: ${formattedStartDate}, Formatted End: ${formattedOffDate}`);
 
+        const isValid = formattedStartDate === targetDate || formattedOffDate === targetDate;
         console.log(`Is valid for target date (${targetDate})?`, isValid);
+
         return isValid;
     });
 }
 
-
-
 function getTableOccupancy(filteredData, targetDate) {
     const occupancyData = {};
 
-    // Define target date range
-    const targetDateStart = new Date(`${targetDate}T00:00:00`);  // Start at 00:00
-    const targetDateEnd = new Date(`${targetDate}T23:59:59`);    // End at 23:59
+    const targetDateStart = new Date(`${targetDate}T00:01:00`);  // Start at 00:01
+    const targetDateEnd = new Date(`${targetDate}T23:59:00`);    // End at 23:59
 
     filteredData.forEach(entry => {
         const tableId = entry.TableId;
         let startTime = toIST(new Date(entry.StartTime));
         let offTime = toIST(new Date(entry.OffTime));
 
-        // Adjust times if they span across the target date
         if (startTime < targetDateStart) {
             startTime = targetDateStart;
         }
@@ -77,12 +67,10 @@ function getTableOccupancy(filteredData, targetDate) {
             offTime = targetDateEnd;
         }
 
-        // Skip if no overlap with target date
         if (offTime <= startTime) {
             return;
         }
 
-        // Initialize occupancy data for the table
         if (!occupancyData[tableId]) {
             occupancyData[tableId] = [];
         }
@@ -94,7 +82,6 @@ function getTableOccupancy(filteredData, targetDate) {
         });
     });
 
-    // Sort entries for each table by start time
     Object.keys(occupancyData).forEach(tableId => {
         occupancyData[tableId].sort((a, b) => a.startTime - b.startTime);
     });
@@ -102,12 +89,12 @@ function getTableOccupancy(filteredData, targetDate) {
     return occupancyData;
 }
 
-
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
     chartContainer.innerHTML = '';
 
     const canvas = document.createElement('canvas');
+    canvas.style.height = '600px';  // Increase the height of the graph
     chartContainer.appendChild(canvas);
 
     const datasets = [];
@@ -175,73 +162,6 @@ function displayTableOccupancyChart(occupancyData) {
     });
 }
 
-function displayTableOccupancyTable(occupancyData) {
-    const tableContainer = document.getElementById('tableOccupancyTable');
-    tableContainer.innerHTML = '';
-
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const tbody = document.createElement('tbody');
-
-    const headerRow = document.createElement('tr');
-    ['Table ID', 'Date', 'Start Time', 'End Time'].forEach(headerText => {
-        const th = document.createElement('th');
-        th.textContent = headerText;
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-
-    function compareTableIds(a, b) {
-        const numA = parseInt(a.replace('T', ''));
-        const numB = parseInt(b.replace('T', ''));
-        return numA - numB;
-    }
-
-    const sortedTableIds = Object.keys(occupancyData).sort(compareTableIds);
-
-    sortedTableIds.forEach(tableId => {
-        const tableHeaderRow = document.createElement('tr');
-        const tdTable = document.createElement('td');
-        tdTable.textContent = `Table ${tableId}`;
-        tdTable.colSpan = 4;
-        tdTable.style.fontWeight = 'bold';
-        tableHeaderRow.appendChild(tdTable);
-        tbody.appendChild(tableHeaderRow);
-
-        occupancyData[tableId].forEach(entry => {
-            const row = document.createElement('tr');
-
-            const tdTableId = document.createElement('td');
-            tdTableId.textContent = ''; 
-            row.appendChild(tdTableId);
-
-            const tdDate = document.createElement('td');
-            tdDate.textContent = entry.date;
-            row.appendChild(tdDate);
-
-            const tdStartTime = document.createElement('td');
-            tdStartTime.textContent = formatTime(entry.startTime);
-            row.appendChild(tdStartTime);
-
-            const tdEndTime = document.createElement('td');
-            tdEndTime.textContent = formatTime(entry.offTime);
-            row.appendChild(tdEndTime);
-
-            tbody.appendChild(row);
-        });
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    tableContainer.appendChild(table);
-}
-
-function formatTime(fractionalHour) {
-    const hours = Math.floor(fractionalHour);
-    const minutes = Math.round((fractionalHour - hours) * 60);
-    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-}
-
 // Function to re-initialize based on date selection
 async function init() {
     const studio = 'Studio 111';
@@ -262,14 +182,12 @@ async function init() {
     });
 }
 
-
 async function loadDataForDate(studio, targetDate) {
     const tableData = await fetchTableData(studio);
     const filteredData = filterDataByDate(tableData, targetDate);
     const occupancyData = getTableOccupancy(filteredData, targetDate);
 
     displayTableOccupancyChart(occupancyData);
-    displayTableOccupancyTable(occupancyData);
 }
 
 init();
