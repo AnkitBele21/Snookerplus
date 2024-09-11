@@ -4,45 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Topup Data</title>
-    <link rel="stylesheet" href="topup.css"> <!-- Link to the CSS file -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="topup.css"> <!-- Link to additional custom CSS file -->
 </head>
 <body>
-    <h1>Topup Data</h1>
 
-    <!-- Summary Box -->
-    <div id="summaryBox">
-        <div>
-            <p>Total Topup: <span id="totalTopup">0.00</span></p>
+    <div class="container my-4">
+        <!-- Heading -->
+        <h1 class="text-center mb-4">Topup Data</h1>
+
+        <!-- Summary Box -->
+        <div class="row text-center mb-4">
+            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                <div class="p-3 bg-white shadow-sm rounded">
+                    <p class="mb-1">Total Topup:</p>
+                    <span id="totalTopup" class="h4 text-dark">0.00</span>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 mb-3 mb-md-0">
+                <div class="p-3 bg-white shadow-sm rounded">
+                    <p class="mb-1">Online Total:</p>
+                    <span id="onlineTotal" class="h4 text-dark">0.00</span>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="p-3 bg-white shadow-sm rounded">
+                    <p class="mb-1">Cash Total:</p>
+                    <span id="cashTotal" class="h4 text-dark">0.00</span>
+                </div>
+            </div>
         </div>
-        <div>
-            <p>Online Total: <span id="onlineTotal">0.00</span></p>
+
+        <!-- Date Selector -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-12 col-sm-6 col-md-4">
+                <div class="input-group">
+                    <label for="dateSelector" class="input-group-text">Select Date</label>
+                    <input type="date" id="dateSelector" class="form-control">
+                </div>
+            </div>
         </div>
-        <div>
-            <p>Cash Total: <span id="cashTotal">0.00</span></p>
+
+        <!-- Topup Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center bg-white shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Total Topup</th>
+                        <th>Online</th>
+                        <th>Cash</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be dynamically inserted here by JavaScript -->
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Date Selector -->
-    <div id="dateSelectorWrapper">
-        <label for="dateSelector">Select Date:</label>
-        <input type="date" id="dateSelector">
-    </div>
-
-    <!-- Topup Table -->
-    <table id="topupTable">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Total Topup</th>
-                <th>Online</th>
-                <th>Cash</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Table rows will be dynamically inserted here by JavaScript -->
-        </tbody>
-    </table>
-
+    <!-- Bootstrap JS (for responsive utilities) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="topup.js"></script> <!-- Link to the JavaScript file -->
 </body>
 </html>
