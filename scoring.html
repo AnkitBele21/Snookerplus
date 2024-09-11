@@ -32,7 +32,7 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            width: calc(100% - 20px); /* Minimal spacing from the edges */
+            width: calc(100% - 20px); /* Spacing from edges */
             margin: 10px;
             background: #1D1D25;
             color: #FFFFFF;
@@ -40,55 +40,60 @@
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            padding: 5px 10px; /* Reduced padding */
+            padding: 10px 20px;
             box-sizing: border-box;
             border-top: 2px solid #01AB7A;
-            transition: all 0.3s ease; /* Smooth transition */
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
         .center-content {
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
         }
         .logo {
-            height: 25px; /* Reduced size */
-            margin-bottom: 2px;
+            height: 30px;
+            margin-bottom: 8px;
         }
         .player-info {
             display: flex;
             flex-direction: column;
             align-items: center;
             flex: 1;
-            transition: all 0.3s ease; /* Smooth transition */
+            text-align: center;
+            transition: all 0.3s ease;
         }
         .name {
-            font-size: 1.2em; /* Adjusted font size */
+            font-size: 1.3em;
             margin: 0;
-            transition: all 0.3s ease; /* Smooth transition */
+            font-weight: bold;
         }
         .score {
-            font-size: 1em; /* Adjusted font size */
-            margin: 2px 0;
+            font-size: 1.5em;
+            margin-top: 5px;
+            font-weight: 700;
+            color: #01AB7A;
         }
         .rounds {
-            font-size: 0.8em; /* Adjusted font size */
-            margin: 2px 0;
+            font-size: 1.2em;
+            color: #ccc;
         }
         .active {
             background: #01AB7A;
             color: #1D1D25;
-            border-radius: 5px;
             padding: 5px 10px;
-            transition: all 0.3s ease; /* Smooth transition */
+            border-radius: 5px;
+            font-weight: bold;
         }
         .message {
-            width: calc(100% - 20px); /* Minimal spacing from the edges */
+            width: calc(100% - 20px);
             margin: 10px;
             position: absolute;
             bottom: 0;
             left: 0;
             text-align: center;
-            font-size: 1.5em; /* Font size for message */
+            font-size: 1.5em;
             padding: 5px;
             background: #01AB7A;
             color: #1D1D25;
@@ -117,8 +122,8 @@
 <div class="message" id="messageStrip" style="display: none;"></div>
 
 <script>
-    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc';
-    const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';
+    const API_KEY = 'YOUR_API_KEY';
+    const SHEET_ID = 'YOUR_SHEET_ID';
     const SHEET_NAME = 'Scoring';
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
