@@ -21,7 +21,7 @@ async function fetchTableData(studio) {
             return [];
         }
 
-        return data[0]; // Log the full raw data for further inspection
+        return data[0]; // Returning the first element, assuming the data structure is an array
     } catch (error) {
         console.error('Error fetching table data:', error);
         return [];
@@ -35,18 +35,14 @@ function filterDataByDate(tableData, targetDate) {
         const startDate = toIST(new Date(entry.StartTime));
         const offDate = toIST(new Date(entry.OffTime));
 
-        // Log the data for debugging
-        console.log(`Entry Start: ${startDate}, Entry End: ${offDate}`);
+        console.log(`Entry Start: ${startDate}, Entry End: ${offDate}`); // Log for debugging
 
-        // Include entries where the time spans across midnight (or the target date)
-        const isSameDay = startDate.toDateString() === offDate.toDateString();
         const targetDateObj = new Date(targetDate);
-
+        
+        // Filter based on if the entry spans or occurs on the target date
         const isValid = (
-            // Check if the entry starts or ends on the target date
-            (startDate.toDateString() === targetDateObj.toDateString()) ||
-            (offDate.toDateString() === targetDateObj.toDateString()) ||
-            // Check if the entry spans across the target date
+            startDate.toDateString() === targetDateObj.toDateString() ||
+            offDate.toDateString() === targetDateObj.toDateString() ||
             (startDate < targetDateObj && offDate > targetDateObj)
         );
 
@@ -55,34 +51,26 @@ function filterDataByDate(tableData, targetDate) {
     });
 }
 
-
-
 function getTableOccupancy(filteredData, targetDate) {
     const occupancyData = {};
 
-    // Define target date range
-    const targetDateStart = new Date(`${targetDate}T00:00:00`);  // Start at 00:00
-    const targetDateEnd = new Date(`${targetDate}T23:59:59`);    // End at 23:59
+    // Define the time range for the target date (00:00 - 23:59)
+    const targetDateStart = new Date(`${targetDate}T00:00:00`);
+    const targetDateEnd = new Date(`${targetDate}T23:59:59`);
 
     filteredData.forEach(entry => {
         const tableId = entry.TableId;
         let startTime = toIST(new Date(entry.StartTime));
         let offTime = toIST(new Date(entry.OffTime));
 
-        // Adjust times if they span across the target date
-        if (startTime < targetDateStart) {
-            startTime = targetDateStart;
-        }
-        if (offTime > targetDateEnd) {
-            offTime = targetDateEnd;
-        }
+        // Adjust times if the entry spans outside the target date
+        if (startTime < targetDateStart) startTime = targetDateStart;
+        if (offTime > targetDateEnd) offTime = targetDateEnd;
 
-        // Skip if no overlap with target date
-        if (offTime <= startTime) {
-            return;
-        }
+        // Skip entries with no valid overlap with the target date
+        if (offTime <= startTime) return;
 
-        // Initialize occupancy data for the table
+        // Initialize occupancy data for the table if it doesn't exist
         if (!occupancyData[tableId]) {
             occupancyData[tableId] = [];
         }
@@ -94,14 +82,13 @@ function getTableOccupancy(filteredData, targetDate) {
         });
     });
 
-    // Sort entries for each table by start time
+    // Sort each table's entries by start time
     Object.keys(occupancyData).forEach(tableId => {
         occupancyData[tableId].sort((a, b) => a.startTime - b.startTime);
     });
 
     return occupancyData;
 }
-
 
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
@@ -115,26 +102,23 @@ function displayTableOccupancyChart(occupancyData) {
 
     Object.keys(occupancyData).forEach(tableId => {
         const dataPoints = occupancyData[tableId].map(entry => {
-            const startHour = entry.startTime;
-            const offHour = entry.offTime;
-            if (!uniqueDates.includes(entry.date)) {
-                uniqueDates.push(entry.date);
-            }
+            if (!uniqueDates.includes(entry.date)) uniqueDates.push(entry.date);
+
             return {
                 x: entry.date,
-                y: [startHour, offHour]
+                y: [entry.startTime, entry.offTime]  // Start and end times as y values
             };
         });
 
-        const dataset = {
+        const randomColor = `rgba(${Math.floor(Math.random() * 255)}, 99, 132, 0.5)`;
+
+        datasets.push({
             label: `Table ${tableId}`, 
             data: dataPoints,
-            backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, 99, 132, 0.5)`,
-            borderColor: `rgba(${Math.floor(Math.random() * 255)}, 99, 132, 1)`,
+            backgroundColor: randomColor,
+            borderColor: randomColor.replace('0.5', '1'),
             borderWidth: 1
-        };
-
-        datasets.push(dataset);
+        });
     });
 
     new Chart(canvas, {
@@ -149,7 +133,7 @@ function displayTableOccupancyChart(occupancyData) {
                     beginAtZero: true,
                     max: 24,
                     ticks: {
-                        stepSize: 0.25,  // Increase y-axis detail with 15-minute intervals
+                        stepSize: 0.25,  // 15-minute intervals
                         callback: function (value) {
                             const hours = Math.floor(value);
                             const minutes = Math.floor((value - hours) * 60);
@@ -191,13 +175,8 @@ function displayTableOccupancyTable(occupancyData) {
     });
     thead.appendChild(headerRow);
 
-    function compareTableIds(a, b) {
-        const numA = parseInt(a.replace('T', ''));
-        const numB = parseInt(b.replace('T', ''));
-        return numA - numB;
-    }
-
-    const sortedTableIds = Object.keys(occupancyData).sort(compareTableIds);
+    // Sort table IDs for better readability
+    const sortedTableIds = Object.keys(occupancyData).sort((a, b) => parseInt(a.replace('T', '')) - parseInt(b.replace('T', '')));
 
     sortedTableIds.forEach(tableId => {
         const tableHeaderRow = document.createElement('tr');
@@ -212,7 +191,7 @@ function displayTableOccupancyTable(occupancyData) {
             const row = document.createElement('tr');
 
             const tdTableId = document.createElement('td');
-            tdTableId.textContent = ''; 
+            tdTableId.textContent = ''; // Empty cell under 'Table' header
             row.appendChild(tdTableId);
 
             const tdDate = document.createElement('td');
@@ -242,7 +221,7 @@ function formatTime(fractionalHour) {
     return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
 }
 
-// Function to re-initialize based on date selection
+// Function to initialize and handle date changes
 async function init() {
     const studio = 'Studio 111';
     const dateInput = document.getElementById('dateSelector');
@@ -251,17 +230,16 @@ async function init() {
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
 
-    // Trigger loading for the default date (today)
+    // Load data for the default date (today)
     await loadDataForDate(studio, today);
 
     // Add event listener for date changes
     dateInput.addEventListener('change', async (event) => {
         const selectedDate = event.target.value;
-        console.log('Date selected:', selectedDate); // Log the selected date
+        console.log('Date selected:', selectedDate);
         await loadDataForDate(studio, selectedDate);
     });
 }
-
 
 async function loadDataForDate(studio, targetDate) {
     const tableData = await fetchTableData(studio);
@@ -272,4 +250,5 @@ async function loadDataForDate(studio, targetDate) {
     displayTableOccupancyTable(occupancyData);
 }
 
+// Initialize the script
 init();
