@@ -23,32 +23,26 @@
             font-weight: 600;
         }
 
-        /* Compact Summary Box */
+        /* Modern Summary Box */
         .summary-box {
             background-color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
-        }
-
-        .summary-item {
             text-align: center;
-            border-right: 1px solid #ececec;
+            font-size: 1.1rem;
         }
 
-        .summary-item:last-child {
-            border-right: none;
-        }
-
-        .summary-item p {
-            margin: 0;
-            font-size: 14px;
+        .summary-box p {
+            margin: 10px 0;
             color: #7f8c8d;
+            font-weight: 500;
         }
 
-        .summary-item span {
-            font-size: 1.5em;
+        .summary-box span {
+            display: block;
+            font-size: 1.8rem;
             font-weight: bold;
             color: #2c3e50;
         }
@@ -58,6 +52,40 @@
             margin-bottom: 30px;
         }
 
+        table {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #34495e;
+            color: #fff;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: center;
+            border-bottom: 1px solid #ececec;
+        }
+
+        td {
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Modern Date Format */
+        td.date-cell {
+            font-weight: bold;
+            color: #16a085;
+            font-size: 1.2rem;
+        }
+
         /* Date Selector Styling */
         #dateSelector {
             font-size: 16px;
@@ -65,12 +93,24 @@
             border-radius: 6px;
             border: 1px solid #ccc;
             color: #34495e;
+            box-shadow: 0 0 6px rgba(52, 73, 94, 0.1);
         }
 
         #dateSelector:focus {
             outline: none;
             border-color: #34495e;
             box-shadow: 0 0 6px rgba(52, 73, 94, 0.2);
+        }
+
+        /* Responsive Summary Box */
+        @media (max-width: 768px) {
+            .summary-box span {
+                font-size: 1.6rem;
+            }
+
+            .summary-box p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -80,20 +120,11 @@
         <!-- Heading -->
         <h1>Topup Data</h1>
 
-        <!-- Compact Summary Box -->
-        <div class="row summary-box">
-            <div class="col-4 summary-item">
-                <p>Total Topup</p>
-                <span id="totalTopup">0.00</span>
-            </div>
-            <div class="col-4 summary-item">
-                <p>Online Total</p>
-                <span id="onlineTotal">0.00</span>
-            </div>
-            <div class="col-4 summary-item">
-                <p>Cash Total</p>
-                <span id="cashTotal">0.00</span>
-            </div>
+        <!-- Modern Summary Box -->
+        <div class="summary-box">
+            <p>Total Topup: <span id="totalTopup">0.00</span></p>
+            <p>Online Total: <span id="onlineTotal">0.00</span></p>
+            <p>Cash Total: <span id="cashTotal">0.00</span></p>
         </div>
 
         <!-- Date Selector -->
@@ -108,8 +139,8 @@
 
         <!-- Topup Table -->
         <div class="table-responsive">
-            <table id="topupTable" class="table table-bordered table-hover text-center bg-white shadow-sm">
-                <thead class="table-dark">
+            <table id="topupTable" class="table table-bordered table-hover text-center">
+                <thead>
                     <tr>
                         <th>Date</th>
                         <th>Total Topup</th>
