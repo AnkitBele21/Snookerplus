@@ -1,6 +1,6 @@
 // Convert UTC time to IST (Indian Standard Time)
 function toIST(date) {
-    return new Date(date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+    return new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
 }
 
 async function fetchTableData(studio) {
