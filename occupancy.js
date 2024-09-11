@@ -38,35 +38,38 @@ function filterDataByDate(tableData, targetDate) {
         // Log the data for debugging
         console.log(`Entry Start: ${startDate}, Entry End: ${offDate}`);
 
-        // Format dates to 'YYYY-MM-DD'
-        const formattedStartDate = startDate.toISOString().split('T')[0];
-        const formattedOffDate = offDate.toISOString().split('T')[0];
+        // Include entries where the time spans across midnight (or the target date)
+        const isSameDay = startDate.toDateString() === offDate.toDateString();
+        const targetDateObj = new Date(targetDate);
 
-        // Log formatted dates
-        console.log(`Formatted Start: ${formattedStartDate}, Formatted End: ${formattedOffDate}`);
+        const isValid = (
+            // Check if the entry starts or ends on the target date
+            (startDate.toDateString() === targetDateObj.toDateString()) ||
+            (offDate.toDateString() === targetDateObj.toDateString()) ||
+            // Check if the entry spans across the target date
+            (startDate < targetDateObj && offDate > targetDateObj)
+        );
 
-        // Include entries where either start or off date matches the target date
-        const isValid = formattedStartDate === targetDate || formattedOffDate === targetDate;
         console.log(`Is valid for target date (${targetDate})?`, isValid);
-
         return isValid;
     });
 }
+
 
 
 function getTableOccupancy(filteredData, targetDate) {
     const occupancyData = {};
 
     // Define target date range
-    const targetDateStart = new Date(`${targetDate}T00:01:00`);  // Start at 00:01
-    const targetDateEnd = new Date(`${targetDate}T23:59:00`);    // End at 23:59
+    const targetDateStart = new Date(`${targetDate}T00:00:00`);  // Start at 00:00
+    const targetDateEnd = new Date(`${targetDate}T23:59:59`);    // End at 23:59
 
     filteredData.forEach(entry => {
         const tableId = entry.TableId;
         let startTime = toIST(new Date(entry.StartTime));
         let offTime = toIST(new Date(entry.OffTime));
 
-        // Adjust times to be within the target date
+        // Adjust times if they span across the target date
         if (startTime < targetDateStart) {
             startTime = targetDateStart;
         }
