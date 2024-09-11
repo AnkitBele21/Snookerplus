@@ -58,8 +58,8 @@ function getTableOccupancy(filteredData, targetDate) {
     const occupancyData = {};
 
     // Define target date range
-    const targetDateStart = new Date(`${targetDate}T00:00:00`);
-    const targetDateEnd = new Date(`${targetDate}T23:59:59`);
+    const targetDateStart = new Date(`${targetDate}T00:01:00`);  // Start at 00:01
+    const targetDateEnd = new Date(`${targetDate}T23:59:00`);    // End at 23:59
 
     filteredData.forEach(entry => {
         const tableId = entry.TableId;
@@ -98,6 +98,7 @@ function getTableOccupancy(filteredData, targetDate) {
 
     return occupancyData;
 }
+
 
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
