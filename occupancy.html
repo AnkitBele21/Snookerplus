@@ -3,208 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table Occupancy Chart</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 0;
-            margin: 0;
-            background-color: #f4f4f4;
-        }
-
-        #chartContainer {
-            width: 100%;
-            max-width: 800px;
-            height: 500px; /* Increase height for better mobile visibility */
-            margin: 20px auto;
-            padding: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: white;
-            border-radius: 8px;
-        }
-
-        canvas {
-            width: 100% !important;
-            height: 100% !important; /* Ensure chart takes full height */
-        }
-
-        /* Media queries for responsiveness */
-        @media (max-width: 768px) {
-            #chartContainer {
-                height: 600px; /* Adjust height for smaller screens */
-            }
-
-            canvas {
-                height: 100% !important;
-            }
-        }
-    </style>
+    <title>Snooker Table Occupancy</title>
+    <link rel="stylesheet" href="occupancy.css">
 </head>
 <body>
+    <header>
+        <h1>Snooker Table Occupancy for Studio 111</h1>
+    </header>
 
-    <div id="chartContainer">
-        <canvas id="tableOccupancyChart"></canvas>
+    <div class="container">
+        <div>
+            <label for="dateSelector">Select Date:</label>
+            <input type="date" id="dateSelector">
+        </div>
+        <div id="tableOccupancyChart" class="chart-container"></div>
     </div>
 
-    <input type="date" id="dateSelector" style="margin: 10px auto; display: block;" />
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        function toIST(date) {
-            return new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-        }
-
-        async function fetchTableData(studio) {
-            const url = `https://app.snookerplus.in/apis/data/frames/${encodeURIComponent(studio)}`;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-                return data[0] || [];
-            } catch (error) {
-                console.error('Error fetching table data:', error);
-                return [];
-            }
-        }
-
-        function filterDataByDate(tableData, targetDate) {
-            return tableData.filter(entry => {
-                const startDate = toIST(new Date(entry.StartTime));
-                const offDate = toIST(new Date(entry.OffTime));
-
-                const formattedStartDate = startDate.toISOString().split('T')[0];
-                const formattedOffDate = offDate.toISOString().split('T')[0];
-
-                return formattedStartDate === targetDate || formattedOffDate === targetDate;
-            });
-        }
-
-        function getTableOccupancy(filteredData, targetDate) {
-            const occupancyData = {};
-            const targetDateStart = new Date(`${targetDate}T00:01:00`);
-            const targetDateEnd = new Date(`${targetDate}T23:59:00`);
-
-            filteredData.forEach(entry => {
-                const tableId = entry.TableId;
-                let startTime = toIST(new Date(entry.StartTime));
-                let offTime = toIST(new Date(entry.OffTime));
-
-                if (startTime < targetDateStart) startTime = targetDateStart;
-                if (offTime > targetDateEnd) offTime = targetDateEnd;
-
-                if (offTime <= startTime) return;
-
-                if (!occupancyData[tableId]) occupancyData[tableId] = [];
-                occupancyData[tableId].push({
-                    date: targetDate,
-                    startTime: startTime.getHours() + startTime.getMinutes() / 60,
-                    offTime: offTime.getHours() + offTime.getMinutes() / 60,
-                });
-            });
-
-            Object.keys(occupancyData).forEach(tableId => {
-                occupancyData[tableId].sort((a, b) => a.startTime - b.startTime);
-            });
-
-            return occupancyData;
-        }
-
-        function displayTableOccupancyChart(occupancyData) {
-            const chartContainer = document.getElementById('tableOccupancyChart').getContext('2d');
-
-            const datasets = [];
-            const uniqueDates = [];
-
-            Object.keys(occupancyData).forEach(tableId => {
-                const dataPoints = occupancyData[tableId].map(entry => {
-                    const startHour = entry.startTime;
-                    const offHour = entry.offTime;
-                    if (!uniqueDates.includes(entry.date)) {
-                        uniqueDates.push(entry.date);
-                    }
-                    return {
-                        x: entry.date,
-                        y: [startHour, offHour]
-                    };
-                });
-
-                const dataset = {
-                    label: `Table ${tableId}`,
-                    data: dataPoints,
-                    backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, 99, 132, 0.5)`,
-                    borderColor: `rgba(${Math.floor(Math.random() * 255)}, 99, 132, 1)`,
-                    borderWidth: 1
-                };
-
-                datasets.push(dataset);
-            });
-
-            new Chart(chartContainer, {
-                type: 'bar',
-                data: {
-                    labels: uniqueDates,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 24,
-                            ticks: {
-                                stepSize: 0.25,  // 15-minute intervals
-                                callback: function (value) {
-                                    const hours = Math.floor(value);
-                                    const minutes = Math.floor((value - hours) * 60);
-                                    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Time (24-hour scale)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            },
-                            ticks: {
-                                autoSkip: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        async function init() {
-            const studio = 'Studio 111';
-            const dateInput = document.getElementById('dateSelector');
-
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.value = today;
-
-            await loadDataForDate(studio, today);
-
-            dateInput.addEventListener('change', async (event) => {
-                const selectedDate = event.target.value;
-                await loadDataForDate(studio, selectedDate);
-            });
-        }
-
-        async function loadDataForDate(studio, targetDate) {
-            const tableData = await fetchTableData(studio);
-            const filteredData = filterDataByDate(tableData, targetDate);
-            const occupancyData = getTableOccupancy(filteredData, targetDate);
-
-            displayTableOccupancyChart(occupancyData);
-        }
-
-        init();
-    </script>
-
+    <script src="occupancy.js"></script>
 </body>
 </html>
