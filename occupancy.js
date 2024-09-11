@@ -90,6 +90,7 @@ function getTableOccupancy(filteredData, targetDate) {
     return occupancyData;
 }
 
+// Function to display the occupancy chart
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
     chartContainer.innerHTML = '';
@@ -113,7 +114,7 @@ function displayTableOccupancyChart(occupancyData) {
         const randomColor = `rgba(${Math.floor(Math.random() * 255)}, 99, 132, 0.5)`;
 
         datasets.push({
-            label: `Table ${tableId}`, 
+            label: `Table ${tableId}`,
             data: dataPoints,
             backgroundColor: randomColor,
             borderColor: randomColor.replace('0.5', '1'),
@@ -128,6 +129,8 @@ function displayTableOccupancyChart(occupancyData) {
             datasets: datasets
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
@@ -142,22 +145,33 @@ function displayTableOccupancyChart(occupancyData) {
                     },
                     title: {
                         display: true,
-                        text: 'Time (24-hour scale)'
+                        text: 'Time (24-hour scale)',
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }  // Adjust font size based on screen width
                     }
                 },
                 x: {
                     title: {
                         display: true,
-                        text: 'Date'
+                        text: 'Date',
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }  // Adjust font size based on screen width
                     },
                     ticks: {
-                        autoSkip: false
+                        autoSkip: false,
+                        font: { size: window.innerWidth < 768 ? 10 : 12 }  // Adjust font size for mobile
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }  // Legend font size adjustment
                     }
                 }
             }
         }
     });
 }
+
 
 function displayTableOccupancyTable(occupancyData) {
     const tableContainer = document.getElementById('tableOccupancyTable');
