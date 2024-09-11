@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             position: relative;
             height: 100vh;
             width: 100vw;
@@ -22,28 +22,31 @@
             width: 100%;
             height: 100%;
             z-index: -1;
+            background: linear-gradient(135deg, #0b0b12, #1d1d25);
         }
         .fullscreen-bg img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            opacity: 0.5;
         }
         .overlay {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: calc(100% - 20px); /* Minimal spacing from the edges */
-            margin: 10px;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%; 
             background: #1D1D25;
             color: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
-            padding: 5px 10px; /* Reduced padding */
+            padding: 15px 20px; 
+            border-radius: 10px;
             box-sizing: border-box;
-            border-top: 2px solid #01AB7A;
-            transition: all 0.3s ease; /* Smooth transition */
+            border-top: 4px solid #01AB7A;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
         .center-content {
             display: flex;
@@ -51,47 +54,61 @@
             align-items: center;
         }
         .logo {
-            height: 25px; /* Reduced size */
-            margin-bottom: 2px;
+            height: 40px; 
+            margin-bottom: 5px;
         }
         .player-info {
             display: flex;
             flex-direction: column;
             align-items: center;
             flex: 1;
-            transition: all 0.3s ease; /* Smooth transition */
         }
         .name {
-            font-size: 1.2em; /* Adjusted font size */
+            font-size: 1.5em; 
             margin: 0;
-            transition: all 0.3s ease; /* Smooth transition */
+            font-weight: 600;
         }
         .score {
-            font-size: 1em; /* Adjusted font size */
-            margin: 2px 0;
+            font-size: 1.2em; 
+            margin: 5px 0;
+            font-weight: 700;
         }
         .rounds {
-            font-size: 0.8em; /* Adjusted font size */
-            margin: 2px 0;
+            font-size: 1em; 
+            margin: 5px 0;
+            color: #cccccc;
         }
         .active {
-            background: #01AB7A;
-            color: #1D1D25;
-            border-radius: 5px;
-            padding: 5px 10px;
-            transition: all 0.3s ease; /* Smooth transition */
+            color: #01AB7A;
+            text-shadow: 0 0 5px rgba(1, 171, 122, 0.8);
         }
         .message {
-            width: calc(100% - 20px); /* Minimal spacing from the edges */
-            margin: 10px;
+            width: 95%; 
+            margin: 20px auto;
             position: absolute;
             bottom: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
-            font-size: 1.5em; /* Font size for message */
-            padding: 5px;
+            font-size: 1.6em; 
+            padding: 15px;
             background: #01AB7A;
             color: #1D1D25;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Smooth Fade In Animation for Message */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -140,7 +157,6 @@
                 player1Name.classList.remove('active');
                 player2Name.classList.remove('active');
 
-                // Add active class to the current player
                 if (rowData[4] === '1') {
                     player1Name.classList.add('active');
                 } else if (rowData[4] === '2') {
