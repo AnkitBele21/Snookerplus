@@ -10,6 +10,7 @@ h1 {
     text-align: center;
     color: #333;
     margin-top: 20px;
+    font-size: 2rem;
 }
 
 .container {
@@ -18,32 +19,43 @@ h1 {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
+/* Chart Section */
 #tableOccupancyChart {
     background-color: #fff;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
     width: 100%;
-    margin: 20px auto;
+    margin: 20px 0;
+    overflow-x: auto;
 }
 
 #tableOccupancyChart canvas {
     display: block;
-    max-width: 100%;
-    height: auto;
+    width: 100%;
+    height: 600px; /* Increased height for better granularity */
 }
 
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 600px; /* Maintain consistent height with the canvas */
+}
+
+/* Table Section */
 .table-container {
     background-color: #fff;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
     width: 100%;
-    margin: 20px auto;
+    margin: 20px 0;
+    overflow-x: auto;
 }
 
 .table-container table {
@@ -56,6 +68,7 @@ h1 {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 .table-container th {
@@ -63,6 +76,7 @@ h1 {
     font-weight: bold;
 }
 
+/* Alert Messages */
 .alert {
     background-color: #f8d7da;
     color: #721c24;
@@ -79,25 +93,26 @@ h1 {
     color: #155724;
 }
 
-/* ChartJS Styles */
-.chart-container {
-    position: relative;
-    height: 400px;
-    width: 100%;
-}
-
-canvas {
-    max-width: 100%;
-    height: auto;
-}
-
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
     .container {
         padding: 10px;
     }
 
-    h1 {
-        font-size: 1.5rem;
+    #tableOccupancyChart, 
+    .table-container {
+        padding: 15px;
+    }
+
+    #tableOccupancyChart canvas {
+        height: 400px; /* Reduce chart height for mobile screens */
+    }
+
+    .table-container th, .table-container td {
+        padding: 6px;
     }
 }
