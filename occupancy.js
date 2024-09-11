@@ -14,7 +14,7 @@ async function fetchTableData(studio) {
         }
 
         const data = await response.json();
-        console.log('Full API response:', data); // Log the full API response
+        console.log('Full API response:', data);
 
         if (!data || data.length === 0) {
             console.warn('API returned empty data or invalid structure:', data);
@@ -35,11 +35,10 @@ function filterDataByDate(tableData, targetDate) {
         const startDate = toIST(new Date(entry.StartTime));
         const offDate = toIST(new Date(entry.OffTime));
 
-        console.log(`Entry Start: ${startDate}, Entry End: ${offDate}`); // Log for debugging
+        console.log(`Entry Start: ${startDate}, Entry End: ${offDate}`);
 
         const targetDateObj = new Date(targetDate);
         
-        // Filter based on if the entry spans or occurs on the target date
         const isValid = (
             startDate.toDateString() === targetDateObj.toDateString() ||
             offDate.toDateString() === targetDateObj.toDateString() ||
@@ -54,7 +53,6 @@ function filterDataByDate(tableData, targetDate) {
 function getTableOccupancy(filteredData, targetDate) {
     const occupancyData = {};
 
-    // Define the time range for the target date (00:00 - 23:59)
     const targetDateStart = new Date(`${targetDate}T00:00:00`);
     const targetDateEnd = new Date(`${targetDate}T23:59:59`);
 
@@ -63,14 +61,11 @@ function getTableOccupancy(filteredData, targetDate) {
         let startTime = toIST(new Date(entry.StartTime));
         let offTime = toIST(new Date(entry.OffTime));
 
-        // Adjust times if the entry spans outside the target date
         if (startTime < targetDateStart) startTime = targetDateStart;
         if (offTime > targetDateEnd) offTime = targetDateEnd;
 
-        // Skip entries with no valid overlap with the target date
         if (offTime <= startTime) return;
 
-        // Initialize occupancy data for the table if it doesn't exist
         if (!occupancyData[tableId]) {
             occupancyData[tableId] = [];
         }
@@ -82,7 +77,6 @@ function getTableOccupancy(filteredData, targetDate) {
         });
     });
 
-    // Sort each table's entries by start time
     Object.keys(occupancyData).forEach(tableId => {
         occupancyData[tableId].sort((a, b) => a.startTime - b.startTime);
     });
@@ -90,7 +84,6 @@ function getTableOccupancy(filteredData, targetDate) {
     return occupancyData;
 }
 
-// Function to display the occupancy chart
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
     chartContainer.innerHTML = '';
@@ -146,25 +139,25 @@ function displayTableOccupancyChart(occupancyData) {
                     title: {
                         display: true,
                         text: 'Time (24-hour scale)',
-                        font: { size: window.innerWidth < 768 ? 10 : 14 }  // Adjust font size based on screen width
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }
                     }
                 },
                 x: {
                     title: {
                         display: true,
                         text: 'Date',
-                        font: { size: window.innerWidth < 768 ? 10 : 14 }  // Adjust font size based on screen width
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }
                     },
                     ticks: {
                         autoSkip: false,
-                        font: { size: window.innerWidth < 768 ? 10 : 12 }  // Adjust font size for mobile
+                        font: { size: window.innerWidth < 768 ? 10 : 12 }
                     }
                 }
             },
             plugins: {
                 legend: {
                     labels: {
-                        font: { size: window.innerWidth < 768 ? 10 : 14 }  // Legend font size adjustment
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }
                     }
                 }
             }
@@ -172,82 +165,15 @@ function displayTableOccupancyChart(occupancyData) {
     });
 }
 
-
-function displayTableOccupancyTable(occupancyData) {
-    const tableContainer = document.getElementById('tableOccupancyTable');
-    tableContainer.innerHTML = '';
-
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    const tbody = document.createElement('tbody');
-
-    const headerRow = document.createElement('tr');
-    ['Table ID', 'Date', 'Start Time', 'End Time'].forEach(headerText => {
-        const th = document.createElement('th');
-        th.textContent = headerText;
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-
-    // Sort table IDs for better readability
-    const sortedTableIds = Object.keys(occupancyData).sort((a, b) => parseInt(a.replace('T', '')) - parseInt(b.replace('T', '')));
-
-    sortedTableIds.forEach(tableId => {
-        const tableHeaderRow = document.createElement('tr');
-        const tdTable = document.createElement('td');
-        tdTable.textContent = `Table ${tableId}`;
-        tdTable.colSpan = 4;
-        tdTable.style.fontWeight = 'bold';
-        tableHeaderRow.appendChild(tdTable);
-        tbody.appendChild(tableHeaderRow);
-
-        occupancyData[tableId].forEach(entry => {
-            const row = document.createElement('tr');
-
-            const tdTableId = document.createElement('td');
-            tdTableId.textContent = ''; // Empty cell under 'Table' header
-            row.appendChild(tdTableId);
-
-            const tdDate = document.createElement('td');
-            tdDate.textContent = entry.date;
-            row.appendChild(tdDate);
-
-            const tdStartTime = document.createElement('td');
-            tdStartTime.textContent = formatTime(entry.startTime);
-            row.appendChild(tdStartTime);
-
-            const tdEndTime = document.createElement('td');
-            tdEndTime.textContent = formatTime(entry.offTime);
-            row.appendChild(tdEndTime);
-
-            tbody.appendChild(row);
-        });
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    tableContainer.appendChild(table);
-}
-
-function formatTime(fractionalHour) {
-    const hours = Math.floor(fractionalHour);
-    const minutes = Math.round((fractionalHour - hours) * 60);
-    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-}
-
-// Function to initialize and handle date changes
 async function init() {
     const studio = 'Studio 111';
     const dateInput = document.getElementById('dateSelector');
 
-    // Initialize with today's date
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
 
-    // Load data for the default date (today)
     await loadDataForDate(studio, today);
 
-    // Add event listener for date changes
     dateInput.addEventListener('change', async (event) => {
         const selectedDate = event.target.value;
         console.log('Date selected:', selectedDate);
@@ -261,7 +187,6 @@ async function loadDataForDate(studio, targetDate) {
     const occupancyData = getTableOccupancy(filteredData, targetDate);
 
     displayTableOccupancyChart(occupancyData);
-    displayTableOccupancyTable(occupancyData);
 }
 
 // Initialize the script
