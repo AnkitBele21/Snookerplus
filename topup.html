@@ -6,33 +6,93 @@
     <title>Topup Data</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="topup.css"> <!-- Link to additional custom CSS file -->
+    <!-- Link to additional custom CSS -->
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9fafb;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        /* Compact Summary Box */
+        .summary-box {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .summary-item {
+            text-align: center;
+            border-right: 1px solid #ececec;
+        }
+
+        .summary-item:last-child {
+            border-right: none;
+        }
+
+        .summary-item p {
+            margin: 0;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .summary-item span {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Table Styling */
+        .table-responsive {
+            margin-bottom: 30px;
+        }
+
+        /* Date Selector Styling */
+        #dateSelector {
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            color: #34495e;
+        }
+
+        #dateSelector:focus {
+            outline: none;
+            border-color: #34495e;
+            box-shadow: 0 0 6px rgba(52, 73, 94, 0.2);
+        }
+    </style>
 </head>
 <body>
 
     <div class="container my-4">
         <!-- Heading -->
-        <h1 class="text-center mb-4">Topup Data</h1>
+        <h1>Topup Data</h1>
 
-        <!-- Summary Box -->
-        <div class="row text-center mb-4">
-            <div class="col-12 col-md-4 mb-3 mb-md-0">
-                <div class="p-3 bg-white shadow-sm rounded">
-                    <p class="mb-1">Total Topup:</p>
-                    <span id="totalTopup" class="h4 text-dark">0.00</span>
-                </div>
+        <!-- Compact Summary Box -->
+        <div class="row summary-box">
+            <div class="col-4 summary-item">
+                <p>Total Topup</p>
+                <span id="totalTopup">0.00</span>
             </div>
-            <div class="col-12 col-md-4 mb-3 mb-md-0">
-                <div class="p-3 bg-white shadow-sm rounded">
-                    <p class="mb-1">Online Total:</p>
-                    <span id="onlineTotal" class="h4 text-dark">0.00</span>
-                </div>
+            <div class="col-4 summary-item">
+                <p>Online Total</p>
+                <span id="onlineTotal">0.00</span>
             </div>
-            <div class="col-12 col-md-4">
-                <div class="p-3 bg-white shadow-sm rounded">
-                    <p class="mb-1">Cash Total:</p>
-                    <span id="cashTotal" class="h4 text-dark">0.00</span>
-                </div>
+            <div class="col-4 summary-item">
+                <p>Cash Total</p>
+                <span id="cashTotal">0.00</span>
             </div>
         </div>
 
