@@ -116,58 +116,53 @@ function displayTableOccupancyChart(occupancyData) {
     });
 
     new Chart(canvas, {
-    type: 'bar',
-    data: {
-        labels: uniqueDates,
-        datasets: datasets
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: false,
-                min: 6, // Starting at 06:00
-                max: 30, // Ending at 05:00 of the next day (24 + 6)
-                ticks: {
-                    stepSize: 1, // 1-hour intervals
-                    callback: function (value) {
-                        let adjustedValue = value;
-                        if (value >= 24) {
-                            adjustedValue = value - 24; // Adjust for times past 24:00
+        type: 'bar',
+        data: {
+            labels: uniqueDates,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 24,
+                    ticks: {
+                        stepSize: 0.25,  // 15-minute intervals
+                        callback: function (value) {
+                            const hours = Math.floor(value);
+                            const minutes = Math.floor((value - hours) * 60);
+                            return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`; 
                         }
-                        const hours = Math.floor(adjustedValue);
-                        const minutes = Math.floor((adjustedValue - hours) * 60);
-                        return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`; 
+                    },
+                    title: {
+                        display: true,
+                        text: 'Time (24-hour scale)',
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }
                     }
                 },
-                title: {
-                    display: true,
-                    text: 'Time (24-hour scale)',
-                    font: { size: window.innerWidth < 768 ? 10 : 14 }
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date',
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }
+                    },
+                    ticks: {
+                        autoSkip: false,
+                        font: { size: window.innerWidth < 768 ? 10 : 12 }
+                    }
                 }
             },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Date',
-                    font: { size: window.innerWidth < 768 ? 10 : 14 }
-                },
-                ticks: {
-                    autoSkip: false,
-                    font: { size: window.innerWidth < 768 ? 10 : 12 }
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                labels: {
-                    font: { size: window.innerWidth < 768 ? 10 : 14 }
+            plugins: {
+                legend: {
+                    labels: {
+                        font: { size: window.innerWidth < 768 ? 10 : 14 }
+                    }
                 }
             }
         }
-    }
-});
+    });
 }
 
 async function init() {
