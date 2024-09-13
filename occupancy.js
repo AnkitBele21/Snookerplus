@@ -115,6 +115,33 @@ function displayTableOccupancyChart(occupancyData) {
         });
     });
 
+    // Get the current time in hours (24-hour format)
+    const now = toIST(new Date());
+    const currentTime = now.getHours() + now.getMinutes() / 60;
+
+    // Plugin to draw the horizontal line for the current time
+    const currentTimePlugin = {
+        id: 'currentTimeLine',
+        beforeDraw: (chart) => {
+            const ctx = chart.ctx;
+            const yScale = chart.scales.y;
+
+            // Find the pixel position for the current time
+            const yPosition = yScale.getPixelForValue(currentTime);
+
+            // Draw the line
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(chart.chartArea.left, yPosition);
+            ctx.lineTo(chart.chartArea.right, yPosition);
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.restore();
+        }
+    };
+
+    // Create the chart with the plugin for the horizontal line
     new Chart(canvas, {
         type: 'bar',
         data: {
@@ -161,9 +188,11 @@ function displayTableOccupancyChart(occupancyData) {
                     }
                 }
             }
-        }
+        },
+        plugins: [currentTimePlugin]
     });
 }
+
 
 async function init() {
     const studio = 'Studio 111';
