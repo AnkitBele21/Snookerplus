@@ -1,6 +1,18 @@
+// Convert the current UTC time to IST (Indian Standard Time)
+function getCurrentDateInIST() {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000; // Get the timezone offset in milliseconds
+    const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+    const istTime = new Date(now.getTime() + offset + istOffset);
+    
+    return istTime.toISOString().split('T')[0];  // Return the date in YYYY-MM-DD format
+}
+
 // Convert UTC time to IST (Indian Standard Time)
 function toIST(date) {
-    return new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const offset = date.getTimezoneOffset() * 60000; // Get the timezone offset in milliseconds
+    const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+    return new Date(date.getTime() + offset + istOffset);
 }
 
 // Function to extract studio name from the URL query string
@@ -200,13 +212,7 @@ function displayTableOccupancyChart(occupancyData) {
     });
 }
 
-// Adjust date to Indian Standard Time (IST) and return it in YYYY-MM-DD format
-function getCurrentDateInIST() {
-    const currentISTDate = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
-    const currentDateIST = new Date(currentISTDate); // Convert to Date object
-    return currentDateIST.toISOString().split('T')[0];  // Extract the date in YYYY-MM-DD format
-}
-
+// Initialize the script with the correct date
 async function init() {
     const studio = getStudioFromUrl();  // Get studio from URL
     const dateInput = document.getElementById('dateSelector');
