@@ -91,7 +91,6 @@ function getTableOccupancy(filteredData, targetDate) {
     return occupancyData;
 }
 
-
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
     chartContainer.innerHTML = '';
@@ -201,12 +200,17 @@ function displayTableOccupancyChart(occupancyData) {
     });
 }
 
+// Adjust date to Indian Standard Time (IST) and return it in YYYY-MM-DD format
+function getCurrentDateInIST() {
+    const currentISTDate = toIST(new Date());
+    return currentISTDate.toISOString().split('T')[0];  // Extract the date in YYYY-MM-DD format
+}
 
 async function init() {
     const studio = getStudioFromUrl();  // Get studio from URL
     const dateInput = document.getElementById('dateSelector');
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = getCurrentDateInIST();  // Get the current date in IST
     dateInput.value = today;
 
     await loadDataForDate(studio, today);
