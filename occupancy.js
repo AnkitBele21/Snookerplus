@@ -84,7 +84,7 @@ function getTableOccupancy(filteredData, targetDate) {
     return occupancyData;
 }
 
-function displayTableOccupancyChart(occupancyData) {
+function displayTableOccupancyChart(occupancyData, targetDate) {
     const chartContainer = document.getElementById('tableOccupancyChart');
     chartContainer.innerHTML = '';
 
@@ -115,7 +115,8 @@ function displayTableOccupancyChart(occupancyData) {
         });
     });
 
-    // Get the current time in hours (24-hour format)
+    // Get the current date and time in IST
+    const today = new Date().toISOString().split('T')[0];
     const now = toIST(new Date());
     const currentTime = now.getHours() + now.getMinutes() / 60;
 
@@ -141,7 +142,13 @@ function displayTableOccupancyChart(occupancyData) {
         }
     };
 
-    // Create the chart with the plugin for the horizontal line
+    // Conditionally add the plugin only if the target date is today
+    const chartPlugins = [];
+    if (targetDate === today) {
+        chartPlugins.push(currentTimePlugin);
+    }
+
+    // Create the chart with or without the plugin for the horizontal line
     new Chart(canvas, {
         type: 'bar',
         data: {
@@ -189,9 +196,10 @@ function displayTableOccupancyChart(occupancyData) {
                 }
             }
         },
-        plugins: [currentTimePlugin]
+        plugins: chartPlugins // Only include the plugin if it’s the current date
     });
 }
+
 
 
 async function init() {
