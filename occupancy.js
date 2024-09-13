@@ -3,6 +3,12 @@ function toIST(date) {
     return new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
 }
 
+// Function to extract studio name from the URL query string
+function getStudioFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('studio') || 'Studio 111'; // Default to 'Studio 111' if no studio is specified in the URL
+}
+
 async function fetchTableData(studio) {
     const url = `https://app.snookerplus.in/apis/data/frames/${encodeURIComponent(studio)}`;
     console.log('Fetching data from:', url);
@@ -197,7 +203,7 @@ function displayTableOccupancyChart(occupancyData) {
 
 
 async function init() {
-    const studio = 'Studio 111';
+    const studio = getStudioFromUrl();  // Get studio from URL
     const dateInput = document.getElementById('dateSelector');
 
     const today = new Date().toISOString().split('T')[0];
