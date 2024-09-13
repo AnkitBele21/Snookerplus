@@ -202,8 +202,9 @@ function displayTableOccupancyChart(occupancyData) {
 
 // Adjust date to Indian Standard Time (IST) and return it in YYYY-MM-DD format
 function getCurrentDateInIST() {
-    const currentISTDate = toIST(new Date());
-    return currentISTDate.toISOString().split('T')[0];  // Extract the date in YYYY-MM-DD format
+    const currentISTDate = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+    const currentDateIST = new Date(currentISTDate); // Convert to Date object
+    return currentDateIST.toISOString().split('T')[0];  // Extract the date in YYYY-MM-DD format
 }
 
 async function init() {
