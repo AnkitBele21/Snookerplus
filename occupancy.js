@@ -55,11 +55,12 @@ function getTableOccupancy(filteredData, targetDate) {
 
     const targetDateStart = new Date(`${targetDate}T00:00:00`);
     const targetDateEnd = new Date(`${targetDate}T23:59:59`);
+    const currentTime = new Date(); // Current time for ongoing frames
 
     filteredData.forEach(entry => {
         const tableId = entry.TableId;
         let startTime = toIST(new Date(entry.StartTime));
-        let offTime = toIST(new Date(entry.OffTime));
+        let offTime = entry.OffTime ? toIST(new Date(entry.OffTime)) : currentTime; // If OffTime is missing, use the current time
 
         if (startTime < targetDateStart) startTime = targetDateStart;
         if (offTime > targetDateEnd) offTime = targetDateEnd;
@@ -83,6 +84,7 @@ function getTableOccupancy(filteredData, targetDate) {
 
     return occupancyData;
 }
+
 
 function displayTableOccupancyChart(occupancyData) {
     const chartContainer = document.getElementById('tableOccupancyChart');
