@@ -20,7 +20,23 @@
     <h2>Graphical Representation</h2>
     <canvas id="analyticsChart" width="400" height="200"></canvas> <!-- Chart.js canvas -->
 
+    <h2>Hourly Slot Data (6:00 AM - 5:00 AM)</h2>
+    <table id="hourlySlotsTable" border="1">
+        <thead>
+            <tr>
+                <th>Slot</th>
+                <th>Start Time</th>
+                <th>Duration (Minutes)</th>
+                <th>Total Money (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Hourly slots will be populated dynamically from peak.js -->
+        </tbody>
+    </table>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
     <script src="Owndash.js"></script>
+    <script src="peak.js"></script> <!-- Include the new peak.js file -->
 </body>
 </html>
