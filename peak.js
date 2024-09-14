@@ -4,9 +4,7 @@ function convertToIST(dateString) {
     
     // Convert UTC to IST (UTC+5:30)
     const offsetIST = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
-    const istDate = new Date(date.getTime() + offsetIST);
-    
-    return istDate; // Return the IST-adjusted date
+    return new Date(date.getTime() + offsetIST); // Return the IST-adjusted date
 }
 
 // Function to create the hourly bar chart
@@ -81,8 +79,10 @@ function populateHourlySlotsData(frames) {
             const minutesInCurrentSlot = isStartSlot ? (endDate.getMinutes() + 1) : 60;
             const timeToAllocate = isStartSlot ? duration : Math.min(duration, minutesInCurrentSlot);
 
-            slots[startSlotIndex].duration += timeToAllocate;
-            slots[startSlotIndex].totalMoney += (timeToAllocate / duration) * totalMoney;
+            // Make sure we are using a variable, not a constant, for modification
+            let currentSlotIndex = startSlotIndex;
+            slots[currentSlotIndex].duration += timeToAllocate;
+            slots[currentSlotIndex].totalMoney += (timeToAllocate / duration) * totalMoney;
 
             // Move to the next slot
             duration -= timeToAllocate;
@@ -126,5 +126,7 @@ async function init() {
     // Populate the hourly slots data for bar chart
     populateHourlySlotsData(frames);
 }
+
+
 
 window.addEventListener('load', init);
