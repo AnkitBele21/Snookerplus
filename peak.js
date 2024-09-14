@@ -1,11 +1,11 @@
 // Function to convert a UTC date/time string to Indian Standard Time (IST)
 function convertToIST(dateString) {
     const date = new Date(dateString); // Parse the incoming date string (assuming it's in UTC)
-
+    
     // Convert UTC to IST (UTC+5:30)
     const offsetIST = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
     const istDate = new Date(date.getTime() + offsetIST);
-
+    
     return istDate; // Return the IST-adjusted date
 }
 
@@ -14,8 +14,8 @@ function createHourlyBarChart(slots) {
     const ctx = document.getElementById('hourlyBarChart').getContext('2d');
 
     const labels = slots.map(slot => slot.startTime); // Extract time slots
-    const durationData = slots.map(slot => slot.duration.toFixed(2)); // Duration for each slot
-    const totalMoneyData = slots.map(slot => slot.totalMoney.toFixed(2)); // Total money for each slot
+    const durationData = slots.map(slot => slot.duration); // Duration for each slot
+    const totalMoneyData = slots.map(slot => slot.totalMoney); // Total money for each slot
 
     new Chart(ctx, {
         type: 'bar',
@@ -69,19 +69,22 @@ function populateHourlySlotsData(frames) {
         const duration = parseInt(frame.Duration, 10) || 0;
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
+        // Calculate end time and determine the ending hour
+        const endDate = new Date(startDate.getTime() + duration * 60 * 1000);
+        let endHour = endDate.getHours();
+
         let remainingDuration = duration; // Track remaining duration to distribute over hours
         let slotIndex = (hour >= 6 ? hour - 6 : hour + 18); // Mapping 6:00 AM to 5:00 AM
 
         // Distribute duration and money across hours if it spans multiple slots
         while (remainingDuration > 0) {
-            const minutesInCurrentHour = 60 - startDate.getMinutes(); // Minutes remaining in the current hour
+            const minutesInCurrentHour = (endHour === hour) ? endDate.getMinutes() : 60 - startDate.getMinutes();
             const timeToAllocate = Math.min(remainingDuration, minutesInCurrentHour);
 
             slots[slotIndex].duration += timeToAllocate;
             slots[slotIndex].totalMoney += (timeToAllocate / duration) * totalMoney;
 
             remainingDuration -= timeToAllocate;
-            startDate.setMinutes(0); // Reset minutes for next hour calculation
 
             // Move to the next hour slot
             hour = (hour + 1) % 24;
@@ -89,11 +92,13 @@ function populateHourlySlotsData(frames) {
         }
     });
 
+    // Log the slots data to debug
+    console.log(slots);
+
     // Create the hourly bar chart
     createHourlyBarChart(slots);
 }
 
-// Main initialization function
 async function init() {
     const table = 'frames';
 
