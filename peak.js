@@ -65,30 +65,30 @@ function populateHourlySlotsData(frames) {
         const startDate = convertToIST(frame.StartTime); // Convert the frame's start time to IST
         if (!startDate || isNaN(startDate.getTime())) return; // Skip invalid dates
 
-        let hour = startDate.getHours(); // Use the IST-adjusted hour
+        const startHour = startDate.getHours(); // Use the IST-adjusted start hour
         const duration = parseInt(frame.Duration, 10) || 0;
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
-        // Calculate end time and determine the ending hour
-        const endDate = new Date(startDate.getTime() + duration * 60 * 1000);
+        // Determine the start and end slots
+        let startSlotIndex = (startHour >= 6 ? startHour - 6 : startHour + 18); // Mapping 6:00 AM to 5:00 AM
+        let endDate = new Date(startDate.getTime() + duration * 60 * 1000);
         let endHour = endDate.getHours();
+        let endSlotIndex = (endHour >= 6 ? endHour - 6 : endHour + 18);
 
-        let remainingDuration = duration; // Track remaining duration to distribute over hours
-        let slotIndex = (hour >= 6 ? hour - 6 : hour + 18); // Mapping 6:00 AM to 5:00 AM
+        // Distribute duration and money across slots
+        while (startSlotIndex <= endSlotIndex) {
+            const isStartSlot = startHour === endHour; // If the start and end hour are the same
+            const minutesInCurrentSlot = isStartSlot ? (endDate.getMinutes() + 1) : 60;
+            const timeToAllocate = isStartSlot ? duration : Math.min(duration, minutesInCurrentSlot);
 
-        // Distribute duration and money across hours if it spans multiple slots
-        while (remainingDuration > 0) {
-            const minutesInCurrentHour = (endHour === hour) ? endDate.getMinutes() : 60 - startDate.getMinutes();
-            const timeToAllocate = Math.min(remainingDuration, minutesInCurrentHour);
+            slots[startSlotIndex].duration += timeToAllocate;
+            slots[startSlotIndex].totalMoney += (timeToAllocate / duration) * totalMoney;
 
-            slots[slotIndex].duration += timeToAllocate;
-            slots[slotIndex].totalMoney += (timeToAllocate / duration) * totalMoney;
-
-            remainingDuration -= timeToAllocate;
-
-            // Move to the next hour slot
-            hour = (hour + 1) % 24;
-            slotIndex = (hour >= 6 ? hour - 6 : hour + 18);
+            // Move to the next slot
+            duration -= timeToAllocate;
+            startHour = (startHour + 1) % 24;
+            startSlotIndex = (startHour >= 6 ? startHour - 6 : startHour + 18);
+            if (duration <= 0) break; // Exit the loop if no duration remains
         }
     });
 
