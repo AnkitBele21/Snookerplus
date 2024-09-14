@@ -1,4 +1,46 @@
-function populateHourlySlotsTable(frames) {
+function createHourlyBarChart(slots) {
+    const ctx = document.getElementById('hourlyBarChart').getContext('2d');
+    
+    const labels = slots.map(slot => slot.startTime); // Extract time slots
+    const durationData = slots.map(slot => slot.duration.toFixed(2)); // Duration for each slot
+    const totalMoneyData = slots.map(slot => slot.totalMoney.toFixed(2)); // Total money for each slot
+
+    const hourlyBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels, // Time labels (6:00 AM, 7:00 AM, etc.)
+            datasets: [
+                {
+                    label: 'Duration (Min)',
+                    data: durationData, // Data for duration
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Total Money (₹)',
+                    data: totalMoneyData, // Data for total money
+                    backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function populateHourlySlotsData(frames) {
     const slots = Array(24).fill().map((_, i) => ({
         startTime: `${(i + 6) % 24}:00`,
         duration: 0,
@@ -19,30 +61,8 @@ function populateHourlySlotsTable(frames) {
         slots[slotIndex].totalMoney += totalMoney;
     });
 
-    const tableBody = document.querySelector("#hourlySlotsTable tbody");
-    tableBody.innerHTML = ""; // Clear existing data
-
-    slots.forEach((slot, index) => {
-        const row = document.createElement("tr");
-
-        const slotCell = document.createElement("td");
-        slotCell.textContent = `Slot ${index + 1}`;
-        row.appendChild(slotCell);
-
-        const startTimeCell = document.createElement("td");
-        startTimeCell.textContent = slot.startTime;
-        row.appendChild(startTimeCell);
-
-        const durationCell = document.createElement("td");
-        durationCell.textContent = slot.duration.toFixed(2);
-        row.appendChild(durationCell);
-
-        const moneyCell = document.createElement("td");
-        moneyCell.textContent = `₹${slot.totalMoney.toFixed(2)}`;
-        row.appendChild(moneyCell);
-
-        tableBody.appendChild(row);
-    });
+    // Create the hourly bar chart
+    createHourlyBarChart(slots);
 }
 
 async function init() {
@@ -67,8 +87,8 @@ async function init() {
         updateSelectedDateBox(groupedData, topupGroupedData, selectedDate);
     });
 
-    // Populate the hourly slots table
-    populateHourlySlotsTable(frames);
+    // Populate the hourly slots data for bar chart
+    populateHourlySlotsData(frames);
 }
 
 window.addEventListener('load', init);
