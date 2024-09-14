@@ -4,7 +4,9 @@ function convertToIST(dateString) {
     
     // Convert UTC to IST (UTC+5:30)
     const offsetIST = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
-    return new Date(date.getTime() + offsetIST); // Return the IST-adjusted date
+    const istDate = new Date(date.getTime() + offsetIST); // Apply offset
+    
+    return istDate; // Return the IST-adjusted date
 }
 
 // Function to create the hourly bar chart
