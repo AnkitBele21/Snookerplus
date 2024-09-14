@@ -1,8 +1,6 @@
 // Function to convert a UTC date/time string to Indian Standard Time (IST)
 function convertToIST(dateString) {
     const date = new Date(dateString); // Parse the incoming date string (assuming it's in UTC)
-    
-    // Convert UTC to IST (UTC+5:30)
     const offsetIST = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
     return new Date(date.getTime() + offsetIST); // Return the IST-adjusted date
 }
@@ -32,10 +30,18 @@ function createHourlyBarChart(slots) {
             responsive: true,
             scales: {
                 x: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Time Slot'
+                    }
                 },
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Duration (Min)'
+                    }
                 }
             }
         }
@@ -46,7 +52,7 @@ function createHourlyBarChart(slots) {
 function populateHourlySlotsData(frames) {
     // Create 24 slots for each hour starting at 6:00 AM (IST)
     const slots = Array(24).fill().map((_, i) => ({
-        startTime: `${(i + 6) % 24}:00 - ${(i + 7) % 24}:00`, // Create time labels from 6:00 AM to 5:00 AM
+        startTime: `${String((i + 6) % 24).padStart(2, '0')}:00 - ${String((i + 7) % 24).padStart(2, '0')}:00`,
         duration: 0
     }));
 
@@ -54,15 +60,15 @@ function populateHourlySlotsData(frames) {
         const startDate = convertToIST(frame.StartTime); // Convert the frame's start time to IST
         if (!startDate || isNaN(startDate.getTime())) return; // Skip invalid dates
 
-        const startHour = startDate.getHours(); // Use the IST-adjusted start hour
-        const duration = parseInt(frame.Duration, 10) || 0;
+        let startHour = startDate.getHours();
+        let duration = parseInt(frame.Duration, 10) || 0;
 
-        // Determine the start slot index
-        let startSlotIndex = (startHour >= 6 ? startHour - 6 : startHour + 18); // Mapping 6:00 AM to 5:00 AM
+        // Determine the slot index
+        let startSlotIndex = startHour >= 6 ? startHour - 6 : startHour + 18;
 
         // Distribute duration across slots
         while (duration > 0) {
-            // Calculate minutes remaining in the current slot
+            // Calculate remaining minutes in the current slot
             const currentSlotMinutes = 60 - (startDate.getMinutes() || 0);
             const minutesInCurrentSlot = Math.min(duration, currentSlotMinutes);
 
@@ -72,7 +78,7 @@ function populateHourlySlotsData(frames) {
             // Move to the next slot
             duration -= minutesInCurrentSlot;
             startDate.setHours(startDate.getHours() + 1);
-            startSlotIndex = (startDate.getHours() >= 6 ? startDate.getHours() - 6 : startDate.getHours() + 18);
+            startSlotIndex = startDate.getHours() >= 6 ? startDate.getHours() - 6 : startDate.getHours() + 18;
         }
     });
 
