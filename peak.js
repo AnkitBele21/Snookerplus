@@ -63,7 +63,7 @@ function populateHourlySlotsData(frames) {
         const startDate = convertToIST(frame.StartTime); // Convert the frame's start time to IST
         if (!startDate || isNaN(startDate.getTime())) return; // Skip invalid dates
 
-        const startHour = startDate.getHours(); // Use the IST-adjusted start hour
+        let startHour = startDate.getHours(); // Use the IST-adjusted start hour
         const duration = parseInt(frame.Duration, 10) || 0;
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
@@ -75,11 +75,17 @@ function populateHourlySlotsData(frames) {
 
         // Distribute duration and money across slots
         while (startSlotIndex <= endSlotIndex) {
-            const isStartSlot = startHour === endHour; // If the start and end hour are the same
-            const minutesInCurrentSlot = isStartSlot ? (endDate.getMinutes() + 1) : 60;
-            const timeToAllocate = isStartSlot ? duration : Math.min(duration, minutesInCurrentSlot);
+            // Calculate minutes in the current slot
+            let minutesInCurrentSlot;
+            if (startHour === endHour) {
+                minutesInCurrentSlot = (endDate.getMinutes() + 1);
+            } else {
+                minutesInCurrentSlot = 60 - startDate.getMinutes(); // Time remaining in the start slot
+            }
 
-            // Make sure we are using a variable, not a constant, for modification
+            const timeToAllocate = Math.min(duration, minutesInCurrentSlot);
+
+            // Use `let` instead of `const` to allow modification
             let currentSlotIndex = startSlotIndex;
             slots[currentSlotIndex].duration += timeToAllocate;
             slots[currentSlotIndex].totalMoney += (timeToAllocate / duration) * totalMoney;
@@ -126,7 +132,5 @@ async function init() {
     // Populate the hourly slots data for bar chart
     populateHourlySlotsData(frames);
 }
-
-
 
 window.addEventListener('load', init);
