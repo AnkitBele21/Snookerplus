@@ -18,8 +18,9 @@
     <div id="totalMoneyBox"></div> <!-- Display total table money -->
 
     <h2>Graphical Representation</h2>
-    <canvas id="analyticsChart" width="400" height="200"></canvas> <!-- Chart.js canvas -->
+    <canvas id="analyticsChart" width="400" height="200"></canvas> <!-- Existing chart -->
 
+    <!-- Hourly Slots Table (if still needed) -->
     <h2>Hourly Slot Data (6:00 AM - 5:00 AM)</h2>
     <table id="hourlySlotsTable" border="1">
         <thead>
@@ -35,8 +36,13 @@
         </tbody>
     </table>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
-    <script src="Owndash.js"></script>
-    <script src="peak.js"></script> <!-- Include the new peak.js file -->
+    <!-- New Bar Chart for Hourly Slots -->
+    <h2>Hourly Duration vs. Total Money</h2>
+    <canvas id="hourlyBarChart" width="400" height="200"></canvas> <!-- New bar chart -->
+
+    <!-- Include external scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js for graph rendering -->
+    <script src="Owndash.js"></script> <!-- Main script file -->
+    <script src="peak.js"></script> <!-- Updated script with bar chart logic -->
 </body>
 </html>
