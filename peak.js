@@ -19,7 +19,7 @@ function createHourlyBarChart(slots) {
     const hourlyBarChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels, // Time labels (6:00 AM, 7:00 AM, etc.)
+            labels: labels, // Time labels (e.g., "06:00 - 07:00", "07:00 - 08:00", etc.)
             datasets: [
                 {
                     label: 'Duration (Min)',
@@ -34,7 +34,10 @@ function createHourlyBarChart(slots) {
             responsive: true,
             scales: {
                 x: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        autoSkip: false
+                    }
                 },
                 y: {
                     beginAtZero: true
@@ -46,8 +49,9 @@ function createHourlyBarChart(slots) {
 
 // Function to populate hourly slots data and create the bar chart
 function populateHourlySlotsData(frames) {
+    // Create 24 slots for each hour from 00:00 to 23:00
     const slots = Array(24).fill().map((_, i) => ({
-        startTime: `${(i + 6) % 24}:00 - ${((i + 7) % 24).toString().padStart(2, '0')}:00`,
+        startTime: `${i.toString().padStart(2, '0')}:00 - ${(i + 1) % 24.toString().padStart(2, '0')}:00`,
         duration: 0
     }));
 
@@ -58,8 +62,8 @@ function populateHourlySlotsData(frames) {
         const hour = startDate.getHours(); // Use the IST-adjusted hour
         const duration = parseInt(frame.Duration, 10) || 0;
 
-        // Assign to the appropriate hour slot (0 index corresponds to 6:00 AM)
-        const slotIndex = (hour >= 6 ? hour - 6 : hour + 18); // Mapping 6:00 AM to 5:00 AM next day
+        // Assign to the appropriate hour slot (0 index corresponds to 00:00)
+        const slotIndex = hour; // Directly map hour to index
         slots[slotIndex].duration += duration;
     });
 
