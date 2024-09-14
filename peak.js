@@ -1,3 +1,15 @@
+// Function to convert date/time to Indian Standard Time (IST)
+function convertToIST(dateString) {
+    const date = new Date(dateString); // Parse the incoming date string (assuming it's in UTC)
+    
+    // Convert UTC to IST (UTC+5:30)
+    const offsetIST = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
+    const istDate = new Date(date.getTime() + offsetIST);
+
+    return istDate; // Return the IST-adjusted date
+}
+
+// Function to create the hourly bar chart
 function createHourlyBarChart(slots) {
     const ctx = document.getElementById('hourlyBarChart').getContext('2d');
     
@@ -40,6 +52,7 @@ function createHourlyBarChart(slots) {
     });
 }
 
+// Function to populate hourly slots data and create the bar chart
 function populateHourlySlotsData(frames) {
     const slots = Array(24).fill().map((_, i) => ({
         startTime: `${(i + 6) % 24}:00`,
@@ -48,10 +61,10 @@ function populateHourlySlotsData(frames) {
     }));
 
     frames.forEach(frame => {
-        const startDate = convertToIST(frame.StartTime);
+        const startDate = convertToIST(frame.StartTime); // Convert the frame's start time to IST
         if (!startDate || isNaN(startDate.getTime())) return; // Skip invalid dates
 
-        const hour = startDate.getHours();
+        const hour = startDate.getHours(); // Use the IST-adjusted hour
         const duration = parseInt(frame.Duration, 10) || 0;
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
