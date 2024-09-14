@@ -63,39 +63,16 @@ function populateHourlySlotsData(frames) {
         const startDate = convertToIST(frame.StartTime); // Convert the frame's start time to IST
         if (!startDate || isNaN(startDate.getTime())) return; // Skip invalid dates
 
-        let startHour = startDate.getHours(); // Use the IST-adjusted start hour
+        const startHour = startDate.getHours(); // Use the IST-adjusted start hour
         const duration = parseInt(frame.Duration, 10) || 0;
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
 
-        // Determine the start and end slots
-        let startSlotIndex = (startHour >= 6 ? startHour - 6 : startHour + 18); // Mapping 6:00 AM to 5:00 AM
-        let endDate = new Date(startDate.getTime() + duration * 60 * 1000);
-        let endHour = endDate.getHours();
-        let endSlotIndex = (endHour >= 6 ? endHour - 6 : endHour + 18);
+        // Determine the appropriate slot for the start hour
+        const slotIndex = (startHour >= 6 ? startHour - 6 : startHour + 18); // Mapping 6:00 AM to 5:00 AM
 
-        // Distribute duration and money across slots
-        while (startSlotIndex <= endSlotIndex) {
-            // Calculate minutes in the current slot
-            let minutesInCurrentSlot;
-            if (startHour === endHour) {
-                minutesInCurrentSlot = (endDate.getMinutes() + 1);
-            } else {
-                minutesInCurrentSlot = 60 - startDate.getMinutes(); // Time remaining in the start slot
-            }
-
-            const timeToAllocate = Math.min(duration, minutesInCurrentSlot);
-
-            // Use `let` instead of `const` to allow modification
-            let currentSlotIndex = startSlotIndex;
-            slots[currentSlotIndex].duration += timeToAllocate;
-            slots[currentSlotIndex].totalMoney += (timeToAllocate / duration) * totalMoney;
-
-            // Move to the next slot
-            duration -= timeToAllocate;
-            startHour = (startHour + 1) % 24;
-            startSlotIndex = (startHour >= 6 ? startHour - 6 : startHour + 18);
-            if (duration <= 0) break; // Exit the loop if no duration remains
-        }
+        // Assign the entire duration and money to the slot
+        slots[slotIndex].duration += duration;
+        slots[slotIndex].totalMoney += totalMoney;
     });
 
     // Log the slots data to debug
