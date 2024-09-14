@@ -1,22 +1,20 @@
-// Function to convert date/time to Indian Standard Time (IST)
+// Function to convert a UTC date/time string to Indian Standard Time (IST)
 function convertToIST(dateString) {
     const date = new Date(dateString); // Parse the incoming date string (assuming it's in UTC)
     
     // Convert UTC to IST (UTC+5:30)
     const offsetIST = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
-    const istDate = new Date(date.getTime() + offsetIST);
-
-    return istDate; // Return the IST-adjusted date
+    return new Date(date.getTime() + offsetIST); // Return the IST-adjusted date
 }
 
 // Function to create the hourly bar chart
 function createHourlyBarChart(slots) {
     const ctx = document.getElementById('hourlyBarChart').getContext('2d');
-    
+
     const labels = slots.map(slot => slot.startTime); // Extract time slots
     const durationData = slots.map(slot => slot.duration); // Duration for each slot
 
-    const hourlyBarChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels, // Time labels (e.g., "06:00 - 07:00", "07:00 - 08:00", etc.)
@@ -34,10 +32,7 @@ function createHourlyBarChart(slots) {
             responsive: true,
             scales: {
                 x: {
-                    beginAtZero: true,
-                    ticks: {
-                        autoSkip: false
-                    }
+                    beginAtZero: true
                 },
                 y: {
                     beginAtZero: true
@@ -49,9 +44,9 @@ function createHourlyBarChart(slots) {
 
 // Function to populate hourly slots data and create the bar chart
 function populateHourlySlotsData(frames) {
-    // Create 24 slots for each hour from 00:00 to 23:00
+    // Create 24 slots for each hour starting at 6:00 AM (IST)
     const slots = Array(24).fill().map((_, i) => ({
-        startTime: `${i.toString().padStart(2, '0')}:00 - ${(i + 1) % 24.toString().padStart(2, '0')}:00`,
+        startTime: `${(i + 6) % 24}:00 - ${(i + 7) % 24}:00`, // Create time labels from 6:00 AM to 5:00 AM
         duration: 0
     }));
 
@@ -59,13 +54,30 @@ function populateHourlySlotsData(frames) {
         const startDate = convertToIST(frame.StartTime); // Convert the frame's start time to IST
         if (!startDate || isNaN(startDate.getTime())) return; // Skip invalid dates
 
-        const hour = startDate.getHours(); // Use the IST-adjusted hour
+        const startHour = startDate.getHours(); // Use the IST-adjusted start hour
         const duration = parseInt(frame.Duration, 10) || 0;
 
-        // Assign to the appropriate hour slot (0 index corresponds to 00:00)
-        const slotIndex = hour; // Directly map hour to index
-        slots[slotIndex].duration += duration;
+        // Determine the start slot index
+        let startSlotIndex = (startHour >= 6 ? startHour - 6 : startHour + 18); // Mapping 6:00 AM to 5:00 AM
+
+        // Distribute duration across slots
+        while (duration > 0) {
+            // Calculate minutes remaining in the current slot
+            const currentSlotMinutes = 60 - (startDate.getMinutes() || 0);
+            const minutesInCurrentSlot = Math.min(duration, currentSlotMinutes);
+
+            // Update the current slot
+            slots[startSlotIndex].duration += minutesInCurrentSlot;
+
+            // Move to the next slot
+            duration -= minutesInCurrentSlot;
+            startDate.setHours(startDate.getHours() + 1);
+            startSlotIndex = (startDate.getHours() >= 6 ? startDate.getHours() - 6 : startDate.getHours() + 18);
+        }
     });
+
+    // Log the slots data to debug
+    console.log(slots);
 
     // Create the hourly bar chart
     createHourlyBarChart(slots);
@@ -78,23 +90,18 @@ async function init() {
     const Studio = getParameterByName('Studio') || 'Default Studio';
     console.log('Studio:', Studio);
 
+    // Fetch the frame data
     const frames = await fetchData1(table, Studio);
-    const topupData = await fetchData2(table, Studio);
-
-    const { groupedData, totalTableMoney } = groupDataByDate(frames);
-    const topupGroupedData = groupTopupDataByDate(topupData);
-
-    updateChart(groupedData);
-    updateTotalMoneyBox(totalTableMoney);
-
-    const datePicker = document.getElementById('datePicker');
-    datePicker.addEventListener('change', () => {
-        const selectedDate = datePicker.value;
-        updateSelectedDateBox(groupedData, topupGroupedData, selectedDate);
-    });
 
     // Populate the hourly slots data for bar chart
     populateHourlySlotsData(frames);
 }
 
+// Function to get query parameter by name
+function getParameterByName(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+
+// Event listener for window load
 window.addEventListener('load', init);
