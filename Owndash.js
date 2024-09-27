@@ -163,6 +163,17 @@ function updateChart(groupedData) {
     const durations = labels.map(date => groupedData[date].duration);
     const totalMoney = labels.map(date => groupedData[date].totalMoney);
 
+    // Colors for each bar: normal color or different for Sundays
+    const backgroundColors = labels.map(date => {
+        const dayOfWeek = new Date(date).getDay(); // Get the day of the week (0 for Sunday)
+        return dayOfWeek === 0 ? 'rgba(255, 99, 132, 0.2)' : 'rgba(75, 192, 192, 0.2)'; // Red for Sundays
+    });
+
+    const borderColors = labels.map(date => {
+        const dayOfWeek = new Date(date).getDay();
+        return dayOfWeek === 0 ? 'rgba(255, 99, 132, 1)' : 'rgba(75, 192, 192, 1)'; // Red for Sundays
+    });
+
     if (analyticsChart) {
         analyticsChart.destroy(); // Destroy existing chart instance if it exists
     }
@@ -175,8 +186,8 @@ function updateChart(groupedData) {
                 {
                     label: 'Total Duration (minutes)',
                     data: durations,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
                     borderWidth: 1
                 },
                 {
@@ -206,6 +217,7 @@ function updateChart(groupedData) {
         }
     });
 }
+
 
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
