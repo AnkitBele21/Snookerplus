@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Snooker Dashboard</title>
+    <link rel="stylesheet" href="book.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Unified Snooker Dashboard</h1>
+        <div class="dashboard-controls">
+            <label for="datePicker">Select Date:</label>
+            <input type="date" id="datePicker" value="">
+            <button id="refreshData">Refresh Data</button>
+        </div>
+    </header>
+
+    <section class="analytics-section">
+        <div class="chart-container">
+            <canvas id="analyticsChart"></canvas>
+        </div>
+        <div id="totalMoneyBox" class="info-box"></div>
+    </section>
+
+    <section id="selectedDateBox" class="info-box">
+        <!-- Data for selected date will appear here -->
+    </section>
+
+    <footer>
+        <p>Snooker+ Dashboard &copy; 2024</p>
+    </footer>
+
+    <script src="book.js"></script>
+</body>
+</html>
