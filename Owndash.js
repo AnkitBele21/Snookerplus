@@ -8,10 +8,25 @@ function getParameterByName(name, url = window.location.href) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-// Fetch table data from the API
-async function fetchData(table, Studio, type = '') {
-    const url = `https://app.snookerplus.in/apis/data/${type ? type + '/' : ''}${encodeURIComponent(Studio)}`;
-    console.log(`Fetching ${type || 'table'} data from:`, url);
+// Filter frames data based on the selected month
+function filterDataByMonth(data, selectedMonth) {
+    const filteredData = data.filter(item => {
+        const itemDate = new Date(item.StartTime);
+        const itemMonth = itemDate.getMonth();
+        const itemYear = itemDate.getFullYear();
+
+        return (
+            itemMonth === selectedMonth.getMonth() && 
+            itemYear === selectedMonth.getFullYear()
+        );
+    });
+    return filteredData;
+}
+
+// Fetch frame data
+async function fetchData1(table, Studio) {
+    const url = `https://app.snookerplus.in/apis/data/${table}/${encodeURIComponent(Studio)}`;
+    console.log('Fetching data from:', url);
 
     try {
         const response = await fetch(url);
@@ -21,10 +36,33 @@ async function fetchData(table, Studio, type = '') {
         }
 
         const data = await response.json();
-        console.log(`Fetched ${type || 'table'} data:`, data);
-        return data[0];
+        console.log('Fetched data:', data);
+
+        return data; // Return the data without flattening
     } catch (error) {
-        console.error(`Error fetching ${type || 'table'} data:`, error);
+        console.error('Error fetching data:', error);
+        return []; // Return an empty array or handle the error as needed
+    }
+}
+
+// Fetch top-up data
+async function fetchData2(table, Studio) {
+    const url = `https://app.snookerplus.in/apis/data/topup/${encodeURIComponent(Studio)}`;
+    console.log('Fetching data from:', url);
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Fetched topup data:', data);
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching topup data:', error);
         return [];
     }
 }
@@ -34,17 +72,17 @@ function convertToIST(date) {
     if (!date) return null;
 
     const utcDate = new Date(date);
-    const istOffset = 5.5 * 60 * 60 * 1000;
-    return new Date(utcDate.getTime() + istOffset);
+    const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC + 5:30
+    const istDate = new Date(utcDate.getTime() + istOffset);
+
+    return istDate;
 }
 
-// Get the day of the week
 function getDayOfWeek(date) {
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return daysOfWeek[date.getDay()];
 }
 
-// Group frame data by date
 function groupDataByDate(frames) {
     const groupedData = {};
     let totalTableMoney = 0;
@@ -58,6 +96,7 @@ function groupDataByDate(frames) {
 
         const duration = parseInt(frame.Duration, 10) || 0;
         const totalMoney = parseFloat(frame.TotalMoney) || 0;
+
         const dateString = date.toISOString().split('T')[0];
         const dayOfWeek = getDayOfWeek(date);
 
@@ -73,7 +112,6 @@ function groupDataByDate(frames) {
     return { groupedData, totalTableMoney };
 }
 
-// Group top-up data by date
 function groupTopupDataByDate(topupData) {
     const groupedData = {};
 
@@ -106,7 +144,6 @@ function groupTopupDataByDate(topupData) {
     return groupedData;
 }
 
-// Update the selected date box with data
 function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     const selectedDateBox = document.getElementById('selectedDateBox');
     if (!selectedDateBox) {
@@ -135,9 +172,11 @@ function updateSelectedDateBox(groupedData, topupGroupedData, selectedDate) {
     }
 }
 
-// Update chart with grouped data
+let analyticsChart = null;
+
 function updateChart(groupedData) {
     const ctx = document.getElementById('analyticsChart').getContext('2d');
+
     const labels = Object.keys(groupedData);
     const durations = labels.map(date => groupedData[date].duration);
     const totalMoney = labels.map(date => groupedData[date].totalMoney);
@@ -196,7 +235,6 @@ function updateChart(groupedData) {
     });
 }
 
-// Update total table money display
 function updateTotalMoneyBox(totalTableMoney) {
     const totalMoneyBox = document.getElementById('totalMoneyBox');
     if (!totalMoneyBox) {
@@ -207,26 +245,33 @@ function updateTotalMoneyBox(totalTableMoney) {
     totalMoneyBox.innerHTML = `<p>Total Table Money: ₹${totalTableMoney.toFixed(2)}</p>`;
 }
 
-// Initialize the page and load data
-async function init() {
-    const table = 'frames';
-    const Studio = getParameterByName('Studio') || 'Default Studio';
-    console.log('Studio:', Studio);
-
-    const frames = await fetchData(table, Studio);
-    const topupData = await fetchData(table, Studio, 'topup');
-
-    const { groupedData, totalTableMoney } = groupDataByDate(frames);
-    const topupGroupedData = groupTopupDataByDate(topupData);
+function handleMonthChange(selectedMonth, frames, topupData) {
+    const filteredFrames = filterDataByMonth(frames, selectedMonth);
+    const { groupedData, totalTableMoney } = groupDataByDate(filteredFrames);
 
     updateChart(groupedData);
     updateTotalMoneyBox(totalTableMoney);
 
-    const datePicker = document.getElementById('datePicker');
-    datePicker.addEventListener('change', () => {
-        const selectedDate = datePicker.value;
-        updateSelectedDateBox(groupedData, topupGroupedData, selectedDate);
-    });
+    const topupGroupedData = groupTopupDataByDate(topupData);
+    const today = new Date();
+    const selectedDate = today.toISOString().split('T')[0];
+    updateSelectedDateBox(groupedData, topupGroupedData, selectedDate);
 }
 
-window.addEventListener('load', init);
+document.addEventListener('DOMContentLoaded', async () => {
+    const Studio = getParameterByName('Studio');
+    const table = getParameterByName('table') || 'frames';
+    const monthSelect = document.getElementById('monthSelect');
+
+    const frames = await fetchData1(table, Studio);
+    const topupData = await fetchData2(table, Studio);
+
+    const currentMonth = new Date();
+
+    monthSelect.addEventListener('change', () => {
+        const selectedMonth = new Date(monthSelect.value);
+        handleMonthChange(selectedMonth, frames, topupData);
+    });
+
+    handleMonthChange(currentMonth, frames, topupData); // Load current month data by default
+});
