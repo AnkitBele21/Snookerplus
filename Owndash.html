@@ -9,18 +9,31 @@
 <body>
     <h1>Snooker Frames Analytics Dashboard</h1>
 
-    <h2>Select Date</h2>
-    <input type="date" id="datePicker" />
+    <!-- Month Selector to switch between months -->
+    <h2>Select Month</h2>
+    <select id="monthSelect">
+        <!-- You can dynamically populate this list with JavaScript if needed -->
+        <option value="2024-09-01">September 2024</option>
+        <option value="2024-08-01">August 2024</option>
+        <option value="2024-07-01">July 2024</option>
+        <!-- Add more options as necessary -->
+    </select>
 
-    <div id="selectedDateBox"></div> <!-- Display details for selected date -->
+    <!-- Display details for selected date -->
+    <div id="selectedDateBox"></div>
 
+    <!-- Total Table Money for the selected month -->
     <h2>Total Table Money</h2>
-    <div id="totalMoneyBox"></div> <!-- Display total table money -->
+    <div id="totalMoneyBox"></div>
 
+    <!-- Graphical Representation -->
     <h2>Graphical Representation</h2>
     <canvas id="analyticsChart" width="400" height="200"></canvas> <!-- Chart.js canvas -->
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
+    <!-- Include Chart.js for graph plotting -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Include your own JavaScript file to handle logic -->
     <script src="Owndash.js"></script>
 </body>
 </html>
