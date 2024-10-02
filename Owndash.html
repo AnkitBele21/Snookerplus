@@ -9,24 +9,18 @@
 <body>
     <h1>Snooker Frames Analytics Dashboard</h1>
 
-    <!-- Date selection for filtering data -->
     <h2>Select Date</h2>
     <input type="date" id="datePicker" />
 
-    <!-- Box for showing total duration and total money for selected date -->
-    <div id="selectedDateBox">
-        <h3>Total Duration (Minutes): <span id="totalDuration">0</span></h3>
-        <h3>Total Money (₹): <span id="totalMoney">0</span></h3>
-    </div>
+    <div id="selectedDateBox"></div> <!-- Display details for selected date -->
 
-    <!-- Section for graphical representation using Chart.js -->
+    <h2>Total Table Money</h2>
+    <div id="totalMoneyBox"></div> <!-- Display total table money -->
+
     <h2>Graphical Representation</h2>
     <canvas id="analyticsChart" width="400" height="200"></canvas> <!-- Chart.js canvas -->
 
-    <!-- Include Chart.js from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Include your custom JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
     <script src="Owndash.js"></script>
 </body>
 </html>
