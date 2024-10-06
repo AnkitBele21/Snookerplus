@@ -33,7 +33,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(29, 29, 37, 0.9); /* Slightly transparent */
+            background: rgba(29, 29, 37, 0.9);
             color: #FFFFFF;
             display: flex;
             justify-content: space-between;
@@ -50,34 +50,36 @@
             text-align: center;
         }
         .main-logo {
-            height: 40px; /* Reduced logo size */
+            height: 40px;
         }
         .player-info {
             display: flex;
+            justify-content: center;
             align-items: center;
             flex: 1;
-            justify-content: flex-start;
+            text-align: center;
             position: relative;
         }
         .active-indicator {
-            margin-right: 8px; /* Space between dot and player name */
-            width: 16px;
-            height: 16px;
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
             background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/activeplayer.png?raw=true');
-            background-size: contain;
+            background-size: cover;
             display: none;
         }
         .name {
-            font-size: 1.3em; /* Adjusted for better fit */
+            font-size: 1.2em;
             margin: 0;
             font-weight: bold;
-            color: #FFFFFF;
+            text-align: center;
         }
         .score {
             font-size: 1.4em;
-            margin-left: 15px;
+            margin-left: 10px;
             font-weight: 700;
             color: #01AB7A;
+            text-align: right;
         }
         .rounds {
             font-size: 1.1em;
@@ -99,10 +101,10 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            font-size: 0.9em; /* Reduced size */
+            font-size: 0.9em;
             color: #FFFFFF;
             background-color: rgba(29, 29, 37, 0.8);
-            padding: 5px 10px; /* Reduced padding */
+            padding: 5px 10px;
             border-radius: 5px;
             font-weight: bold;
         }
@@ -114,8 +116,8 @@
             z-index: 15;
         }
         .top-right-logo img {
-            width: 70px; /* Slightly smaller */
-            opacity: 0.8; /* Slight opacity for professional look */
+            width: 70px;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -134,13 +136,13 @@
     </div>
     <div class="center-content">
         <!-- Main Tournament Sponsor Logo -->
-        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo"> <!-- Replace with 3rd party logo -->
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
         <div class="rounds" id="rounds">(0-0)</div>
     </div>
     <div class="player-info" id="player2">
-        <div class="active-indicator" id="player2Indicator"></div> <!-- Active Player Indicator (Image) -->
-        <div class="name" id="player2Name">Player 2</div>
         <div class="score" id="player2Score">0</div>
+        <div class="name" id="player2Name">Player 2</div>
+        <div class="active-indicator" id="player2Indicator"></div> <!-- Active Player Indicator (Image) -->
     </div>
 </div>
 
