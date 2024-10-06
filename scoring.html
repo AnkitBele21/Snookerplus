@@ -32,19 +32,16 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            width: calc(100% - 20px); /* Spacing from edges */
-            margin: 10px;
-            background: #1D1D25;
+            width: 100%;
+            background: rgba(29, 29, 37, 0.9); /* Slightly transparent */
             color: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
-            padding: 10px 20px;
+            padding: 8px 20px;
             box-sizing: border-box;
             border-top: 2px solid #01AB7A;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            z-index: 10;
         }
         .center-content {
             display: flex;
@@ -53,8 +50,7 @@
             text-align: center;
         }
         .main-logo {
-            height: 50px;
-            margin-bottom: 10px;
+            height: 40px; /* Reduced logo size */
         }
         .player-info {
             display: flex;
@@ -65,18 +61,18 @@
             transition: all 0.3s ease;
         }
         .name {
-            font-size: 1.3em;
+            font-size: 1.2em; /* Adjusted for better fit */
             margin: 0;
             font-weight: bold;
         }
         .score {
-            font-size: 1.5em;
+            font-size: 1.4em;
             margin-top: 5px;
             font-weight: 700;
             color: #01AB7A;
         }
         .rounds {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #ccc;
         }
         .active {
@@ -87,8 +83,7 @@
             font-weight: bold;
         }
         .message {
-            width: calc(100% - 20px);
-            margin: 10px;
+            width: 100%;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -103,7 +98,7 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            font-size: 0.8 em;
+            font-size: 1.1em;
             color: #FFFFFF;
             background-color: rgba(29, 29, 37, 0.8);
             padding: 8px 15px;
@@ -118,7 +113,7 @@
             z-index: 15;
         }
         .top-right-logo img {
-            width: 120px; /* Adjusted to make the logo smaller */
+            width: 70px; /* Slightly smaller */
             opacity: 0.8; /* Slight opacity for professional look */
         }
     </style>
