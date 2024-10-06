@@ -108,11 +108,12 @@
             color: #1D1D25;
         }
         .footer-logo {
-            position: absolute;
-            bottom: 10px;
+            position: fixed;
+            top: 10px;
             right: 10px;
             display: flex;
             align-items: center;
+            z-index: 20; /* Ensure it stays above other content */
         }
     </style>
 </head>
