@@ -58,12 +58,23 @@
             align-items: center;
             flex: 1;
             text-align: center;
-            transition: all 0.3s ease;
+            position: relative;
         }
         .name {
             font-size: 1.2em; /* Adjusted for better fit */
             margin: 0;
             font-weight: bold;
+        }
+        .active-indicator {
+            position: absolute;
+            top: 50%;
+            left: -20px;
+            transform: translateY(-50%);
+            width: 20px; /* Adjust size based on image */
+            height: 20px; /* Adjust size based on image */
+            background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/activeplayer.png?raw=true');
+            background-size: cover;
+            display: none;
         }
         .score {
             font-size: 1.4em;
@@ -74,13 +85,6 @@
         .rounds {
             font-size: 1.1em;
             color: #ccc;
-        }
-        .active {
-            background: #01AB7A;
-            color: #1D1D25;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-weight: bold;
         }
         .message {
             width: 100%;
@@ -98,10 +102,10 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            font-size: 1.1em;
+            font-size: 0.9em; /* Reduced size */
             color: #FFFFFF;
             background-color: rgba(29, 29, 37, 0.8);
-            padding: 8px 15px;
+            padding: 5px 10px; /* Reduced padding */
             border-radius: 5px;
             font-weight: bold;
         }
@@ -127,6 +131,7 @@
 
 <div class="overlay" id="scoreStrip">
     <div class="player-info" id="player1">
+        <div class="active-indicator" id="player1Indicator"></div> <!-- Active Player Indicator (Image) -->
         <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
     </div>
@@ -136,6 +141,7 @@
         <div class="rounds" id="rounds">(0-0)</div>
     </div>
     <div class="player-info" id="player2">
+        <div class="active-indicator" id="player2Indicator"></div> <!-- Active Player Indicator (Image) -->
         <div class="name" id="player2Name">Player 2</div>
         <div class="score" id="player2Score">0</div>
     </div>
@@ -168,16 +174,16 @@
                 document.getElementById('player2Score').textContent = rowData[3] || '0';
                 document.getElementById('rounds').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
 
-                const player1Name = document.getElementById('player1Name');
-                const player2Name = document.getElementById('player2Name');
-                player1Name.classList.remove('active');
-                player2Name.classList.remove('active');
+                // Show active player with indicator image
+                const player1Indicator = document.getElementById('player1Indicator');
+                const player2Indicator = document.getElementById('player2Indicator');
+                player1Indicator.style.display = 'none';
+                player2Indicator.style.display = 'none';
 
-                // Add active class to the current player
                 if (rowData[4] === '1') {
-                    player1Name.classList.add('active');
+                    player1Indicator.style.display = 'block';
                 } else if (rowData[4] === '2') {
-                    player2Name.classList.add('active');
+                    player2Indicator.style.display = 'block';
                 }
 
                 // Display the image if URL exists in cell J2
