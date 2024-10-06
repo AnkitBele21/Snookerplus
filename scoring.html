@@ -56,6 +56,15 @@
             height: 30px;
             margin-bottom: 8px;
         }
+        .main-logo {
+            height: 50px; /* Bigger for premium branding */
+            margin-bottom: 10px;
+        }
+        .media-partner {
+            font-size: 0.8em;
+            margin-top: 5px;
+            color: #ccc;
+        }
         .player-info {
             display: flex;
             flex-direction: column;
@@ -98,6 +107,13 @@
             background: #01AB7A;
             color: #1D1D25;
         }
+        .footer-logo {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -110,7 +126,8 @@
         <div class="score" id="player1Score">0</div>
     </div>
     <div class="center-content">
-        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Logo" class="logo">
+        <!-- Main Tournament Sponsor Logo -->
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo"> <!-- Replace with 3rd party logo -->
         <div class="rounds" id="rounds">(0-0)</div>
     </div>
     <div class="player-info" id="player2">
@@ -119,15 +136,20 @@
     </div>
 </div>
 
+<!-- Media Partner Logo Section -->
+<div class="footer-logo">
+    <img src="https://yourmedialogo.com/snookerplus-logo.png" alt="Snooker+ Logo" class="logo"> <!-- Snooker+ media partner logo -->
+    <div class="media-partner">Media Partner</div>
+</div>
+
 <div class="message" id="messageStrip" style="display: none;"></div>
 
 <script>
     const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';  // Replace with actual sheet ID
-const SHEET_NAME = 'Scoring'; // Ensure the tab name is 'Scoring'
-const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
+    const SHEET_NAME = 'Scoring'; // Ensure the tab name is 'Scoring'
+    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
 
-const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
-
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
     async function fetchData() {
         try {
