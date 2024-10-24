@@ -96,43 +96,24 @@
             background: #01AB7A;
             color: #1D1D25;
         }
-        /* Venue styling */
-      /* Venue logo styling */
-.venue-logo {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 10;
-}
 
-.venue-logo-img {
-    width: 70px; /* Adjust the size as needed */
-    opacity: 0.9;
-}
-
-        /* Top-right corner logo (media partner) */
-.top-right-logo {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 15;
-}
-.top-right-logo img {
-    width: 150px; /* Increased size */
-    opacity: 0.9; /* Slightly increased opacity for better visibility */
-}
-
+        /* Top-center media partner logo (replacing main sponsor logo) */
+        .top-center-logo {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+        }
+        .top-center-logo img {
+            width: 150px; /* Adjust the size as needed */
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
 
 <div class="fullscreen-bg" id="fullscreenBg"></div>
-
-<!-- Venue Information with Logo -->
-<div class="venue-logo">
-    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/Group%204303%20(2).png?raw=true" alt="Jai Club Logo" class="venue-logo-img">
-</div>
-
 
 <div class="overlay" id="scoreStrip">
     <!-- Player 1 Info: Active Indicator -> Name -> Score -->
@@ -142,10 +123,8 @@
         <div class="score" id="player1Score">0</div>
     </div>
 
-    <!-- Center content with logo and rounds score -->
+    <!-- Center content with rounds score -->
     <div class="center-content">
-        <!-- Main Tournament Sponsor Logo -->
-        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
         <div class="rounds" id="rounds">(0-0)</div>
     </div>
 
@@ -157,8 +136,8 @@
     </div>
 </div>
 
-<!-- Media Partner Logo (top right) -->
-<div class="top-right-logo">
+<!-- Media Partner Logo (top center, replacing main sponsor) -->
+<div class="top-center-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
 
