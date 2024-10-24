@@ -49,6 +49,9 @@
             align-items: center;
             text-align: center;
         }
+        .main-logo {
+            height: 40px;
+        }
         .player-info {
             display: flex;
             justify-content: center;
@@ -93,77 +96,97 @@
             background: #01AB7A;
             color: #1D1D25;
         }
+        /* Venue styling */
+        .venue-logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
 
-        /* Media partner logo now positioned in the top-right corner */
+        .venue-logo-img {
+            width: 70px; 
+            opacity: 0.9;
+        }
+
         .top-right-logo {
             position: absolute;
             top: 10px;
             right: 10px;
             z-index: 15;
         }
+
         .top-right-logo img {
-            width: 150px; /* Adjust size as needed */
+            width: 150px;
             opacity: 0.9;
         }
 
-        /* Lead display styling */
-        .lead-display {
+        /* Lead Display styling */
+        #leadDisplay {
             position: absolute;
-            top: 20%; /* Position the lead display lower on the screen */
+            top: 50px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(1, 171, 122, 0.9);
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 2em; /* Make the text larger */
-            color: #FFFFFF;
+            background: #01AB7A;
+            color: #1D1D25;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.5em;
             font-weight: bold;
-            text-align: center;
+            display: none;
             z-index: 15;
         }
+
     </style>
 </head>
 <body>
 
 <div class="fullscreen-bg" id="fullscreenBg"></div>
 
+<!-- Venue Information with Logo -->
+<div class="venue-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/Group%204303%20(2).png?raw=true" alt="Jai Club Logo" class="venue-logo-img">
+</div>
+
 <div class="overlay" id="scoreStrip">
     <!-- Player 1 Info: Active Indicator -> Name -> Score -->
     <div class="player-info" id="player1">
-        <div class="active-indicator" id="player1Indicator"></div> <!-- Active Player Indicator (Image) -->
+        <div class="active-indicator" id="player1Indicator"></div>
         <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
     </div>
 
-    <!-- Center content with rounds score -->
+    <!-- Center content with logo and rounds score -->
     <div class="center-content">
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
         <div class="rounds" id="rounds">(0-0)</div>
     </div>
 
     <!-- Player 2 Info: Active Indicator -> Name -> Score -->
     <div class="player-info" id="player2">
-        <div class="active-indicator" id="player2Indicator"></div> <!-- Active Player Indicator (Image) -->
+        <div class="active-indicator" id="player2Indicator"></div>
         <div class="name" id="player2Name">Player 2</div>
         <div class="score" id="player2Score">0</div>
     </div>
 </div>
 
-<!-- Lead Display (Centered on the screen) -->
-<div class="lead-display" id="leadDisplay" style="display: none;">
-    <span id="leadingPlayer">Player</span> is leading by <span id="leadPoints">0</span> points!
-</div>
-
-<!-- Media Partner Logo (top-right corner) -->
+<!-- Media Partner Logo (top right) -->
 <div class="top-right-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
+</div>
+
+<!-- Lead Points and Leading Player Display -->
+<div id="leadDisplay">
+    Leading Player: <span id="leadingPlayer">Player X</span><br>
+    Lead Points: <span id="leadPoints">0</span>
 </div>
 
 <div class="message" id="messageStrip" style="display: none;"></div>
 
 <script>
-    const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';  // Replace with actual sheet ID
-    const SHEET_NAME = 'Scoring'; // Ensure the tab name is 'Scoring'
-    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
+    const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';  
+    const SHEET_NAME = 'Scoring'; 
+    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc';
 
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
@@ -192,6 +215,18 @@
                     player2Indicator.style.display = 'block';
                 }
 
+                // Display lead points and leading player from B5 and B6
+                const leadPoints = Math.abs(rowData[4] || 0); // Taking absolute value
+                const leadingPlayer = rowData[5] || 'N/A'; 
+
+                if (leadPoints > 0) {
+                    document.getElementById('leadPoints').textContent = leadPoints;
+                    document.getElementById('leadingPlayer').textContent = leadingPlayer;
+                    document.getElementById('leadDisplay').style.display = 'block';
+                } else {
+                    document.getElementById('leadDisplay').style.display = 'none';
+                }
+
                 // Display the image if URL exists in cell J2
                 const imageUrl = rowData[9];
                 if (imageUrl) {
@@ -200,27 +235,13 @@
                     document.getElementById('fullscreenBg').innerHTML = '';
                 }
 
-                // Display the message if content exists in cell K2
+                // Display a message if any is set in K2
                 const message = rowData[10];
                 if (message) {
                     document.getElementById('messageStrip').textContent = message;
                     document.getElementById('messageStrip').style.display = 'block';
-                    document.getElementById('scoreStrip').style.display = 'none';
                 } else {
                     document.getElementById('messageStrip').style.display = 'none';
-                    document.getElementById('scoreStrip').style.display = 'flex';
-                }
-
-                // Fetch and display lead points and leading player's name
-                const leadPoints = Math.abs(rowData[5] || 0); // Positive value, even if negative in sheet
-                const leadingPlayer = rowData[6] || 'Player'; // Leading player's name
-
-                if (leadPoints > 0 && leadingPlayer) {
-                    document.getElementById('leadPoints').textContent = leadPoints;
-                    document.getElementById('leadingPlayer').textContent = leadingPlayer;
-                    document.getElementById('leadDisplay').style.display = 'block';
-                } else {
-                    document.getElementById('leadDisplay').style.display = 'none';
                 }
             }
         } catch (error) {
@@ -228,7 +249,7 @@
         }
     }
 
-    setInterval(fetchData, 3000); // Refresh every 3 seconds
+    setInterval(fetchData, 5000); 
 </script>
 
 </body>
