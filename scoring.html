@@ -109,15 +109,16 @@
         /* Lead display styling */
         .lead-display {
             position: absolute;
-            top: 50px; /* Adjust as per your layout */
+            top: 20%; /* Position the lead display lower on the screen */
             left: 50%;
             transform: translateX(-50%);
             background-color: rgba(1, 171, 122, 0.9);
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 1.5em;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 2em; /* Make the text larger */
             color: #FFFFFF;
             font-weight: bold;
+            text-align: center;
             z-index: 15;
         }
     </style>
@@ -147,7 +148,7 @@
     </div>
 </div>
 
-<!-- Lead Display (Centered) -->
+<!-- Lead Display (Centered on the screen) -->
 <div class="lead-display" id="leadDisplay" style="display: none;">
     <span id="leadingPlayer">Player</span> is leading by <span id="leadPoints">0</span> points!
 </div>
@@ -232,4 +233,3 @@
 
 </body>
 </html>
-
