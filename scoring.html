@@ -49,9 +49,6 @@
             align-items: center;
             text-align: center;
         }
-        .main-logo {
-            height: 40px;
-        }
         .player-info {
             display: flex;
             justify-content: center;
@@ -97,16 +94,15 @@
             color: #1D1D25;
         }
 
-        /* Top-center media partner logo (replacing main sponsor logo) */
-        .top-center-logo {
+        /* Media partner logo now positioned in the top-right corner */
+        .top-right-logo {
             position: absolute;
             top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 10px;
             z-index: 15;
         }
-        .top-center-logo img {
-            width: 150px; /* Adjust the size as needed */
+        .top-right-logo img {
+            width: 150px; /* Adjust size as needed */
             opacity: 0.9;
         }
     </style>
@@ -136,8 +132,8 @@
     </div>
 </div>
 
-<!-- Media Partner Logo (top center, replacing main sponsor) -->
-<div class="top-center-logo">
+<!-- Media Partner Logo (top-right corner) -->
+<div class="top-right-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
 
