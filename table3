@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Scoring</title>
+    <title>Snooker Scoring Table 3</title>
     <style>
         body {
             margin: 0;
@@ -94,7 +94,6 @@
             color: #1D1D25;
         }
 
-        /* Media partner logo now positioned in the top-right corner */
         .top-right-logo {
             position: absolute;
             top: 10px;
@@ -102,33 +101,33 @@
             z-index: 15;
         }
         .top-right-logo img {
-            width: 150px; /* Adjust size as needed */
+            width: 150px;
             opacity: 0.9;
         }
     </style>
 </head>
 <body>
 
-<div class="fullscreen-bg" id="fullscreenBg"></div>
+<div class="fullscreen-bg" id="fullscreenBgTable3"></div>
 
-<div class="overlay" id="scoreStrip">
+<div class="overlay" id="scoreStripTable3">
     <!-- Player 1 Info: Active Indicator -> Name -> Score -->
-    <div class="player-info" id="player1">
-        <div class="active-indicator" id="player1Indicator"></div> <!-- Active Player Indicator (Image) -->
-        <div class="name" id="player1Name">Player 1</div>
-        <div class="score" id="player1Score">0</div>
+    <div class="player-info" id="player1Table3">
+        <div class="active-indicator" id="player1IndicatorTable3"></div>
+        <div class="name" id="player1NameTable3">Player 1</div>
+        <div class="score" id="player1ScoreTable3">0</div>
     </div>
 
     <!-- Center content with rounds score -->
     <div class="center-content">
-        <div class="rounds" id="rounds">(0-0)</div>
+        <div class="rounds" id="roundsTable3">(0-0)</div>
     </div>
 
     <!-- Player 2 Info: Active Indicator -> Name -> Score -->
-    <div class="player-info" id="player2">
-        <div class="active-indicator" id="player2Indicator"></div> <!-- Active Player Indicator (Image) -->
-        <div class="name" id="player2Name">Player 2</div>
-        <div class="score" id="player2Score">0</div>
+    <div class="player-info" id="player2Table3">
+        <div class="active-indicator" id="player2IndicatorTable3"></div>
+        <div class="name" id="player2NameTable3">Player 2</div>
+        <div class="score" id="player2ScoreTable3">0</div>
     </div>
 </div>
 
@@ -137,31 +136,30 @@
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
 
-<div class="message" id="messageStrip" style="display: none;"></div>
+<div class="message" id="messageStripTable3" style="display: none;"></div>
 
 <script>
     const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';  // Replace with actual sheet ID
-    const SHEET_NAME = 'table3'; // Ensure the tab name is 'table3'
+    const SHEET_NAME_TABLE3 = 'table3'; // Use the sheet name "table3"
     const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
 
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+    const urlTable3 = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME_TABLE3}?key=${API_KEY}`;
 
-    async function fetchData() {
+    async function fetchDataTable3() {
         try {
-            const response = await fetch(url);
+            const response = await fetch(urlTable3);
             const data = await response.json();
             const values = data.values;
             if (values && values.length > 1) {
                 const rowData = values[1];
-                document.getElementById('player1Name').textContent = rowData[0] || 'Player 1';
-                document.getElementById('player1Score').textContent = rowData[1] || '0';
-                document.getElementById('player2Name').textContent = rowData[2] || 'Player 2';
-                document.getElementById('player2Score').textContent = rowData[3] || '0';
-                document.getElementById('rounds').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
+                document.getElementById('player1NameTable3').textContent = rowData[0] || 'Player 1';
+                document.getElementById('player1ScoreTable3').textContent = rowData[1] || '0';
+                document.getElementById('player2NameTable3').textContent = rowData[2] || 'Player 2';
+                document.getElementById('player2ScoreTable3').textContent = rowData[3] || '0';
+                document.getElementById('roundsTable3').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
 
-                // Show active player with indicator image
-                const player1Indicator = document.getElementById('player1Indicator');
-                const player2Indicator = document.getElementById('player2Indicator');
+                const player1Indicator = document.getElementById('player1IndicatorTable3');
+                const player2Indicator = document.getElementById('player2IndicatorTable3');
                 player1Indicator.style.display = 'none';
                 player2Indicator.style.display = 'none';
 
@@ -171,23 +169,21 @@
                     player2Indicator.style.display = 'block';
                 }
 
-                // Display the image if URL exists in cell J2
                 const imageUrl = rowData[9];
                 if (imageUrl) {
-                    document.getElementById('fullscreenBg').innerHTML = `<img src="${imageUrl}" alt="Background">`;
+                    document.getElementById('fullscreenBgTable3').innerHTML = `<img src="${imageUrl}" alt="Background">`;
                 } else {
-                    document.getElementById('fullscreenBg').innerHTML = '';
+                    document.getElementById('fullscreenBgTable3').innerHTML = '';
                 }
 
-                // Display the message if content exists in cell K2
                 const message = rowData[10];
                 if (message) {
-                    document.getElementById('messageStrip').textContent = message;
-                    document.getElementById('messageStrip').style.display = 'block';
-                    document.getElementById('scoreStrip').style.display = 'none';
+                    document.getElementById('messageStripTable3').textContent = message;
+                    document.getElementById('messageStripTable3').style.display = 'block';
+                    document.getElementById('scoreStripTable3').style.display = 'none';
                 } else {
-                    document.getElementById('messageStrip').style.display = 'none';
-                    document.getElementById('scoreStrip').style.display = 'flex';
+                    document.getElementById('messageStripTable3').style.display = 'none';
+                    document.getElementById('scoreStripTable3').style.display = 'flex';
                 }
             }
         } catch (error) {
@@ -195,8 +191,8 @@
         }
     }
 
-    fetchData();
-    setInterval(fetchData, 2500);
+    fetchDataTable3();
+    setInterval(fetchDataTable3, 2500);
 </script>
 
 </body>
