@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buddies Billiards Scoring</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Verdana', sans-serif;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .fullscreen-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .fullscreen-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(50, 50, 70, 0.95);
+            color: #FFD700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 25px;
+            box-sizing: border-box;
+            border-top: 3px solid #FFD700;
+            z-index: 10;
+        }
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .player-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        .active-indicator {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            display: none;
+        }
+        .name {
+            font-size: 1.3em;
+            margin: 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        .score {
+            font-size: 1.5em;
+            margin-left: 10px;
+            font-weight: 700;
+            color: #FFD700;
+            text-align: right;
+        }
+        .rounds {
+            font-size: 1.2em;
+            color: #ccc;
+        }
+        .message {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            font-size: 1.5em;
+            padding: 5px;
+            background: #FFD700;
+            color: #323246;
+        }
+
+        /* Media partner text (top-right corner) */
+        .top-right-logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 15;
+        }
+        .top-right-logo span {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #323246;
+            background: #FFD700;
+            padding: 5px 10px;
+            border-radius: 5px;
+            opacity: 0.95;
+        }
+    </style>
+</head>
+<body>
+
+<div class="fullscreen-bg" id="fullscreenBg"></div>
+
+<div class="overlay" id="scoreStrip">
+    <!-- Player 1 Info: Active Indicator -> Name -> Score -->
+    <div class="player-info" id="player1">
+        <div class="active-indicator" id="player1Indicator"></div> <!-- Active Player Indicator -->
+        <div class="name" id="player1Name">Player 1</div>
+        <div class="score" id="player1Score">0</div>
+    </div>
+
+    <!-- Center content with rounds score -->
+    <div class="center-content">
+        <div class="rounds" id="rounds">(0-0)</div>
+    </div>
+
+    <!-- Player 2 Info: Active Indicator -> Name -> Score -->
+    <div class="player-info" id="player2">
+        <div class="active-indicator" id="player2Indicator"></div> <!-- Active Player Indicator -->
+        <div class="name" id="player2Name">Player 2</div>
+        <div class="score" id="player2Score">0</div>
+    </div>
+</div>
+
+<!-- Media Partner Text -->
+<div class="top-right-logo">
+    <span>Buddies Billiards & Accessories</span>
+</div>
+
+<div class="message" id="messageStrip" style="display: none;"></div>
+
+<script>
+    const SHEET_ID = '191cLsQMY9_6q24DAUNfTTXNQe5g8LbabiS7oRpTxzV8';  // Replace with actual sheet ID
+    const SHEET_NAME = 'buddies'; // Ensure the tab name is 'Scoring'
+    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
+
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+
+    async function fetchData() {
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            const values = data.values;
+            if (values && values.length > 1) {
+                const rowData = values[1];
+                document.getElementById('player1Name').textContent = rowData[0] || 'Player 1';
+                document.getElementById('player1Score').textContent = rowData[1] || '0';
+                document.getElementById('player2Name').textContent = rowData[2] || 'Player 2';
+                document.getElementById('player2Score').textContent = rowData[3] || '0';
+                document.getElementById('rounds').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
+
+                // Show active player with indicator image
+                const player1Indicator = document.getElementById('player1Indicator');
+                const player2Indicator = document.getElementById('player2Indicator');
+                player1Indicator.style.display = 'none';
+                player2Indicator.style.display = 'none';
+
+                if (rowData[4] === '1') {
+                    player1Indicator.style.display = 'block';
+                } else if (rowData[4] === '2') {
+                    player2Indicator.style.display = 'block';
+                }
+
+                // Display the image if URL exists in cell J2
+                const imageUrl = rowData[9];
+                if (imageUrl) {
+                    document.getElementById('fullscreenBg').innerHTML = `<img src="${imageUrl}" alt="Background">`;
+                } else {
+                    document.getElementById('fullscreenBg').innerHTML = '';
+                }
+
+                // Display the message if content exists in cell K2
+                const message = rowData[10];
+                if (message) {
+                    document.getElementById('messageStrip').textContent = message;
+                    document.getElementById('messageStrip').style.display = 'block';
+                    document.getElementById('scoreStrip').style.display = 'none';
+                } else {
+                    document.getElementById('messageStrip').style.display = 'none';
+                    document.getElementById('scoreStrip').style.display = 'flex';
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching data from Google Sheets:', error);
+        }
+    }
+
+    fetchData();
+    setInterval(fetchData, 2500);
+</script>
+
+</body>
+</html>
