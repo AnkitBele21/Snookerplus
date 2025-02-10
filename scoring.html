@@ -43,48 +43,73 @@
             border-top: 2px solid #01AB7A;
             z-index: 10;
         }
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .main-logo {
+            height: 40px;
+        }
         .player-info {
             display: flex;
+            justify-content: center;
             align-items: center;
             flex: 1;
             text-align: center;
+            position: relative;
+        }
+        .active-indicator {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
+            background-size: cover;
+            display: none;
         }
         .name {
             font-size: 1.2em;
+            margin: 0;
             font-weight: bold;
+            text-align: center;
         }
         .score {
             font-size: 1.4em;
+            margin-left: 10px;
             font-weight: 700;
             color: #01AB7A;
-            margin-left: 10px;
+            text-align: right;
         }
         .rounds {
             font-size: 1.1em;
             color: #ccc;
-            text-align: center;
         }
         .message {
             width: 100%;
             position: absolute;
             bottom: 0;
+            left: 0;
             text-align: center;
             font-size: 1.5em;
             padding: 5px;
             background: #01AB7A;
             color: #1D1D25;
         }
-        /* Logos */
+
+        /* Venue logo styling */
         .venue-logo {
             position: absolute;
             top: 10px;
             left: 10px;
             z-index: 10;
         }
-        .venue-logo img {
+        .venue-logo-img {
             width: 70px;
             opacity: 0.9;
         }
+
+        /* Top-right corner logo (media partner) */
         .top-right-logo {
             position: absolute;
             top: 10px;
@@ -92,16 +117,8 @@
             z-index: 15;
         }
         .top-right-logo img {
-            width: 120px;
+            width: 150px;
             opacity: 0.9;
-        }
-        .sponsor-logo {
-            display: flex;
-            justify-content: center;
-            flex-grow: 1;
-        }
-        .sponsor-logo img {
-            height: 40px;
         }
     </style>
 </head>
@@ -109,89 +126,42 @@
 
 <div class="fullscreen-bg" id="fullscreenBg"></div>
 
-<!-- Venue Logo -->
+<!-- Venue Information with Logo -->
 <div class="venue-logo">
-    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/Group%204303%20(2).png?raw=true" alt="Club Logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/Group%204303%20(2).png?raw=true" alt="Jai Club Logo" class="venue-logo-img">
 </div>
 
-<!-- Score Overlay -->
 <div class="overlay" id="scoreStrip">
-    <!-- Player 1 -->
+    <!-- Player 1 Info: Active Indicator -> Name -> Score -->
     <div class="player-info" id="player1">
+        <div class="active-indicator" id="player1Indicator"></div>
         <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
     </div>
 
-    <!-- Sponsor Logo & Rounds -->
-    <div class="sponsor-logo">
-        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Sponsor Logo">
-        <div class="rounds" id="rounds">(0 (Best of n) 0)</div>
+    <!-- Center content with logo and rounds score -->
+    <div class="center-content">
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
+        <div class="rounds" id="rounds">(0-0)</div>
     </div>
 
-    <!-- Player 2 -->
+    <!-- Player 2 Info: Active Indicator -> Name -> Score -->
     <div class="player-info" id="player2">
-        <div class="score" id="player2Score">0</div>
+        <div class="active-indicator" id="player2Indicator"></div>
         <div class="name" id="player2Name">Player 2</div>
+        <div class="score" id="player2Score">0</div>
     </div>
 </div>
 
-<!-- Media Partner Logo -->
+<!-- Media Partner Logo (top right) -->
 <div class="top-right-logo">
-    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Media Partner Logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
 
 <div class="message" id="messageStrip" style="display: none;"></div>
 
-<script>
-    const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';
-    const SHEET_NAME = 'Scoring';
-    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc';
-
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
-
-    async function fetchData() {
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            const values = data.values;
-            if (values && values.length > 1) {
-                const rowData = values[1];
-                document.getElementById('player1Name').textContent = rowData[0] || 'Player 1';
-                document.getElementById('player1Score').textContent = rowData[1] || '0';
-                document.getElementById('player2Name').textContent = rowData[2] || 'Player 2';
-                document.getElementById('player2Score').textContent = rowData[3] || '0';
-
-                // Updated rounds format (e.g., "1 (Best of 5) 4")
-                const totalRounds = rowData[5] || 'n';
-                document.getElementById('rounds').textContent = `(${rowData[6] || '0'} (Best of ${totalRounds}) ${rowData[7] || '0'})`;
-
-                // Background image from Google Sheets
-                const imageUrl = rowData[9];
-                if (imageUrl) {
-                    document.getElementById('fullscreenBg').innerHTML = `<img src="${imageUrl}" alt="Background">`;
-                } else {
-                    document.getElementById('fullscreenBg').innerHTML = '';
-                }
-
-                // Display message if exists
-                const message = rowData[10];
-                if (message) {
-                    document.getElementById('messageStrip').textContent = message;
-                    document.getElementById('messageStrip').style.display = 'block';
-                    document.getElementById('scoreStrip').style.display = 'none';
-                } else {
-                    document.getElementById('messageStrip').style.display = 'none';
-                    document.getElementById('scoreStrip').style.display = 'flex';
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching data from Google Sheets:', error);
-        }
-    }
-
-    fetchData();
-    setInterval(fetchData, 2500);
-</script>
+<!-- Load control.js to handle the scoring logic -->
+<script src="control.js"></script>
 
 </body>
 </html>
