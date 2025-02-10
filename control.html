@@ -79,22 +79,26 @@
     <button onclick="updateScoring()">Update Score</button>
 
     <script>
-        function updateScoring() {
-            const data = {
-                player1Name: document.getElementById('player1Name').value || 'Player 1',
-                player1Score: document.getElementById('player1Score').value || '0',
-                player2Name: document.getElementById('player2Name').value || 'Player 2',
-                player2Score: document.getElementById('player2Score').value || '0',
-                totalRounds: document.getElementById('totalRounds').value || '1',
-                rounds: document.getElementById('rounds').value || '0-0',
-                activePlayer: document.getElementById('activePlayer').value || '0',
-                message: document.getElementById('message').value || ''
-            };
+    function updateScoring() {
+        let roundsInput = document.getElementById('rounds').value || '0-0';
+        let [player1Wins, player2Wins] = roundsInput.split('-').map(num => parseInt(num) || 0);
 
-            // Store data in localStorage
-            localStorage.setItem('snookerScoring', JSON.stringify(data));
-        }
-    </script>
+        const data = {
+            player1Name: document.getElementById('player1Name').value || 'Player 1',
+            player1Score: document.getElementById('player1Score').value || '0',
+            player2Name: document.getElementById('player2Name').value || 'Player 2',
+            player2Score: document.getElementById('player2Score').value || '0',
+            totalFrames: document.getElementById('totalRounds').value || '1',
+            player1Wins: player1Wins,
+            player2Wins: player2Wins,
+            activePlayer: document.getElementById('activePlayer').value || '0',
+            message: document.getElementById('message').value || ''
+        };
+
+        // Store data in localStorage
+        localStorage.setItem('snookerScoring', JSON.stringify(data));
+    }
+</script>
 
 </body>
 </html>
