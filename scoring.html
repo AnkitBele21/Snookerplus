@@ -3,37 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Scoring Overlay</title>
+    <title>Snooker Scoring</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             font-family: 'Arial', sans-serif;
+            position: relative;
             height: 100vh;
             width: 100vw;
             background: rgba(0, 0, 0, 0);
         }
-
-        /* Logo Section */
-        .logo-bar {
+        .fullscreen-bg {
             position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 90%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
-
-        .logo-bar img {
-            height: 50px;
-            max-width: 150px;
-            object-fit: contain;
+        .fullscreen-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-
-        /* Overlay */
         .overlay {
             position: absolute;
             bottom: 0;
@@ -44,135 +38,159 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
+            padding: 8px 20px;
             box-sizing: border-box;
             border-top: 2px solid #01AB7A;
+            z-index: 10;
         }
-
-        /* Player Info */
         .player-info {
             display: flex;
             align-items: center;
+            flex: 1;
             text-align: center;
         }
-
-        .player-left {
-            justify-content: flex-start;
-            flex: 1;
-        }
-
-        .player-right {
-            justify-content: flex-end;
-            flex: 1;
-        }
-
-        .active-indicator {
-            margin-right: 10px;
-            width: 15px;
-            height: 15px;
-            background-color: #01AB7A;
-            border-radius: 50%;
-            display: none;
-        }
-
         .name {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: bold;
-            text-align: center;
         }
-
         .score {
-            font-size: 1.5em;
-            margin-left: 10px;
+            font-size: 1.4em;
             font-weight: 700;
             color: #01AB7A;
-            text-align: right;
+            margin-left: 10px;
         }
-
-        /* Rounds in Center */
         .rounds {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #ccc;
-            font-weight: bold;
-            flex: 0.5;
             text-align: center;
         }
-
-        /* Message Strip */
         .message {
             width: 100%;
             position: absolute;
             bottom: 0;
-            left: 0;
             text-align: center;
             font-size: 1.5em;
             padding: 5px;
             background: #01AB7A;
             color: #1D1D25;
-            display: none;
-            font-weight: bold;
         }
-
+        /* Logos */
+        .venue-logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+        .venue-logo img {
+            width: 70px;
+            opacity: 0.9;
+        }
+        .top-right-logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 15;
+        }
+        .top-right-logo img {
+            width: 120px;
+            opacity: 0.9;
+        }
+        .sponsor-logo {
+            display: flex;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        .sponsor-logo img {
+            height: 40px;
+        }
     </style>
 </head>
 <body>
 
-<!-- Logo Section -->
-<div class="logo-bar">
-    <img src="CLUB_LOGO_URL" alt="Club">
-    <img src="SPONSOR_LOGO_URL" alt="Sponsor">
-    <img src="https://img1.wsimg.com/isteam/ip/9e11a5db-9940-4d56-b773-7f8426617dc8/Frame%2012995%20(1).png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25" alt="Media Partner">
+<div class="fullscreen-bg" id="fullscreenBg"></div>
+
+<!-- Venue Logo -->
+<div class="venue-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/Group%204303%20(2).png?raw=true" alt="Club Logo">
 </div>
 
 <!-- Score Overlay -->
-<div class="overlay">
-    <!-- Player 1 (Left-aligned) -->
-    <div class="player-info player-left" id="player1">
-        <div class="active-indicator" id="player1Indicator"></div>
+<div class="overlay" id="scoreStrip">
+    <!-- Player 1 -->
+    <div class="player-info" id="player1">
         <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
     </div>
 
-    <!-- Rounds (Centered) -->
-    <div class="rounds" id="rounds">(1 (Best of N) 4)</div>
+    <!-- Sponsor Logo & Rounds -->
+    <div class="sponsor-logo">
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Sponsor Logo">
+        <div class="rounds" id="rounds">(0 (Best of n) 0)</div>
+    </div>
 
-    <!-- Player 2 (Right-aligned) -->
-    <div class="player-info player-right" id="player2">
+    <!-- Player 2 -->
+    <div class="player-info" id="player2">
         <div class="score" id="player2Score">0</div>
         <div class="name" id="player2Name">Player 2</div>
-        <div class="active-indicator" id="player2Indicator"></div>
     </div>
 </div>
 
-<!-- Message Bar -->
-<div class="message" id="messageStrip"></div>
+<!-- Media Partner Logo -->
+<div class="top-right-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Media Partner Logo">
+</div>
+
+<div class="message" id="messageStrip" style="display: none;"></div>
 
 <script>
-    function updateScoringDisplay() {
-        const data = JSON.parse(localStorage.getItem('snookerScoring'));
-        if (data) {
-            document.getElementById('player1Name').textContent = data.player1Name;
-            document.getElementById('player1Score').textContent = data.player1Score;
-            document.getElementById('player2Name').textContent = data.player2Name;
-            document.getElementById('player2Score').textContent = data.player2Score;
-            
-            // Format rounds correctly
-            document.getElementById('rounds').textContent = `(${data.currentRound} (Best of ${data.totalRounds}) ${data.opponentRound})`;
+    const SHEET_ID = '19eff4Xletc8-56N4QqRuhqMWOlAuenrJ4OoOLGPu-RE';
+    const SHEET_NAME = 'Scoring';
+    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc';
 
-            document.getElementById('player1Indicator').style.display = (data.activePlayer == '1') ? 'block' : 'none';
-            document.getElementById('player2Indicator').style.display = (data.activePlayer == '2') ? 'block' : 'none';
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
-            if (data.message) {
-                document.getElementById('messageStrip').textContent = data.message;
-                document.getElementById('messageStrip').style.display = 'block';
-            } else {
-                document.getElementById('messageStrip').style.display = 'none';
+    async function fetchData() {
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            const values = data.values;
+            if (values && values.length > 1) {
+                const rowData = values[1];
+                document.getElementById('player1Name').textContent = rowData[0] || 'Player 1';
+                document.getElementById('player1Score').textContent = rowData[1] || '0';
+                document.getElementById('player2Name').textContent = rowData[2] || 'Player 2';
+                document.getElementById('player2Score').textContent = rowData[3] || '0';
+
+                // Updated rounds format (e.g., "1 (Best of 5) 4")
+                const totalRounds = rowData[5] || 'n';
+                document.getElementById('rounds').textContent = `(${rowData[6] || '0'} (Best of ${totalRounds}) ${rowData[7] || '0'})`;
+
+                // Background image from Google Sheets
+                const imageUrl = rowData[9];
+                if (imageUrl) {
+                    document.getElementById('fullscreenBg').innerHTML = `<img src="${imageUrl}" alt="Background">`;
+                } else {
+                    document.getElementById('fullscreenBg').innerHTML = '';
+                }
+
+                // Display message if exists
+                const message = rowData[10];
+                if (message) {
+                    document.getElementById('messageStrip').textContent = message;
+                    document.getElementById('messageStrip').style.display = 'block';
+                    document.getElementById('scoreStrip').style.display = 'none';
+                } else {
+                    document.getElementById('messageStrip').style.display = 'none';
+                    document.getElementById('scoreStrip').style.display = 'flex';
+                }
             }
+        } catch (error) {
+            console.error('Error fetching data from Google Sheets:', error);
         }
     }
 
-    // Update every second
-    setInterval(updateScoringDisplay, 1000);
+    fetchData();
+    setInterval(fetchData, 2500);
 </script>
 
 </body>
