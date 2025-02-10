@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Scoring</title>
+    <title>Snooker Scoring Overlay</title>
     <style>
         body {
             margin: 0;
@@ -14,6 +14,27 @@
             width: 100vw;
             background: rgba(0, 0, 0, 0);
         }
+
+        /* Top Section for Logos */
+        .logo-bar {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            width: 80%;
+        }
+
+        .logo-bar img {
+            height: 50px;
+            max-width: 150px;
+            object-fit: contain;
+        }
+
+        /* Main Overlay */
         .overlay {
             position: absolute;
             bottom: 0;
@@ -28,6 +49,8 @@
             box-sizing: border-box;
             border-top: 2px solid #01AB7A;
         }
+
+        /* Player Info */
         .player-info {
             display: flex;
             align-items: center;
@@ -35,30 +58,37 @@
             text-align: center;
             position: relative;
         }
+
         .active-indicator {
             margin-right: 10px;
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            height: 15px;
             background-color: #01AB7A;
             border-radius: 50%;
             display: none;
         }
+
         .name {
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: bold;
             text-align: center;
         }
+
         .score {
-            font-size: 1.4em;
+            font-size: 1.5em;
             margin-left: 10px;
             font-weight: 700;
             color: #01AB7A;
             text-align: right;
         }
+
         .rounds {
-            font-size: 1.1em;
+            font-size: 1.2em;
             color: #ccc;
+            font-weight: bold;
         }
+
+        /* Message Strip */
         .message {
             width: 100%;
             position: absolute;
@@ -70,11 +100,21 @@
             background: #01AB7A;
             color: #1D1D25;
             display: none;
+            font-weight: bold;
         }
+
     </style>
 </head>
 <body>
 
+<!-- Logo Section -->
+<div class="logo-bar">
+    <img src="SPONSOR_LOGO_URL" alt="Sponsor">
+    <img src="CLUB_LOGO_URL" alt="Club">
+    <img src="MEDIA_PARTNER_LOGO_URL" alt="Media Partner">
+</div>
+
+<!-- Score Overlay -->
 <div class="overlay">
     <div class="player-info" id="player1">
         <div class="active-indicator" id="player1Indicator"></div>
@@ -91,6 +131,7 @@
     </div>
 </div>
 
+<!-- Message Bar -->
 <div class="message" id="messageStrip"></div>
 
 <script>
@@ -115,7 +156,7 @@
         }
     }
 
-    // Check for updates every second
+    // Update every second
     setInterval(updateScoringDisplay, 1000);
 </script>
 
