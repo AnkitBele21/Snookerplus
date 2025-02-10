@@ -15,17 +15,16 @@
             background: rgba(0, 0, 0, 0);
         }
 
-        /* Top Section for Logos */
+        /* Logo Section */
         .logo-bar {
             position: absolute;
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 30px;
-            width: 80%;
+            width: 90%;
         }
 
         .logo-bar img {
@@ -34,7 +33,7 @@
             object-fit: contain;
         }
 
-        /* Main Overlay */
+        /* Overlay */
         .overlay {
             position: absolute;
             bottom: 0;
@@ -45,7 +44,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 20px;
+            padding: 10px 20px;
             box-sizing: border-box;
             border-top: 2px solid #01AB7A;
         }
@@ -54,9 +53,17 @@
         .player-info {
             display: flex;
             align-items: center;
-            flex: 1;
             text-align: center;
-            position: relative;
+        }
+
+        .player-left {
+            justify-content: flex-start;
+            flex: 1;
+        }
+
+        .player-right {
+            justify-content: flex-end;
+            flex: 1;
         }
 
         .active-indicator {
@@ -82,10 +89,13 @@
             text-align: right;
         }
 
+        /* Rounds in Center */
         .rounds {
             font-size: 1.2em;
             color: #ccc;
             font-weight: bold;
+            flex: 0.5;
+            text-align: center;
         }
 
         /* Message Strip */
@@ -109,25 +119,28 @@
 
 <!-- Logo Section -->
 <div class="logo-bar">
-    <img src="SPONSOR_LOGO_URL" alt="Sponsor">
     <img src="CLUB_LOGO_URL" alt="Club">
+    <img src="SPONSOR_LOGO_URL" alt="Sponsor">
     <img src="https://img1.wsimg.com/isteam/ip/9e11a5db-9940-4d56-b773-7f8426617dc8/Frame%2012995%20(1).png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25" alt="Media Partner">
 </div>
 
 <!-- Score Overlay -->
 <div class="overlay">
-    <div class="player-info" id="player1">
+    <!-- Player 1 (Left-aligned) -->
+    <div class="player-info player-left" id="player1">
         <div class="active-indicator" id="player1Indicator"></div>
         <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
     </div>
 
-    <div class="rounds" id="rounds">(0-0)</div>
+    <!-- Rounds (Centered) -->
+    <div class="rounds" id="rounds">(1 (Best of N) 4)</div>
 
-    <div class="player-info" id="player2">
-        <div class="active-indicator" id="player2Indicator"></div>
-        <div class="name" id="player2Name">Player 2</div>
+    <!-- Player 2 (Right-aligned) -->
+    <div class="player-info player-right" id="player2">
         <div class="score" id="player2Score">0</div>
+        <div class="name" id="player2Name">Player 2</div>
+        <div class="active-indicator" id="player2Indicator"></div>
     </div>
 </div>
 
@@ -142,7 +155,9 @@
             document.getElementById('player1Score').textContent = data.player1Score;
             document.getElementById('player2Name').textContent = data.player2Name;
             document.getElementById('player2Score').textContent = data.player2Score;
-            document.getElementById('rounds').textContent = `(${data.rounds})`;
+            
+            // Format rounds correctly
+            document.getElementById('rounds').textContent = `(${data.currentRound} (Best of ${data.totalRounds}) ${data.opponentRound})`;
 
             document.getElementById('player1Indicator').style.display = (data.activePlayer == '1') ? 'block' : 'none';
             document.getElementById('player2Indicator').style.display = (data.activePlayer == '2') ? 'block' : 'none';
