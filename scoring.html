@@ -3,51 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Score Display</title>
-    
-    <!-- ✅ Correct Firebase Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
-
+    <title>Snooker Scoring</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        .score { font-size: 40px; font-weight: bold; margin: 10px; }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0, 0, 0, 0);
+        }
+        .fullscreen-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .fullscreen-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(29, 29, 37, 0.9);
+            color: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            box-sizing: border-box;
+            border-top: 2px solid #01AB7A;
+            z-index: 10;
+        }
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .main-logo {
+            height: 20px;
+            opacity: 0;
+        }
+        .player-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        .active-indicator {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
+            background-size: cover;
+            display: none;
+        }
+        .name {
+            font-size: 1.2em;
+            margin: 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        .score {
+            font-size: 1.4em;
+            margin-left: 10px;
+            font-weight: 700;
+            color: #01AB7A;
+            text-align: right;
+        }
+        .rounds {
+            font-size: 1.1em;
+            color: #ccc;
+        }
+        .message {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            font-size: 1.5em;
+            padding: 5px;
+            background: #01AB7A;
+            color: #1D1D25;
+        }
+
+        /* Venue logo styling */
+        .venue-logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
+.venue-logo-img {
+    width: 80px;  /* Adjust size to make it smaller */
+    max-width: 120px; /* Prevent it from becoming too large */
+    opacity: 0.9;
+}
+
+
+        /* Top-right corner logo (media partner) */
+        .top-right-logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 15;
+        }
+        .top-right-logo img {
+            width: 150px;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
 
-    <h2>Live Snooker Scores</h2>
-
-    <div>
-        <h3 id="player1Name">Player 1</h3>
+<div class="overlay" id="scoreStrip">
+    <div class="player-info" id="player1">
+        <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
     </div>
 
-    <div>
-        <h3 id="player2Name">Player 2</h3>
-        <div class="score" id="player2Score">0</div>
+    <div class="center-content">
+        <div class="rounds" id="rounds">(0-0)</div>
     </div>
 
-    <script>
-        // ✅ Initialize Firebase
-        const firebaseConfig = {
-            databaseURL: "https://score-8e601-default-rtdb.firebaseio.com/"
-        };
+    <div class="player-info" id="player2">
+        <div class="name" id="player2Name">Player 2</div>
+        <div class="score" id="player2Score">0</div>
+    </div>
+</div>
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+<div class="message" id="messageStrip" style="display: none;"></div>
 
-        // ✅ Listen for real-time updates
-        db.ref("snooker").on("value", (snapshot) => {
-            let data = snapshot.val();
-            if (data) {
-                document.getElementById('player1Name').innerText = data.player1Name;
-                document.getElementById('player1Score').innerText = data.player1Score;
-                document.getElementById('player2Name').innerText = data.player2Name;
-                document.getElementById('player2Score').innerText = data.player2Score;
-            }
-        });
-    </script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+<script src="control.js"></script>
 
 </body>
 </html>
