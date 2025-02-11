@@ -30,13 +30,16 @@
         }
         input {
             padding: 10px;
-            width: 80px;
             font-size: 1.1rem;
             text-align: center;
             border: 2px solid #ccc;
             border-radius: 5px;
             background: white;
             margin: 0 5px;
+        }
+        /* Reduce width only for score input */
+        .score-input {
+            width: 60px; 
         }
         .score-btn {
             width: 40px;
@@ -110,7 +113,7 @@
         <label for="player1Score">Player 1 Score</label>
         <div class="score-container">
             <button class="score-btn minus" onclick="adjustScore('player1Score', -1)">-</button>
-            <input type="number" id="player1Score" value="0" oninput="markChange()">
+            <input type="number" id="player1Score" value="0" class="score-input" oninput="markChange()">
             <button class="score-btn plus" onclick="adjustScore('player1Score', 1)">+</button>
         </div>
     </div>
@@ -131,7 +134,7 @@
         <label for="player2Score">Player 2 Score</label>
         <div class="score-container">
             <button class="score-btn minus" onclick="adjustScore('player2Score', -1)">-</button>
-            <input type="number" id="player2Score" value="0" oninput="markChange()">
+            <input type="number" id="player2Score" value="0" class="score-input" oninput="markChange()">
             <button class="score-btn plus" onclick="adjustScore('player2Score', 1)">+</button>
         </div>
     </div>
