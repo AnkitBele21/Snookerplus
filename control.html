@@ -23,23 +23,19 @@
             display: block;
             margin-bottom: 5px;
         }
-        .score-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
         input {
             padding: 10px;
+            width: 180px;
             font-size: 1.1rem;
             text-align: center;
             border: 2px solid #ccc;
             border-radius: 5px;
             background: white;
-            margin: 0 5px;
         }
-        /* Reduce width only for score input */
-        .score-input {
-            width: 60px; 
+        .score-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .score-btn {
             width: 40px;
@@ -49,6 +45,7 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
+            margin: 0 5px;
             transition: background 0.3s;
         }
         .score-btn.minus {
@@ -113,7 +110,7 @@
         <label for="player1Score">Player 1 Score</label>
         <div class="score-container">
             <button class="score-btn minus" onclick="adjustScore('player1Score', -1)">-</button>
-            <input type="number" id="player1Score" value="0" class="score-input" oninput="markChange()">
+            <input type="number" id="player1Score" value="0" style="width: 80px;" readonly>
             <button class="score-btn plus" onclick="adjustScore('player1Score', 1)">+</button>
         </div>
     </div>
@@ -134,12 +131,12 @@
         <label for="player2Score">Player 2 Score</label>
         <div class="score-container">
             <button class="score-btn minus" onclick="adjustScore('player2Score', -1)">-</button>
-            <input type="number" id="player2Score" value="0" class="score-input" oninput="markChange()">
+            <input type="number" id="player2Score" value="0" style="width: 80px;" readonly>
             <button class="score-btn plus" onclick="adjustScore('player2Score', 1)">+</button>
         </div>
     </div>
 
-    <!-- Update Score Button -->
+    <!-- Update Score Button (Changes Color) -->
     <button id="updateBtn" class="update-btn" onclick="updateScoring()">Update Score</button>
 
     <!-- Message -->
@@ -195,22 +192,24 @@
         }
 
         function updateScoring() {
-    let totalRounds = document.getElementById('totalRounds').value || '1'; // Default to 1 if empty
+            let roundsInput = document.getElementById('rounds').value || '0-0';
+            let [player1Wins, player2Wins] = roundsInput.split('-').map(num => parseInt(num) || 0);
 
-    const data = {
-        player1Name: document.getElementById('player1Name').value || 'Player 1',
-        player1Score: document.getElementById('player1Score').value || '0',
-        player2Name: document.getElementById('player2Name').value || 'Player 2',
-        player2Score: document.getElementById('player2Score').value || '0',
-        totalFrames: `Best of ${totalRounds}`, // Fix applied here
-        activePlayer: activePlayer,
-        message: document.getElementById('message').value || ''
-    };
+            const data = {
+                player1Name: document.getElementById('player1Name').value || 'Player 1',
+                player1Score: document.getElementById('player1Score').value || '0',
+                player2Name: document.getElementById('player2Name').value || 'Player 2',
+                player2Score: document.getElementById('player2Score').value || '0',
+                totalFrames: document.getElementById('totalRounds').value || '1',
+                player1Wins: player1Wins,
+                player2Wins: player2Wins,
+                activePlayer: activePlayer,
+                message: document.getElementById('message').value || ''
+            };
 
-    localStorage.setItem('snookerScoring', JSON.stringify(data));
-    document.getElementById('updateBtn').classList.remove('active');
-}
-
+            localStorage.setItem('snookerScoring', JSON.stringify(data));
+            document.getElementById('updateBtn').classList.remove('active');
+        }
 
         updateActivePlayerHighlight();
     </script>
