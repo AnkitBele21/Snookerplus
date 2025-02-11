@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snooker Scoring Control</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,12 +52,27 @@
         .update-btn.active {
             background: #01AB7A;
         }
+        /* Improve Change button visibility */
+        .change-btn {
+            display: inline-block;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: #FF9800; /* Orange */
+            padding: 12px 24px;
+            border: 2px solid #E65100; /* Darker orange border */
+            margin: 10px 0; /* Add space */
+        }
+        .change-btn:hover {
+            background: #E65100; /* Darker on hover */
+        }
     </style>
 </head>
 <body>
 
     <!-- Logo -->
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/white%20logo.png?raw=true" alt="Snooker+ Logo" class="logo">
+
+    <h2>Snooker Scoring Control</h2>
 
     <!-- Player 1 -->
     <div class="input-group">
@@ -72,7 +88,7 @@
     <!-- Active Player -->
     <div class="input-group">
         <label>Active Player</label>
-        <button onclick="toggleActivePlayer(); markChange();">Change</button>
+        <button class="change-btn" onclick="toggleActivePlayer(); markChange();">Change</button>
     </div>
 
     <!-- Player 2 -->
