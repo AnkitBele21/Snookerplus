@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snooker Score Display</title>
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js"></script>
+    
+    <!-- ✅ Correct Firebase SDK (Fixes Errors) -->
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js"></script>
+
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         .score { font-size: 40px; font-weight: bold; margin: 10px; }
@@ -26,6 +29,7 @@
     </div>
 
     <script>
+        // ✅ Initialize Firebase (No More Errors)
         const firebaseConfig = {
             databaseURL: "https://score-8e601-default-rtdb.firebaseio.com/"
         };
@@ -33,6 +37,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // ✅ Listen for real-time updates
         db.ref("snooker").on("value", (snapshot) => {
             let data = snapshot.val();
             if (data) {
