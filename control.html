@@ -110,7 +110,7 @@
         <label for="player1Score">Player 1 Score</label>
         <div class="score-container">
             <button class="score-btn minus" onclick="adjustScore('player1Score', -1)">-</button>
-            <input type="number" id="player1Score" value="0" style="width: 80px;" readonly>
+            <input type="number" id="player1Score" value="0" style="width: 80px;" oninput="markChange()">
             <button class="score-btn plus" onclick="adjustScore('player1Score', 1)">+</button>
         </div>
     </div>
@@ -131,7 +131,7 @@
         <label for="player2Score">Player 2 Score</label>
         <div class="score-container">
             <button class="score-btn minus" onclick="adjustScore('player2Score', -1)">-</button>
-            <input type="number" id="player2Score" value="0" style="width: 80px;" readonly>
+            <input type="number" id="player2Score" value="0" style="width: 80px;" oninput="markChange()">
             <button class="score-btn plus" onclick="adjustScore('player2Score', 1)">+</button>
         </div>
     </div>
