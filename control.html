@@ -195,19 +195,22 @@
         }
 
         function updateScoring() {
-            const data = {
-                player1Name: document.getElementById('player1Name').value || 'Player 1',
-                player1Score: document.getElementById('player1Score').value || '0',
-                player2Name: document.getElementById('player2Name').value || 'Player 2',
-                player2Score: document.getElementById('player2Score').value || '0',
-                totalFrames: document.getElementById('totalRounds').value || '1',
-                activePlayer: activePlayer,
-                message: document.getElementById('message').value || ''
-            };
+    let totalRounds = document.getElementById('totalRounds').value || '1'; // Default to 1 if empty
 
-            localStorage.setItem('snookerScoring', JSON.stringify(data));
-            document.getElementById('updateBtn').classList.remove('active');
-        }
+    const data = {
+        player1Name: document.getElementById('player1Name').value || 'Player 1',
+        player1Score: document.getElementById('player1Score').value || '0',
+        player2Name: document.getElementById('player2Name').value || 'Player 2',
+        player2Score: document.getElementById('player2Score').value || '0',
+        totalFrames: `Best of ${totalRounds}`, // Fix applied here
+        activePlayer: activePlayer,
+        message: document.getElementById('message').value || ''
+    };
+
+    localStorage.setItem('snookerScoring', JSON.stringify(data));
+    document.getElementById('updateBtn').classList.remove('active');
+}
+
 
         updateActivePlayerHighlight();
     </script>
