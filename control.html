@@ -4,72 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snooker Scoring Control</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background: #f8f8f8;
-        }
-        .logo {
-            width: 150px;
-            margin-bottom: 15px;
-        }
-        .input-group {
-            margin-bottom: 12px;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-        input {
-            padding: 10px;
-            width: 180px;
-            font-size: 1.1rem;
-            text-align: center;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            background: white;
-        }
-        .score-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .score-btn {
-            width: 40px;
-            height: 40px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            margin: 0 5px;
-            transition: background 0.3s;
-        }
-        .score-btn.minus {
-            background: #FF5252;
-            color: white;
-        }
-        .score-btn.plus {
-            background: #4CAF50;
-            color: white;
-        }
-        .score-btn:hover {
-            opacity: 0.8;
-        }
-        .update-btn {
-            background: grey;
-        }
-        .update-btn.active {
-            background: #01AB7A;
-        }
-        .change-btn {
-            background: #FF9800;
-            padding: 12px 24px;
-            border: 2px solid #E65100;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: #f8f8f8; }
+        .logo { width: 150px; margin-bottom: 15px; }
+        .input-group { margin-bottom: 12px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input { padding: 10px; width: 180px; font-size: 1.1rem; text-align: center; border: 2px solid #ccc; border-radius: 5px; background: white; }
+        .score-container { display: flex; align-items: center; justify-content: center; }
+        .score-btn { width: 40px; height: 40px; font-size: 1.5rem; font-weight: bold; border: none; cursor: pointer; border-radius: 5px; margin: 0 5px; }
+        .score-btn.minus { background: #FF5252; color: white; }
+        .score-btn.plus { background: #4CAF50; color: white; }
+        .update-btn { background: grey; padding: 12px 18px; font-size: 1rem; color: white; border: none; cursor: pointer; border-radius: 5px; }
+        .update-btn.active { background: #01AB7A; }
     </style>
 </head>
 <body>
@@ -79,44 +30,74 @@
 
     <h2>Snooker Scoring Control</h2>
 
+    <!-- Player 1 -->
     <div class="input-group">
         <label for="player1Name">Player 1 Name</label>
-        <input type="text" id="player1Name" oninput="markChange()">
+        <input type="text" id="player1Name">
     </div>
-
     <div class="input-group">
         <label for="player1Score">Player 1 Score</label>
         <div class="score-container">
             <button class="score-btn minus" onclick="adjustScore('player1Score', -1)">-</button>
-            <input type="number" id="player1Score" value="0" style="width: 80px;" oninput="markChange()">
+            <input type="number" id="player1Score" value="0" style="width: 80px;">
             <button class="score-btn plus" onclick="adjustScore('player1Score', 1)">+</button>
         </div>
     </div>
 
-    <div class="input-group">
-        <label>Active Player</label>
-        <button class="change-btn" onclick="toggleActivePlayer(); markChange();">Change</button>
-    </div>
-
+    <!-- Player 2 -->
     <div class="input-group">
         <label for="player2Name">Player 2 Name</label>
-        <input type="text" id="player2Name" oninput="markChange()">
+        <input type="text" id="player2Name">
     </div>
-
     <div class="input-group">
         <label for="player2Score">Player 2 Score</label>
         <div class="score-container">
             <button class="score-btn minus" onclick="adjustScore('player2Score', -1)">-</button>
-            <input type="number" id="player2Score" value="0" style="width: 80px;" oninput="markChange()">
+            <input type="number" id="player2Score" value="0" style="width: 80px;">
             <button class="score-btn plus" onclick="adjustScore('player2Score', 1)">+</button>
         </div>
     </div>
 
+    <!-- Total Rounds -->
+    <div class="input-group">
+        <label for="totalRounds">Total Rounds (Best of N)</label>
+        <input type="number" id="totalRounds" min="1" placeholder="e.g., 5">
+    </div>
+    <!-- Rounds Won -->
+    <div class="input-group">
+        <label for="rounds">Rounds Won (e.g. 2-1)</label>
+        <input type="text" id="rounds" placeholder="0-0">
+    </div>
+
+    <!-- Update Score Button -->
     <button id="updateBtn" class="update-btn" onclick="updateScoring()">Update Score</button>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-    <script src="control.js"></script>
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            databaseURL: "https://score-8e601-default-rtdb.firebaseio.com/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function adjustScore(playerId, change) {
+            let input = document.getElementById(playerId);
+            let score = parseInt(input.value) + change;
+            input.value = score >= 0 ? score : 0;
+        }
+
+        function updateScoring() {
+            let data = {
+                player1Name: document.getElementById('player1Name').value || 'Player 1',
+                player1Score: document.getElementById('player1Score').value,
+                player2Name: document.getElementById('player2Name').value || 'Player 2',
+                player2Score: document.getElementById('player2Score').value,
+                totalFrames: document.getElementById('totalRounds').value || '1',
+                rounds: document.getElementById('rounds').value || '0-0'
+            };
+            db.ref("snooker").set(data);
+        }
+    </script>
 
 </body>
 </html>
