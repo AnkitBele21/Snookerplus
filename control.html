@@ -3,102 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scoring Control</title>
+    <title>Snooker Scoring Control</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
+            background: #f8f8f8;
         }
         .input-group {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         label {
             font-weight: bold;
             display: block;
+            margin-bottom: 5px;
         }
         input {
-            padding: 8px;
-            width: 200px;
-            font-size: 1rem;
+            padding: 10px;
+            width: 220px;
+            font-size: 1.1rem;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background: white;
         }
         button {
-            padding: 10px 15px;
+            padding: 12px 18px;
             font-size: 1rem;
             background: #01AB7A;
             color: white;
             border: none;
             cursor: pointer;
+            border-radius: 5px;
+        }
+        .active {
+            background: #00C853 !important; /* Green highlight for active player */
+            color: white;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <h2>Snooker Scoring Control Panel</h2>
+    <h2>Snooker Scoring Control</h2>
 
+    <!-- Player 1 -->
     <div class="input-group">
         <label for="player1Name">Player 1 Name</label>
         <input type="text" id="player1Name">
     </div>
-    
+
     <div class="input-group">
         <label for="player1Score">Player 1 Score</label>
         <input type="number" id="player1Score" value="0">
     </div>
 
+    <!-- Player 2 -->
     <div class="input-group">
         <label for="player2Name">Player 2 Name</label>
         <input type="text" id="player2Name">
     </div>
-    
+
     <div class="input-group">
         <label for="player2Score">Player 2 Score</label>
         <input type="number" id="player2Score" value="0">
     </div>
 
+    <!-- Active Player -->
     <div class="input-group">
-        <label for="totalRounds">Total Rounds (Best of N)</label>
-        <input type="number" id="totalRounds" min="1" placeholder="e.g., 5">
+        <label>Active Player</label>
+        <button onclick="toggleActivePlayer()">Change</button>
     </div>
 
-    <div class="input-group">
-        <label for="rounds">Rounds Won (e.g. 2-1)</label>
-        <input type="text" id="rounds" placeholder="0-0">
-    </div>
-
-    <div class="input-group">
-        <label for="activePlayer">Active Player (1 or 2)</label>
-        <input type="number" id="activePlayer" min="1" max="2">
-    </div>
-
+    <!-- Message -->
     <div class="input-group">
         <label for="message">Message (Optional)</label>
         <input type="text" id="message" placeholder="Special message...">
     </div>
 
+    <!-- Total Rounds -->
+    <div class="input-group">
+        <label for="totalRounds">Total Rounds (Best of N)</label>
+        <input type="number" id="totalRounds" min="1" placeholder="e.g., 5">
+    </div>
+
+    <!-- Rounds Won -->
+    <div class="input-group">
+        <label for="rounds">Rounds Won (e.g. 2-1)</label>
+        <input type="text" id="rounds" placeholder="0-0">
+    </div>
+
     <button onclick="updateScoring()">Update Score</button>
 
     <script>
-    function updateScoring() {
-        let roundsInput = document.getElementById('rounds').value || '0-0';
-        let [player1Wins, player2Wins] = roundsInput.split('-').map(num => parseInt(num) || 0);
+        let activePlayer = 1; // Default active player
 
-        const data = {
-            player1Name: document.getElementById('player1Name').value || 'Player 1',
-            player1Score: document.getElementById('player1Score').value || '0',
-            player2Name: document.getElementById('player2Name').value || 'Player 2',
-            player2Score: document.getElementById('player2Score').value || '0',
-            totalFrames: document.getElementById('totalRounds').value || '1',
-            player1Wins: player1Wins,
-            player2Wins: player2Wins,
-            activePlayer: document.getElementById('activePlayer').value || '0',
-            message: document.getElementById('message').value || ''
-        };
+        function toggleActivePlayer() {
+            activePlayer = activePlayer === 1 ? 2 : 1;
+            updateActivePlayerHighlight();
+        }
 
-        // Store data in localStorage
-        localStorage.setItem('snookerScoring', JSON.stringify(data));
-    }
-</script>
+        function updateActivePlayerHighlight() {
+            let player1NameInput = document.getElementById('player1Name');
+            let player2NameInput = document.getElementById('player2Name');
+
+            if (activePlayer === 1) {
+                player1NameInput.classList.add('active');
+                player2NameInput.classList.remove('active');
+            } else {
+                player2NameInput.classList.add('active');
+                player1NameInput.classList.remove('active');
+            }
+        }
+
+        function updateScoring() {
+            let roundsInput = document.getElementById('rounds').value || '0-0';
+            let [player1Wins, player2Wins] = roundsInput.split('-').map(num => parseInt(num) || 0);
+
+            const data = {
+                player1Name: document.getElementById('player1Name').value || 'Player 1',
+                player1Score: document.getElementById('player1Score').value || '0',
+                player2Name: document.getElementById('player2Name').value || 'Player 2',
+                player2Score: document.getElementById('player2Score').value || '0',
+                totalFrames: document.getElementById('totalRounds').value || '1',
+                player1Wins: player1Wins,
+                player2Wins: player2Wins,
+                activePlayer: activePlayer,
+                message: document.getElementById('message').value || ''
+            };
+
+            // Store data in localStorage
+            localStorage.setItem('snookerScoring', JSON.stringify(data));
+        }
+
+        // Set initial active player highlight
+        updateActivePlayerHighlight();
+    </script>
 
 </body>
 </html>
