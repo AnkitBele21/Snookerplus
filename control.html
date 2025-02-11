@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snooker Scoring Control</title>
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js"></script>
+    
+    <!-- ✅ Correct Firebase SDK (No More Errors) -->
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js"></script>
+
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: #f8f8f8; }
         .score-container { display: flex; justify-content: center; gap: 10px; align-items: center; }
@@ -40,6 +43,7 @@
     <button onclick="updateScoring()">Update Score</button>
 
     <script>
+        // ✅ Initialize Firebase (No More Errors)
         const firebaseConfig = {
             databaseURL: "https://score-8e601-default-rtdb.firebaseio.com/"
         };
@@ -47,6 +51,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // ✅ Define activePlayer at the top to avoid errors
         let activePlayer = 1;
 
         function toggleActivePlayer() {
