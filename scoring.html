@@ -10,26 +10,161 @@
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
 
     <style>
-        body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: rgba(0, 0, 0, 0); }
-        .overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(29, 29, 37, 0.9); color: #FFFFFF; display: flex; justify-content: space-between; padding: 8px 20px; border-top: 2px solid #01AB7A; }
-        .player-info { display: flex; align-items: center; text-align: center; }
-        .name { font-size: 1.2em; font-weight: bold; }
-        .score { font-size: 1.4em; margin-left: 10px; font-weight: 700; color: #01AB7A; }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0, 0, 0, 0);
+        }
+        .fullscreen-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .fullscreen-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(29, 29, 37, 0.9);
+            color: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            box-sizing: border-box;
+            border-top: 2px solid #01AB7A;
+            z-index: 10;
+        }
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .main-logo {
+            height: 40px;
+        }
+        .player-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        .active-indicator {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
+            background-size: cover;
+            display: none;
+        }
+        .name {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .score {
+            font-size: 1.4em;
+            margin-left: 10px;
+            font-weight: 700;
+            color: #01AB7A;
+            text-align: right;
+        }
+        .rounds {
+            font-size: 1.1em;
+            color: #ccc;
+        }
+        .message {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            font-size: 1.5em;
+            padding: 5px;
+            background: #01AB7A;
+            color: #1D1D25;
+            display: none;
+        }
+
+        /* Venue logo styling */
+        .venue-logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+        }
+        .venue-logo-img {
+            width: 80px;
+            max-width: 120px;
+            opacity: 0.9;
+        }
+
+        /* Media Partner Logo */
+        .top-right-logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 15;
+        }
+        .top-right-logo img {
+            width: 150px;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
 
-<div class="overlay">
-    <div class="player-info">
+<div class="fullscreen-bg" id="fullscreenBg"></div>
+
+<!-- Venue Logo -->
+<div class="venue-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/singh%20billiards.png?raw=true" class="venue-logo-img">
+</div>
+
+<div class="overlay" id="scoreStrip">
+    <!-- Player 1 -->
+    <div class="player-info" id="player1">
+        <div class="active-indicator" id="player1Indicator"></div>
         <div class="name" id="player1Name">Player 1</div>
         <div class="score" id="player1Score">0</div>
     </div>
 
-    <div class="player-info">
+    <!-- Center Content: Logo + Rounds -->
+    <div class="center-content">
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
+        <div class="rounds" id="rounds">(0-0)</div>
+    </div>
+
+    <!-- Player 2 -->
+    <div class="player-info" id="player2">
+        <div class="active-indicator" id="player2Indicator"></div>
         <div class="name" id="player2Name">Player 2</div>
         <div class="score" id="player2Score">0</div>
     </div>
 </div>
+
+<!-- Media Partner Logo -->
+<div class="top-right-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
+</div>
+
+<div class="message" id="messageStrip"></div>
 
 <script>
     // Firebase Configuration
@@ -39,6 +174,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // Load Score Data from Firebase
     db.ref("snooker").on("value", (snapshot) => {
         let data = snapshot.val();
         if (data) {
@@ -46,6 +182,26 @@
             document.getElementById('player1Score').innerText = data.player1Score;
             document.getElementById('player2Name').innerText = data.player2Name;
             document.getElementById('player2Score').innerText = data.player2Score;
+
+            // Handle Active Player Indicator
+            document.getElementById('player1Indicator').style.display = data.activePlayer == "1" ? 'block' : 'none';
+            document.getElementById('player2Indicator').style.display = data.activePlayer == "2" ? 'block' : 'none';
+
+            // Update Rounds with Total Rounds (Best of N)
+            document.getElementById('rounds').innerText = `(${data.rounds || '0-0'} Best of ${data.totalFrames || '1'})`;
+
+            // Show Message Strip (if any message is present)
+            let messageStrip = document.getElementById('messageStrip');
+            let scoreStrip = document.getElementById('scoreStrip');
+
+            if (data.message && data.message.trim() !== "") {
+                messageStrip.innerText = data.message;
+                messageStrip.style.display = 'block';
+                scoreStrip.style.display = 'none'; // Hide Score Strip
+            } else {
+                messageStrip.style.display = 'none';
+                scoreStrip.style.display = 'flex'; // Show Score Strip
+            }
         }
     });
 </script>
