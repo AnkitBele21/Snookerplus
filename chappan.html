@@ -108,14 +108,14 @@
 </head>
 <body>
 
-<div class="fullscreen-bg" id="fullscreenBgTable3"></div>
+<div class="fullscreen-bg" id="fullscreenBgchappan"></div>
 
 <div class="overlay" id="scoreStripchappan">
     <!-- Player 1 Info: Active Indicator -> Name -> Score -->
-    <div class="player-info" id="player1Table3">
-        <div class="active-indicator" id="player1IndicatorTable3"></div>
-        <div class="name" id="player1NameTable3">Player 1</div>
-        <div class="score" id="player1ScoreTable3">0</div>
+    <div class="player-info" id="player1chappan">
+        <div class="active-indicator" id="player1Indicatorchappan"></div>
+        <div class="name" id="player1Namechappan">Player 1</div>
+        <div class="score" id="player1Scorechappan">0</div>
     </div>
 
     <!-- Center content with rounds score -->
@@ -171,15 +171,15 @@
 
                 const imageUrl = rowData[9];
                 if (imageUrl) {
-                    document.getElementById('fullscreenBgTable3').innerHTML = `<img src="${imageUrl}" alt="Background">`;
+                    document.getElementById('fullscreenBgchappan').innerHTML = `<img src="${imageUrl}" alt="Background">`;
                 } else {
-                    document.getElementById('fullscreenBgTable3').innerHTML = '';
+                    document.getElementById('fullscreenBgchappan').innerHTML = '';
                 }
 
                 const message = rowData[10];
                 if (message) {
-                    document.getElementById('messageStripTable3').textContent = message;
-                    document.getElementById('messageStripTable3').style.display = 'block';
+                    document.getElementById('messageStripchappan').textContent = message;
+                    document.getElementById('messageStripchappan').style.display = 'block';
                     document.getElementById('scoreStripTable3').style.display = 'none';
                 } else {
                     document.getElementById('messageStripTable3').style.display = 'none';
