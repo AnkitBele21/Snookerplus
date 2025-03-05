@@ -140,7 +140,7 @@
 
 <script>
     const SHEET_ID = '1Wk61dTUlNu84sYIc42IierWo8HCdHkgYg899OGNyrxI';  // Replace with actual sheet ID
-    const SHEET_NAME_chappan = 'chappan'; // Use the sheet name "table3"
+    const SHEET_NAME_chappan = 'chappan'; // Use the sheet name "chappan"
     const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
 
     const urlchappan = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME_chappan}?key=${API_KEY}`;
@@ -180,10 +180,10 @@
                 if (message) {
                     document.getElementById('messageStripchappan').textContent = message;
                     document.getElementById('messageStripchappan').style.display = 'block';
-                    document.getElementById('scoreStripTable3').style.display = 'none';
+                    document.getElementById('scoreStripchappan').style.display = 'none';
                 } else {
-                    document.getElementById('messageStripTable3').style.display = 'none';
-                    document.getElementById('scoreStripTable3').style.display = 'flex';
+                    document.getElementById('messageStripchappan').style.display = 'none';
+                    document.getElementById('scoreStripchappan').style.display = 'flex';
                 }
             }
         } catch (error) {
@@ -192,7 +192,7 @@
     }
 
     fetchDatachappan();
-    setInterval(fetchDataTable3, 2500);
+    setInterval(fetchDatachappan, 2500);
 </script>
 
 </body>
