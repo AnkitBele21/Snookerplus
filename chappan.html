@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snooker Scoring Table 3</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0, 0, 0, 0);
+        }
+        .fullscreen-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .fullscreen-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(29, 29, 37, 0.9);
+            color: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            box-sizing: border-box;
+            border-top: 2px solid #01AB7A;
+            z-index: 10;
+        }
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .player-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        .active-indicator {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
+            background-size: cover;
+            display: none;
+        }
+        .name {
+            font-size: 1.2em;
+            margin: 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        .score {
+            font-size: 1.4em;
+            margin-left: 10px;
+            font-weight: 700;
+            color: #01AB7A;
+            text-align: right;
+        }
+        .rounds {
+            font-size: 1.1em;
+            color: #ccc;
+        }
+        .message {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            font-size: 1.5em;
+            padding: 5px;
+            background: #01AB7A;
+            color: #1D1D25;
+        }
+
+        .top-right-logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 15;
+        }
+        .top-right-logo img {
+            width: 150px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="fullscreen-bg" id="fullscreenBgTable3"></div>
+
+<div class="overlay" id="scoreStripTable3">
+    <!-- Player 1 Info: Active Indicator -> Name -> Score -->
+    <div class="player-info" id="player1Table3">
+        <div class="active-indicator" id="player1IndicatorTable3"></div>
+        <div class="name" id="player1NameTable3">Player 1</div>
+        <div class="score" id="player1ScoreTable3">0</div>
+    </div>
+
+    <!-- Center content with rounds score -->
+    <div class="center-content">
+        <div class="rounds" id="roundsTable3">(0-0)</div>
+    </div>
+
+    <!-- Player 2 Info: Active Indicator -> Name -> Score -->
+    <div class="player-info" id="player2Table3">
+        <div class="active-indicator" id="player2IndicatorTable3"></div>
+        <div class="name" id="player2NameTable3">Player 2</div>
+        <div class="score" id="player2ScoreTable3">0</div>
+    </div>
+</div>
+
+<!-- Media Partner Logo (top-right corner) -->
+<div class="top-right-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
+</div>
+
+<div class="message" id="messageStripTable3" style="display: none;"></div>
+
+<script>
+    const SHEET_ID = '1Ix0eA2W_mRwl9OAEuRLVDUcQZH32JHwW8lgQHXl2aUA';  // Replace with actual sheet ID
+    const SHEET_NAME_TABLE3 = 'chappan'; // Use the sheet name "table3"
+    const API_KEY = '1Wk61dTUlNu84sYIc42IierWo8HCdHkgYg899OGNyrxI'; // Replace with actual API key
+
+    const urlTable3 = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME_TABLE3}?key=${API_KEY}`;
+
+    async function fetchDataTable3() {
+        try {
+            const response = await fetch(urlTable3);
+            const data = await response.json();
+            const values = data.values;
+            if (values && values.length > 1) {
+                const rowData = values[1];
+                document.getElementById('player1NameTable3').textContent = rowData[0] || 'Player 1';
+                document.getElementById('player1ScoreTable3').textContent = rowData[1] || '0';
+                document.getElementById('player2NameTable3').textContent = rowData[2] || 'Player 2';
+                document.getElementById('player2ScoreTable3').textContent = rowData[3] || '0';
+                document.getElementById('roundsTable3').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
+
+                const player1Indicator = document.getElementById('player1IndicatorTable3');
+                const player2Indicator = document.getElementById('player2IndicatorTable3');
+                player1Indicator.style.display = 'none';
+                player2Indicator.style.display = 'none';
+
+                if (rowData[4] === '1') {
+                    player1Indicator.style.display = 'block';
+                } else if (rowData[4] === '2') {
+                    player2Indicator.style.display = 'block';
+                }
+
+                const imageUrl = rowData[9];
+                if (imageUrl) {
+                    document.getElementById('fullscreenBgTable3').innerHTML = `<img src="${imageUrl}" alt="Background">`;
+                } else {
+                    document.getElementById('fullscreenBgTable3').innerHTML = '';
+                }
+
+                const message = rowData[10];
+                if (message) {
+                    document.getElementById('messageStripTable3').textContent = message;
+                    document.getElementById('messageStripTable3').style.display = 'block';
+                    document.getElementById('scoreStripTable3').style.display = 'none';
+                } else {
+                    document.getElementById('messageStripTable3').style.display = 'none';
+                    document.getElementById('scoreStripTable3').style.display = 'flex';
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching data from Google Sheets:', error);
+        }
+    }
+
+    fetchDataTable3();
+    setInterval(fetchDataTable3, 2500);
+</script>
+
+</body>
+</html>
