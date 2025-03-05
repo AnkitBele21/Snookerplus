@@ -110,7 +110,7 @@
 
 <div class="fullscreen-bg" id="fullscreenBgTable3"></div>
 
-<div class="overlay" id="scoreStripTable3">
+<div class="overlay" id="scoreStripchappan">
     <!-- Player 1 Info: Active Indicator -> Name -> Score -->
     <div class="player-info" id="player1Table3">
         <div class="active-indicator" id="player1IndicatorTable3"></div>
@@ -120,14 +120,14 @@
 
     <!-- Center content with rounds score -->
     <div class="center-content">
-        <div class="rounds" id="roundsTable3">(0-0)</div>
+        <div class="rounds" id="roundschappan">(0-0)</div>
     </div>
 
     <!-- Player 2 Info: Active Indicator -> Name -> Score -->
-    <div class="player-info" id="player2Table3">
-        <div class="active-indicator" id="player2IndicatorTable3"></div>
-        <div class="name" id="player2NameTable3">Player 2</div>
-        <div class="score" id="player2ScoreTable3">0</div>
+    <div class="player-info" id="player2chappan">
+        <div class="active-indicator" id="player2Indicatorchappan"></div>
+        <div class="name" id="player2Namechappan">Player 2</div>
+        <div class="score" id="player2Scorechappan">0</div>
     </div>
 </div>
 
@@ -136,30 +136,30 @@
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
 
-<div class="message" id="messageStripTable3" style="display: none;"></div>
+<div class="message" id="messageStripchappan" style="display: none;"></div>
 
 <script>
     const SHEET_ID = '1Wk61dTUlNu84sYIc42IierWo8HCdHkgYg899OGNyrxI';  // Replace with actual sheet ID
-    const SHEET_NAME_TABLE3 = 'chappan'; // Use the sheet name "table3"
+    const SHEET_NAME_chappan = 'chappan'; // Use the sheet name "table3"
     const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
 
-    const urlTable3 = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME_TABLE3}?key=${API_KEY}`;
+    const urlchappan = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME_chappan}?key=${API_KEY}`;
 
-    async function fetchDataTable3() {
+    async function fetchDatachappan() {
         try {
             const response = await fetch(urlchappan);
             const data = await response.json();
             const values = data.values;
             if (values && values.length > 1) {
                 const rowData = values[1];
-                document.getElementById('player1NameTable3').textContent = rowData[0] || 'Player 1';
-                document.getElementById('player1ScoreTable3').textContent = rowData[1] || '0';
-                document.getElementById('player2NameTable3').textContent = rowData[2] || 'Player 2';
-                document.getElementById('player2ScoreTable3').textContent = rowData[3] || '0';
-                document.getElementById('roundsTable3').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
+                document.getElementById('player1Namechappan').textContent = rowData[0] || 'Player 1';
+                document.getElementById('player1Scorechappan').textContent = rowData[1] || '0';
+                document.getElementById('player2Namechappan').textContent = rowData[2] || 'Player 2';
+                document.getElementById('player2Scorechappan').textContent = rowData[3] || '0';
+                document.getElementById('roundschappan').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
 
-                const player1Indicator = document.getElementById('player1IndicatorTable3');
-                const player2Indicator = document.getElementById('player2IndicatorTable3');
+                const player1Indicator = document.getElementById('player1Indicatorchappan');
+                const player2Indicator = document.getElementById('player2Indicatorchappan');
                 player1Indicator.style.display = 'none';
                 player2Indicator.style.display = 'none';
 
