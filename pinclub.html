@@ -2,13 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Studios List</title>
+  <title>Studio Info</title>
+</head>
+<body>
+  <h1>Studios</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Studio</th>
+        <th>Studio Name</th>
+        <th>City</th>
+        <th>Owner Pass</th>
+      </tr>
+    </thead>
+    <tbody id="studio-table-body">
+    </tbody>
+  </table>
+
   <script>
-    async function fetchStudios() {
-      try {
-        const response = await fetch("https://app.snookerplus.in/apis/data/masterstudio");
-        const data = await response.json();
-        const container = document.getElementById("studioList");
+    fetch('https://app.snookerplus.in/apis/data/masterstudio')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Fetched data:", data); // 🔍 Check structure here
+
+        const tbody = document.getElementById("studio-table-body");
 
         data.forEach(studio => {
           const row = document.createElement("tr");
@@ -20,49 +37,12 @@
             <td>${studio.ownerPass}</td>
           `;
 
-          container.appendChild(row);
+          tbody.appendChild(row);
         });
-      } catch (error) {
-        console.error("Error fetching studio data:", error);
-      }
-    }
-
-    window.onload = fetchStudios;
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+      });
   </script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px 12px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
-</head>
-<body>
-  <h1>Snooker Studios</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Studio</th>
-        <th>Studio Name</th>
-        <th>City</th>
-        <th>Owner Pass</th>
-      </tr>
-    </thead>
-    <tbody id="studioList">
-      <!-- Data will be inserted here -->
-    </tbody>
-  </table>
 </body>
 </html>
