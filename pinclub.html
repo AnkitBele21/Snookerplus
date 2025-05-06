@@ -1,48 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Studio Info</title>
-</head>
-<body>
-  <h1>Studios</h1>
-  <table border="1">
-    <thead>
-      <tr>
-        <th>Studio</th>
-        <th>Studio Name</th>
-        <th>City</th>
-        <th>Owner Pass</th>
-      </tr>
-    </thead>
-    <tbody id="studio-table-body">
-    </tbody>
-  </table>
+<script>
+  fetch('https://app.snookerplus.in/apis/data/masterstudio')
+    .then(response => response.json())
+    .then(data => {
+      console.log("Fetched data:", data); // Still useful for debugging
 
-  <script>
-    fetch('https://app.snookerplus.in/apis/data/masterstudio')
-      .then(response => response.json())
-      .then(data => {
-        console.log("Fetched data:", data); // 🔍 Check structure here
+      // Flatten the two arrays into one
+      const allStudios = [...data[0], ...data[1]];
 
-        const tbody = document.getElementById("studio-table-body");
+      const tbody = document.getElementById("studio-table-body");
 
-        data.forEach(studio => {
-          const row = document.createElement("tr");
+      allStudios.forEach(studio => {
+        const row = document.createElement("tr");
 
-          row.innerHTML = `
-            <td>${studio.Studio}</td>
-            <td>${studio.Studio_name}</td>
-            <td>${studio.city}</td>
-            <td>${studio.ownerPass}</td>
-          `;
+        row.innerHTML = `
+          <td>${studio.Studio}</td>
+          <td>${studio.Studio_name}</td>
+          <td>${studio.city}</td>
+          <td>${studio.ownerPass}</td>
+        `;
 
-          tbody.appendChild(row);
-        });
-      })
-      .catch(error => {
-        console.error("Error fetching data:", error);
+        tbody.appendChild(row);
       });
-  </script>
-</body>
-</html>
+    })
+    .catch(error => {
+      console.error("Error fetching data:", error);
+    });
+</script>
