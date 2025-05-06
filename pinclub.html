@@ -1,28 +1,78 @@
-<script>
-  fetch('https://app.snookerplus.in/apis/data/masterstudio')
-    .then(response => response.json())
-    .then(data => {
-      console.log("Fetched data:", data); // Still useful for debugging
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Studios List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <h1>Studios</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Studio</th>
+        <th>Studio Name</th>
+        <th>City</th>
+        <th>Owner Pass</th>
+      </tr>
+    </thead>
+    <tbody id="studio-table-body">
+      <!-- Data will be inserted here -->
+    </tbody>
+  </table>
 
-      // Flatten the two arrays into one
-      const allStudios = [...data[0], ...data[1]];
+  <script>
+    fetch('https://app.snookerplus.in/apis/data/masterstudio')
+      .then(response => response.json())
+      .then(data => {
+        // If the response is a nested array, flatten it
+        const studios = Array.isArray(data[0]) ? data[0].concat(...data.slice(1)) : data;
 
-      const tbody = document.getElementById("studio-table-body");
+        const tbody = document.getElementById("studio-table-body");
 
-      allStudios.forEach(studio => {
-        const row = document.createElement("tr");
+        studios.forEach(studio => {
+          const row = document.createElement("tr");
 
-        row.innerHTML = `
-          <td>${studio.Studio}</td>
-          <td>${studio.Studio_name}</td>
-          <td>${studio.city}</td>
-          <td>${studio.ownerPass}</td>
-        `;
+          const studioCell = document.createElement("td");
+          studioCell.textContent = studio.Studio || '';
+          row.appendChild(studioCell);
 
-        tbody.appendChild(row);
+          const studioNameCell = document.createElement("td");
+          studioNameCell.textContent = studio.Studio_name || '';
+          row.appendChild(studioNameCell);
+
+          const cityCell = document.createElement("td");
+          cityCell.textContent = studio.city || '';
+          row.appendChild(cityCell);
+
+          const ownerPassCell = document.createElement("td");
+          ownerPassCell.textContent = studio.ownerPass || '';
+          row.appendChild(ownerPassCell);
+
+          tbody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
       });
-    })
-    .catch(error => {
-      console.error("Error fetching data:", error);
-    });
-</script>
+  </script>
+</body>
+</html>
