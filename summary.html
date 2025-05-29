@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snookerplus</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #22252b;
+      color: white;
+      padding: 15px;
+      line-height: 1.5;
+    }
+    
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #028762;
+      text-align: center;
+    }
+    
+    .logo {
+      height: 60px;
+      margin-bottom: 10px;
+    }
+    
+    .title {
+      color: white;
+      font-size: 1.5rem;
+    }
+    
+    .studio-name {
+      color: #028762;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    
+    .controls {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    
+    .control-group {
+      margin-bottom: 5px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #028762;
+      font-weight: bold;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #333;
+      color: white;
+      font-size: 1rem;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+    
+    .checkbox-group input {
+      width: auto;
+      margin-right: 10px;
+    }
+    
+    button {
+      background-color: #028762;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    
+    button:hover {
+      background-color: #026a4f;
+    }
+    
+    #loading {
+      display: none;
+      text-align: center;
+      color: #028762;
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+    
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      margin-top: 20px;
+      border-radius: 10px;
+      background-color: #2a2e34;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    #summaryTable {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+    
+    #tableHeader th {
+      background-color: #028762;
+      color: white;
+      padding: 14px 10px;
+      text-align: center;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      font-size: 0.95rem;
+    }
+    
+    #summaryTable td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #3a3f46;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    
+    #summaryTable tbody tr:nth-child(even) {
+      background-color: #32363d;
+    }
+    
+    #summaryTable tbody tr:hover {
+      background-color: #3a3f46;
+    }
+    
+    /* Color Coding */
+    .green-row {
+      background-color: rgba(2, 135, 98, 0.2) !important;
+    }
+    
+    .green-row:hover {
+      background-color: rgba(2, 135, 98, 0.3) !important;
+    }
+    
+    .red-row {
+      background-color: rgba(255, 80, 80, 0.2) !important;
+    }
+    
+    .red-row:hover {
+      background-color: rgba(255, 80, 80, 0.3) !important;
+    }
+    
+    /* Total Row */
+    #summaryTable tbody tr:last-child {
+      font-weight: bold;
+      background-color: #028762;
+      color: white;
+    }
+    
+    /* Numeric Columns */
+    #summaryTable td:nth-child(n+2) {
+      font-family: 'Courier New', Courier, monospace;
+      text-align: right;
+    }
+    
+    /* Error Message */
+    .error-message {
+      color: #ff6b6b;
+      background-color: rgba(255, 0, 0, 0.1);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Century Dewas Logo" class="logo">
+    <h1 class="title">Player Summary</h1>
+   <!-- <div class="studio-name" id="studioNameDisplay"></div>  -->
+  </div>
+  
+  <div class="error-message" id="errorContainer"></div>
+  
+  <div class="controls">
+    <div class="control-group">
+      <label for="startDate">Start Date/Time</label>
+      <input type="datetime-local" id="startDate">
+    </div>
+    
+    <div class="control-group">
+      <label for="endDate">End Date/Time</label>
+      <input type="datetime-local" id="endDate">
+    </div>
+    
+    <div class="control-group">
+      <label for="playerSearch">Player Name</label>
+      <input type="text" id="playerSearch" placeholder="Search player...">
+    </div>
+    
+    <div class="checkbox-group">
+      <input type="checkbox" id="playerSummaryCheckbox">
+      <label for="playerSummaryCheckbox">Player Summary</label>
+    </div>
+    
+    <button onclick="fetchSummary()">Fetch Summary</button>
+    <span id="loading">Loading data...</span>
+  </div>
+  
+  <div class="table-container">
+    <table id="summaryTable">
+      <thead>
+        <tr id="tableHeader">
+          <!-- Headers will be populated dynamically -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data rows will be populated dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Configuration
+    const SECURITY_TOKEN = "qwertyuiop";
+    
+    // Get parameters from URL
+    function getUrlParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return {
+        studio: urlParams.get('studio') ? decodeURIComponent(urlParams.get('studio')) : null,
+        security: urlParams.get('security')
+      };
+    }
+    
+    // Verify security token
+    function verifySecurityToken(token) {
+      return token === SECURITY_TOKEN;
+    }
+    
+    // Show error message
+    function showError(message) {
+      const errorEl = document.getElementById('errorContainer');
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+    }
+    
+    // Clear error message
+    function clearError() {
+      document.getElementById('errorContainer').style.display = 'none';
+    }
+    
+    // Format date for input field
+    function formatDateForInput(date) {
+      const pad = num => num.toString().padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+    
+    // Initialize the page
+    function initializePage() {
+      const params = getUrlParams();
+      
+      // Verify security token
+      if (!verifySecurityToken(params.security)) {
+        showError("Access denied. Invalid security token.");
+        return;
+      }
+      
+      // Check if studio parameter exists
+      if (!params.studio) {
+        showError("Studio parameter missing in URL.");
+        return;
+      }
+      
+      // Display studio name
+      document.getElementById('studioNameDisplay').textContent = params.studio;
+      
+      // Set default dates (last 24 hours)
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setHours(endDate.getHours() - 24);
+      
+      document.getElementById("endDate").value = formatDateForInput(endDate);
+      document.getElementById("startDate").value = formatDateForInput(startDate);
+      
+      // Add validation to limit date range to 31 days max
+      document.getElementById("startDate").addEventListener("change", function() {
+        const startDate = new Date(this.value);
+        const maxEndDate = new Date(startDate);
+        maxEndDate.setDate(startDate.getDate() + 31);
+        document.getElementById("endDate").min = this.value;
+        document.getElementById("endDate").max = formatDateForInput(maxEndDate);
+      });
+      
+      document.getElementById("endDate").addEventListener("change", function() {
+        const endDate = new Date(this.value);
+        const minStartDate = new Date(endDate);
+        minStartDate.setDate(endDate.getDate() - 31);
+        document.getElementById("startDate").max = this.value;
+        document.getElementById("startDate").min = formatDateForInput(minStartDate);
+      });
+    }
+    
+    // Main function to fetch and display summary
+    async function fetchSummary() {
+      clearError();
+      
+      const params = getUrlParams();
+      const studio = params.studio;
+      const startInput = document.getElementById("startDate").value;
+      const endInput = document.getElementById("endDate").value;
+      const playerSearch = document.getElementById("playerSearch").value.trim();
+      const isPlayerSummary = document.getElementById("playerSummaryCheckbox").checked;
+      
+      // Validate inputs
+      if (!startInput || !endInput) {
+        showError("Please select both start and end date/time!");
+        return;
+      }
+      
+      const startDate = new Date(startInput);
+      const endDate = new Date(endInput);
+      
+      // Validate date range doesn't exceed 31 days
+      const diffDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      if (diffDays > 31) {
+        showError("Date range cannot exceed 31 days!");
+        return;
+      }
+      
+      const loadingEl = document.getElementById("loading");
+      loadingEl.style.display = "inline";
+      
+      try {
+        // Prepare API URLs with date range
+        const apiBase = "https://app.snookerplus.in/apis/data";
+        const fromDate = startDate.toISOString();
+        const toDate = endDate.toISOString();
+        
+        const urls = [
+          `${apiBase}/frames?from=${fromDate}&to=${toDate}`,
+          `${apiBase}/purchase?from=${fromDate}&to=${toDate}`,
+          `${apiBase}/topup?from=${fromDate}&to=${toDate}`,
+          `${apiBase}/adjustment?from=${fromDate}&to=${toDate}`
+        ];
+        
+        // Fetch all data in parallel
+        const [framesData, purchasesData, topupsData, adjustmentsData] = await Promise.all(
+          urls.map(url => 
+            fetch(url)
+              .then(res => {
+                if (!res.ok) throw new Error(`API request failed: ${res.status}`);
+                return res.json();
+              })
+              .catch(err => {
+                console.error(`Error fetching ${url}:`, err);
+                showError(`Failed to load data`);
+                return {0: []};
+              })
+          )
+        );
+        
+        // Filter data by studio
+        const filterByStudio = (items, studioField = 'studio') => {
+          return (items[0] || []).filter(item => 
+            item[studioField] && item[studioField].toLowerCase() === studio.toLowerCase()
+          );
+        };
+        
+        const frames = filterByStudio(framesData, 'Studio');
+        const purchases = filterByStudio(purchasesData);
+        const topups = filterByStudio(topupsData);
+        const adjustments = filterByStudio(adjustmentsData);
+        
+        // Process data and render summary
+        if (isPlayerSummary && playerSearch) {
+          await renderPlayerSummary(
+            playerSearch,
+            frames,
+            purchases,
+            topups,
+            adjustments,
+            startDate,
+            endDate
+          );
+        } else {
+          renderOverallSummary(
+            processData(frames, purchases, topups, adjustments, startDate, endDate, studio),
+            playerSearch
+          );
+        }
+        
+      } catch (error) {
+        console.error("Error in fetchSummary:", error);
+        showError("Failed to fetch data. Please try again.");
+      } finally {
+        loadingEl.style.display = "none";
+      }
+    }
+    
+    // Process all data into summary format
+    function processData(frames, purchases, topups, adjustments, startDate, endDate, studio) {
+      const players = new Set();
+      const tableMoney = new Map();
+      const purchaseTotal = new Map();
+      const topupCashTotal = new Map();
+      const topupOnlineTotal = new Map();
+      const adjustmentTotal = new Map();
+      
+      const inRange = (dateStr) => {
+        const d = new Date(dateStr);
+        return d >= startDate && d <= endDate;
+      };
+      
+      // Process frames
+      frames.forEach(frame => {
+        if (!inRange(frame.StartTime)) return;
+        
+        ["P1", "P2", "P3", "P4", "P5", "P6"].forEach(p => {
+          if (frame[p]) players.add(frame[p]);
+        });
+        
+        const share = parseFloat(frame.Share) || 0;
+        ["LP01", "LP02", "LP03", "LP04", "LP05", "LP06", "LP07", "LP08", "LP09", "LP10"].forEach(lp => {
+          const player = frame[lp];
+          if (player) {
+            tableMoney.set(player, (tableMoney.get(player) || 0) + share);
+          }
+        });
+      });
+      
+      // Process purchases
+      purchases.forEach(({ RecordDate, UserName, amount }) => {
+        if (!inRange(RecordDate)) return;
+        const amt = parseFloat(amount) || 0;
+        purchaseTotal.set(UserName, (purchaseTotal.get(UserName) || 0) + amt);
+      });
+      
+      // Process topups
+      topups.forEach(({ RecordDate, UserName, Amount, Mode }) => {
+        if (!inRange(RecordDate)) return;
+        const amt = parseFloat(Amount) || 0;
+        const map = Mode?.toLowerCase() === "cash" ? topupCashTotal : topupOnlineTotal;
+        map.set(UserName, (map.get(UserName) || 0) + amt);
+      });
+      
+      // Process adjustments
+      adjustments.forEach(({ recordDate, losser, winner, amount }) => {
+        if (!inRange(recordDate)) return;
+        const amt = parseFloat(amount) || 0;
+        
+        if (losser) {
+          adjustmentTotal.set(losser, (adjustmentTotal.get(losser) || 0) + amt);
+          players.add(losser);
+        }
+        
+        if (winner) {
+          adjustmentTotal.set(winner, (adjustmentTotal.get(winner) || 0) - amt);
+          players.add(winner);
+        }
+      });
+      
+      return {
+        players: Array.from(players),
+        tableMoney: Object.fromEntries(tableMoney),
+        purchaseTotal: Object.fromEntries(purchaseTotal),
+        topupCashTotal: Object.fromEntries(topupCashTotal),
+        topupOnlineTotal: Object.fromEntries(topupOnlineTotal),
+        adjustmentTotal: Object.fromEntries(adjustmentTotal)
+      };
+    }
+
+    // Render overall summary table
+    function renderOverallSummary(data, playerSearch) {
+      const { players, tableMoney, purchaseTotal, topupCashTotal, topupOnlineTotal, adjustmentTotal } = data;
+      
+      const headerRow = document.getElementById("tableHeader");
+      headerRow.innerHTML = `
+        <th onclick="sortTable(0)">Player Name ▲▼</th>
+        <th onclick="sortTable(1)">Table Money ▲▼</th>
+        <th onclick="sortTable(2)">Purchase ▲▼</th>
+        <th onclick="sortTable(3)">Cash Top-Up ▲▼</th>
+        <th onclick="sortTable(4)">Online Top-Up ▲▼</th>
+        <th onclick="sortTable(5)">Total Top-Up ▲▼</th>
+        <th onclick="sortTable(6)">Adjustment ▲▼</th>
+        <th onclick="sortTable(7)">Final Amount ▲▼</th>
+        <th onclick="sortTable(8)">Points ▲▼</th>
+      `;
+      
+      const tbody = document.querySelector("#summaryTable tbody");
+      tbody.innerHTML = "";
+      
+      let totals = {
+        tableMoney: 0,
+        purchase: 0,
+        topupCash: 0,
+        topupOnline: 0,
+        adjustment: 0,
+        final: 0
+      };
+      
+      players
+        .filter(player => !playerSearch || player.toLowerCase().includes(playerSearch.toLowerCase()))
+        .forEach(player => {
+          const tMoney = tableMoney[player] || 0;
+          const pur = purchaseTotal[player] || 0;
+          const topCash = topupCashTotal[player] || 0;
+          const topOnline = topupOnlineTotal[player] || 0;
+          const adj = adjustmentTotal[player] || 0;
+          const finalAmt = (topCash + topOnline) - (tMoney + pur) + adj;
+          const totalTopup = topCash + topOnline;
+          const denominator = tMoney + pur;
+          const points = denominator > 0 ? totalTopup / denominator : 0;
+          
+          totals.tableMoney += tMoney;
+          totals.purchase += pur;
+          totals.topupCash += topCash;
+          totals.topupOnline += topOnline;
+          totals.adjustment += adj;
+          totals.final += finalAmt;
+          
+          const row = document.createElement("tr");
+          if (finalAmt > 0) row.classList.add("green-row");
+          else if (finalAmt < -9) row.classList.add("red-row");
+          
+          row.innerHTML = `
+            <td>${player}</td>
+            <td>${tMoney.toFixed(2)}</td>
+            <td>${pur.toFixed(2)}</td>
+            <td>${topCash.toFixed(2)}</td>
+            <td>${topOnline.toFixed(2)}</td>
+            <td>${totalTopup.toFixed(2)}</td>
+            <td>${adj.toFixed(2)}</td>
+            <td>${finalAmt.toFixed(2)}</td>
+            <td>${points.toFixed(2)}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      
+      const totalRow = document.createElement("tr");
+      totalRow.innerHTML = `
+        <td><strong>Total</strong></td>
+        <td><strong>${totals.tableMoney.toFixed(2)}</strong></td>
+        <td><strong>${totals.purchase.toFixed(2)}</strong></td>
+        <td><strong>${totals.topupCash.toFixed(2)}</strong></td>
+        <td><strong>${totals.topupOnline.toFixed(2)}</strong></td>
+        <td><strong>${(totals.topupCash + totals.topupOnline).toFixed(2)}</strong></td>
+        <td><strong>${totals.adjustment.toFixed(2)}</strong></td>
+        <td><strong>${totals.final.toFixed(2)}</strong></td>
+        <td></td>
+      `;
+      tbody.appendChild(totalRow);
+    }
+    
+    // Render player-specific summary
+    async function renderPlayerSummary(playerName, frames, purchases, topups, adjustments, startDate, endDate) {
+      const headerRow = document.getElementById("tableHeader");
+      headerRow.innerHTML = `
+        <th onclick="sortTable(0)">Date ▲▼</th>
+        <th onclick="sortTable(1)">Table Money ▲▼</th>
+        <th onclick="sortTable(2)">Purchase ▲▼</th>
+        <th onclick="sortTable(3)">Cash Top-Up ▲▼</th>
+        <th onclick="sortTable(4)">Online Top-Up ▲▼</th>
+        <th onclick="sortTable(5)">Adjustment ▲▼</th>
+        <th onclick="sortTable(6)">Final Amount ▲▼</th>
+      `;
+      
+      const tbody = document.querySelector("#summaryTable tbody");
+      tbody.innerHTML = "";
+      
+      let dailySummary = {};
+      let totals = {
+        tableMoney: 0,
+        purchase: 0,
+        topupCash: 0,
+        topupOnline: 0,
+        adjustment: 0,
+        final: 0
+      };
+      
+      const inRange = (dateStr) => {
+        const d = new Date(dateStr);
+        return d >= startDate && d <= endDate;
+      };
+      
+      // Process frames for the player
+      frames.forEach(frame => {
+        const frameTime = new Date(frame.StartTime);
+        if (!inRange(frame.StartTime)) return;
+        
+        let appears = false;
+        ["P1", "P2", "P3", "P4", "P5", "P6"].forEach(p => {
+          if (frame[p] && frame[p].toLowerCase() === playerName.toLowerCase()) {
+            appears = true;
+          }
+        });
+        
+        if (appears) {
+          const dateKey = frameTime.toISOString().split("T")[0];
+          dailySummary[dateKey] = dailySummary[dateKey] || { tableMoney: 0, purchase: 0, topupCash: 0, topupOnline: 0, adjustment: 0 };
+          
+          const share = parseFloat(frame.Share) || 0;
+          ["LP01", "LP02", "LP03", "LP04", "LP05", "LP06", "LP07", "LP08", "LP09", "LP10"].forEach(lp => {
+            if (frame[lp] && frame[lp].toLowerCase() === playerName.toLowerCase()) {
+              dailySummary[dateKey].tableMoney += share;
+            }
+          });
+        }
+      });
+      
+      // Process purchases for the player
+      purchases.forEach(purchase => {
+        const purchaseTime = new Date(purchase.RecordDate);
+        if (!inRange(purchase.RecordDate)) return;
+        
+        if (purchase.UserName && purchase.UserName.toLowerCase() === playerName.toLowerCase()) {
+          const dateKey = purchaseTime.toISOString().split("T")[0];
+          dailySummary[dateKey] = dailySummary[dateKey] || { tableMoney: 0, purchase: 0, topupCash: 0, topupOnline: 0, adjustment: 0 };
+          dailySummary[dateKey].purchase += parseFloat(purchase.amount) || 0;
+        }
+      });
+      
+      // Process top-ups for the player
+      topups.forEach(topup => {
+        const topupTime = new Date(topup.RecordDate);
+        if (!inRange(topup.RecordDate)) return;
+        
+        if (topup.UserName && topup.UserName.toLowerCase() === playerName.toLowerCase()) {
+          const dateKey = topupTime.toISOString().split("T")[0];
+          dailySummary[dateKey] = dailySummary[dateKey] || { tableMoney: 0, purchase: 0, topupCash: 0, topupOnline: 0, adjustment: 0 };
+          const amt = parseFloat(topup.Amount) || 0;
+          
+          if (topup.Mode?.toLowerCase() === "cash") {
+            dailySummary[dateKey].topupCash += amt;
+          } else {
+            dailySummary[dateKey].topupOnline += amt;
+          }
+        }
+      });
+      
+      // Process adjustments for the player
+      adjustments.forEach(adj => {
+        const adjTime = new Date(adj.recordDate);
+        if (!inRange(adj.recordDate)) return;
+        
+        const dateKey = adjTime.toISOString().split("T")[0];
+        dailySummary[dateKey] = dailySummary[dateKey] || { tableMoney: 0, purchase: 0, topupCash: 0, topupOnline: 0, adjustment: 0 };
+        const amt = parseFloat(adj.amount) || 0;
+        
+        if (adj.losser && adj.losser.toLowerCase() === playerName.toLowerCase()) {
+          dailySummary[dateKey].adjustment += amt;
+        }
+        if (adj.winner && adj.winner.toLowerCase() === playerName.toLowerCase()) {
+          dailySummary[dateKey].adjustment -= amt;
+        }
+      });
+      
+      // Sort dates and create rows
+      Object.keys(dailySummary)
+        .sort()
+        .forEach(date => {
+          const { tableMoney, purchase, topupCash, topupOnline, adjustment } = dailySummary[date];
+          const finalAmount = (topupCash + topupOnline) - (tableMoney + purchase) + adjustment;
+          
+          totals.tableMoney += tableMoney;
+          totals.purchase += purchase;
+          totals.topupCash += topupCash;
+          totals.topupOnline += topupOnline;
+          totals.adjustment += adjustment;
+          totals.final += finalAmount;
+          
+          const row = document.createElement("tr");
+          if (finalAmount > 0) row.classList.add("green-row");
+          else if (finalAmount < -9) row.classList.add("red-row");
+          
+          row.innerHTML = `
+            <td>${date}</td>
+            <td>${tableMoney.toFixed(2)}</td>
+            <td>${purchase.toFixed(2)}</td>
+            <td>${topupCash.toFixed(2)}</td>
+            <td>${topupOnline.toFixed(2)}</td>
+            <td>${adjustment.toFixed(2)}</td>
+            <td>${finalAmount.toFixed(2)}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      
+      const totalRow = document.createElement("tr");
+      totalRow.innerHTML = `
+        <td><strong>Total</strong></td>
+        <td><strong>${totals.tableMoney.toFixed(2)}</strong></td>
+        <td><strong>${totals.purchase.toFixed(2)}</strong></td>
+        <td><strong>${totals.topupCash.toFixed(2)}</strong></td>
+        <td><strong>${totals.topupOnline.toFixed(2)}</strong></td>
+        <td><strong>${totals.adjustment.toFixed(2)}</strong></td>
+        <td><strong>${totals.final.toFixed(2)}</strong></td>
+      `;
+      tbody.appendChild(totalRow);
+    }
+    
+    // Table sorting functionality
+    let currentSortColumn = null;
+    let sortDirectionAsc = true;
+    
+    function sortTable(columnIndex) {
+      const table = document.getElementById("summaryTable");
+      const tbody = table.querySelector("tbody");
+      const rows = Array.from(tbody.querySelectorAll("tr"));
+      
+      // Skip total row (last row)
+      const dataRows = rows.slice(0, -1);
+      const totalRow = rows[rows.length - 1];
+      
+      // Determine sort direction
+      if (currentSortColumn === columnIndex) {
+        sortDirectionAsc = !sortDirectionAsc;
+      } else {
+        currentSortColumn = columnIndex;
+        sortDirectionAsc = true;
+      }
+      
+      // Sort rows
+      dataRows.sort((a, b) => {
+        const aText = a.children[columnIndex].textContent.trim();
+        const bText = b.children[columnIndex].textContent.trim();
+        
+        // Try numeric comparison first
+        const aNum = parseFloat(aText);
+        const bNum = parseFloat(bText);
+        
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+          return sortDirectionAsc ? aNum - bNum : bNum - aNum;
+        }
+        
+        // Fall back to string comparison
+        return sortDirectionAsc 
+          ? aText.localeCompare(bText) 
+          : bText.localeCompare(aText);
+      });
+      
+      // Rebuild table
+      tbody.innerHTML = "";
+      dataRows.forEach(row => tbody.appendChild(row));
+      tbody.appendChild(totalRow);
+      
+      // Update header arrows
+      updateSortIndicators(columnIndex, sortDirectionAsc);
+    }
+    
+    function updateSortIndicators(columnIndex, ascending) {
+      const headers = document.querySelectorAll("#tableHeader th");
+      headers.forEach((header, index) => {
+        header.innerHTML = header.innerHTML.replace(/ ▲▼$/, '');
+        if (index === columnIndex) {
+          header.innerHTML += ascending ? ' ▲' : ' ▼';
+        } else {
+          header.innerHTML += ' ▲▼';
+        }
+      });
+    }
+    
+    // Initialize the page when loaded
+    window.onload = initializePage;
+  </script>
+</body>
+</html>
