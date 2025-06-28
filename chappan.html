@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Scoring chappan</title>
+    <title>Century Tournament Scoring</title>
     <style>
         body {
             margin: 0;
@@ -33,54 +33,77 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(29, 29, 37, 0.9);
+            background: rgba(29, 29, 37, 0.95);
             color: #FFFFFF;
+            padding: 12px 20px;
+            box-sizing: border-box;
+            border-top: 3px solid #01AB7A;
+            z-index: 10;
+        }
+        .player-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+        .player-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 20px;
-            box-sizing: border-box;
-            border-top: 2px solid #01AB7A;
-            z-index: 10;
+            position: relative;
+            border-left: 4px solid transparent;
         }
-        .center-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+        .player-card.active {
+            border-left: 4px solid #01AB7A;
+            background: rgba(1, 171, 122, 0.15);
         }
         .player-info {
             display: flex;
-            justify-content: center;
             align-items: center;
-            flex: 1;
-            text-align: center;
-            position: relative;
         }
-        .active-indicator {
-            margin-right: 10px;
-            width: 20px;
-            height: 20px;
-            background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
-            background-size: cover;
-            display: none;
+        .player-details {
+            margin-left: 10px;
         }
         .name {
             font-size: 1.2em;
             margin: 0;
             font-weight: bold;
-            text-align: center;
+            line-height: 1.2;
+        }
+        .red-balls {
+            font-size: 0.9em;
+            color: #FF5252;
+            display: flex;
+            align-items: center;
+            margin-top: 3px;
+        }
+        .red-balls span {
+            margin-right: 5px;
         }
         .score {
-            font-size: 1.4em;
-            margin-left: 10px;
+            font-size: 1.8em;
             font-weight: 700;
             color: #01AB7A;
+            min-width: 60px;
             text-align: right;
+        }
+        .match-info {
+            font-size: 1.1em;
+            color: #FFFFFF;
+            width: 100%;
+            text-align: center;
+            margin: 10px 0 5px;
+            font-weight: bold;
         }
         .rounds {
             font-size: 1.1em;
             color: #ccc;
+            width: 100%;
+            text-align: center;
+            margin: 5px 0;
         }
         .message {
             width: 100%;
@@ -88,102 +111,185 @@
             bottom: 0;
             left: 0;
             text-align: center;
-            font-size: 1.5em;
-            padding: 5px;
+            font-size: 1.8em;
+            padding: 15px;
             background: #01AB7A;
             color: #1D1D25;
+            font-weight: bold;
         }
-
         .top-right-logo {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             z-index: 15;
         }
         .top-right-logo img {
-            width: 150px;
+            width: 180px;
             opacity: 0.9;
+        }
+        .mature-badge {
+            background: #FF5252;
+            color: white;
+            font-size: 0.8em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="fullscreen-bg" id="fullscreenBgchappan"></div>
+<div class="fullscreen-bg" id="fullscreenBg"></div>
 
-<div class="overlay" id="scoreStripchappan">
-    <!-- Player 1 Info: Active Indicator -> Name -> Score -->
-    <div class="player-info" id="player1chappan">
-        <div class="active-indicator" id="player1Indicatorchappan"></div>
-        <div class="name" id="player1Namechappan">Player 1</div>
-        <div class="score" id="player1Scorechappan">0</div>
+<div class="overlay" id="scoreStrip">
+    
+    <div class="player-container">
+        <!-- Player 1 -->
+        <div class="player-card" id="player1">
+            <div class="player-info">
+                <div class="player-details">
+                    <div class="name" id="player1Name">Player 1 <span class="mature-badge" id="player1Mature">MATURE</span></div>
+                    <div class="red-balls" id="player1Reds">
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        (3/3)
+                    </div>
+                </div>
+            </div>
+            <div class="score" id="player1Score">0</div>
+        </div>
+        
+        <!-- Player 2 -->
+        <div class="player-card" id="player2">
+            <div class="player-info">
+                <div class="player-details">
+                    <div class="name" id="player2Name">Player 2 <span class="mature-badge" id="player2Mature">MATURE</span></div>
+                    <div class="red-balls" id="player2Reds">
+                        <span>●</span>
+                        <span>●</span>
+                        <span>○</span>
+                        (2/3)
+                    </div>
+                </div>
+            </div>
+            <div class="score" id="player2Score">0</div>
+        </div>
+        
+        <!-- Player 3 -->
+        <div class="player-card" id="player3">
+            <div class="player-info">
+                <div class="player-details">
+                    <div class="name" id="player3Name">Player 3 <span class="mature-badge" id="player3Mature">MATURE</span></div>
+                    <div class="red-balls" id="player3Reds">
+                        <span>○</span>
+                        <span>○</span>
+                        <span>○</span>
+                        (0/3)
+                    </div>
+                </div>
+            </div>
+            <div class="score" id="player3Score">0</div>
+        </div>
+        
+        <!-- Player 4 -->
+        <div class="player-card" id="player4">
+            <div class="player-info">
+                <div class="player-details">
+                    <div class="name" id="player4Name">Player 4 <span class="mature-badge" id="player4Mature">MATURE</span></div>
+                    <div class="red-balls" id="player4Reds">
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        (3/3)
+                    </div>
+                </div>
+            </div>
+            <div class="score" id="player4Score">0</div>
+        </div>
     </div>
-
-    <!-- Center content with rounds score -->
-    <div class="center-content">
-        <div class="rounds" id="roundschappan">(0-0)</div>
-    </div>
-
-    <!-- Player 2 Info: Active Indicator -> Name -> Score -->
-    <div class="player-info" id="player2chappan">
-        <div class="active-indicator" id="player2Indicatorchappan"></div>
-        <div class="name" id="player2Namechappan">Player 2</div>
-        <div class="score" id="player2Scorechappan">0</div>
-    </div>
+    
 </div>
 
-<!-- Media Partner Logo (top-right corner) -->
+<!-- Media Partner Logo -->
 <div class="top-right-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
 
-<div class="message" id="messageStripchappan" style="display: none;"></div>
+<div class="message" id="messageStrip" style="display: none;"></div>
 
 <script>
-    const SHEET_ID = '1Wk61dTUlNu84sYIc42IierWo8HCdHkgYg899OGNyrxI';  // Replace with actual sheet ID
-    const SHEET_NAME_chappan = 'chappan'; // Use the sheet name "chappan"
-    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc'; // Replace with actual API key
+    const SHEET_ID = '1Wk61dTUlNu84sYIc42IierWo8HCdHkgYg899OGNyrxI';
+    const SHEET_NAME = 'century'; // Sheet name for century tournament
+    const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc';
 
-    const urlchappan = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME_chappan}?key=${API_KEY}`;
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
-    async function fetchDatachappan() {
+    async function fetchData() {
         try {
-            const response = await fetch(urlchappan);
+            const response = await fetch(url);
             const data = await response.json();
             const values = data.values;
+            
             if (values && values.length > 1) {
                 const rowData = values[1];
-                document.getElementById('player1Namechappan').textContent = rowData[0] || 'Player 1';
-                document.getElementById('player1Scorechappan').textContent = rowData[1] || '0';
-                document.getElementById('player2Namechappan').textContent = rowData[2] || 'Player 2';
-                document.getElementById('player2Scorechappan').textContent = rowData[3] || '0';
-                document.getElementById('roundschappan').textContent = `(${rowData[6] || '0'}-${rowData[7] || '0'})`;
-
-                const player1Indicator = document.getElementById('player1Indicatorchappan');
-                const player2Indicator = document.getElementById('player2Indicatorchappan');
-                player1Indicator.style.display = 'none';
-                player2Indicator.style.display = 'none';
-
-                if (rowData[4] === '1') {
-                    player1Indicator.style.display = 'block';
-                } else if (rowData[4] === '2') {
-                    player2Indicator.style.display = 'block';
+                
+                // Update player names, scores, and red balls
+                for (let i = 0; i < 4; i++) {
+                    const playerNum = i + 1;
+                    const playerIndex = i * 3; // Each player has 3 columns (name, score, reds)
+                    
+                    // Update name and score
+                    document.getElementById(`player${playerNum}Name`).textContent = rowData[playerIndex] || `Player ${playerNum}`;
+                    document.getElementById(`player${playerNum}Score`).textContent = rowData[playerIndex + 1] || '0';
+                    
+                    // Update red balls status (0-3)
+                    const redBalls = parseInt(rowData[playerIndex + 2]) || 0;
+                    const redsElement = document.getElementById(`player${playerNum}Reds`);
+                    
+                    // Update red balls display
+                    const redIcons = redsElement.querySelectorAll('span');
+                    for (let j = 0; j < 3; j++) {
+                        redIcons[j].textContent = j < redBalls ? '●' : '○';
+                    }
+                    redIcons[3].textContent = `(${redBalls}/3)`;
+                    
+                    // Show/hide mature badge
+                    const matureBadge = document.getElementById(`player${playerNum}Mature`);
+                    matureBadge.style.display = redBalls >= 3 ? 'inline-block' : 'none';
+                    
+                    // Set active player
+                    document.getElementById(`player${playerNum}`).classList.remove('active');
                 }
-
-                const imageUrl = rowData[9];
+                
+                // Set active player
+                const activePlayer = rowData[12]; // Column M (13th column, 0-based index 12)
+                if (activePlayer && activePlayer >= 1 && activePlayer <= 4) {
+                    document.getElementById(`player${activePlayer}`).classList.add('active');
+                }
+                
+                // Update match info and rounds
+                document.getElementById('matchInfo').textContent = rowData[13] || 'Century Tournament';
+                document.getElementById('rounds').textContent = rowData[14] || '';
+                
+                // Update background image
+                const imageUrl = rowData[15];
                 if (imageUrl) {
-                    document.getElementById('fullscreenBgchappan').innerHTML = `<img src="${imageUrl}" alt="Background">`;
+                    document.getElementById('fullscreenBg').innerHTML = `<img src="${imageUrl}" alt="Background">`;
                 } else {
-                    document.getElementById('fullscreenBgchappan').innerHTML = '';
+                    document.getElementById('fullscreenBg').innerHTML = '';
                 }
-
-                const message = rowData[10];
+                
+                // Handle message display
+                const message = rowData[16];
                 if (message) {
-                    document.getElementById('messageStripchappan').textContent = message;
-                    document.getElementById('messageStripchappan').style.display = 'block';
-                    document.getElementById('scoreStripchappan').style.display = 'none';
+                    document.getElementById('messageStrip').textContent = message;
+                    document.getElementById('messageStrip').style.display = 'block';
+                    document.getElementById('scoreStrip').style.display = 'none';
                 } else {
-                    document.getElementById('messageStripchappan').style.display = 'none';
-                    document.getElementById('scoreStripchappan').style.display = 'flex';
+                    document.getElementById('messageStrip').style.display = 'none';
+                    document.getElementById('scoreStrip').style.display = 'block';
                 }
             }
         } catch (error) {
@@ -191,8 +297,8 @@
         }
     }
 
-    fetchDatachappan();
-    setInterval(fetchDatachappan, 2500);
+    fetchData();
+    setInterval(fetchData, 2500);
 </script>
 
 </body>
