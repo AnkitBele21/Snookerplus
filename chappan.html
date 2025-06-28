@@ -223,7 +223,7 @@
 
 <script>
     const SHEET_ID = '1Wk61dTUlNu84sYIc42IierWo8HCdHkgYg899OGNyrxI';
-    const SHEET_NAME = 'century'; // Sheet name for century tournament
+    const SHEET_NAME = 'century'; // Make sure this matches your sheet name exactly
     const API_KEY = 'AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc';
 
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
@@ -235,57 +235,46 @@
             const values = data.values;
             
             if (values && values.length > 1) {
-                const rowData = values[1];
-                console.log("Fetched data:", rowData); // Debugging line
+                const rowData = values[1]; // Gets the second row (row 2 in Sheets)
+                console.log("Full row data:", rowData); // Debug: Check all data is being fetched
+
+                // Player 1 - Columns A, B, C
+                updatePlayer('player1', rowData[0], rowData[1], rowData[2]);
                 
-                // Update Player 1 (A2, B2, C2)
-                document.getElementById('player1Name').textContent = rowData[0] || 'Player 1';
-                document.getElementById('player1Score').textContent = rowData[1] || '0';
-                updateRedBalls('player1', rowData[2]);
+                // Player 2 - Columns D, E, F
+                updatePlayer('player2', rowData[3], rowData[4], rowData[5]);
                 
-                // Update Player 2 (D2, E2, F2)
-                document.getElementById('player2Name').textContent = rowData[3] || 'Player 2';
-                document.getElementById('player2Score').textContent = rowData[4] || '0';
-                updateRedBalls('player2', rowData[5]);
+                // Player 3 - Columns G, H, I
+                updatePlayer('player3', rowData[6], rowData[7], rowData[8]);
                 
-                // Update Player 3 (G2, H2, I2)
-                document.getElementById('player3Name').textContent = rowData[6] || 'Player 3';
-                document.getElementById('player3Score').textContent = rowData[7] || '0';
-                updateRedBalls('player3', rowData[8]);
-                
-                // Update Player 4 (J2, K2, L2)
-                document.getElementById('player4Name').textContent = rowData[9] || 'Player 4';
-                document.getElementById('player4Score').textContent = rowData[10] || '0';
-                updateRedBalls('player4', rowData[11]);
-                
-                // Set active player (M2)
-                const activePlayer = rowData[12];
+                // Player 4 - Columns J, K, L
+                updatePlayer('player4', rowData[9], rowData[10], rowData[11]);
+
+                // Active Player - Column M (index 12)
+                const activePlayer = parseInt(rowData[12]) || 1;
                 document.querySelectorAll('.player-card').forEach(card => card.classList.remove('active'));
-                if (activePlayer >= 1 && activePlayer <= 4) {
-                    document.getElementById(`player${activePlayer}`).classList.add('active');
-                }
-                
-                // Update match info (N2) and rounds (O2)
+                document.getElementById(`player${activePlayer}`).classList.add('active');
+
+                // Match Info - Column N (index 13)
                 document.getElementById('matchInfo').textContent = rowData[13] || 'Century Tournament';
+                
+                // Rounds Info - Column O (index 14)
                 document.getElementById('rounds').textContent = rowData[14] || '';
                 
-                // Update background image (P2)
-                const imageUrl = rowData[15];
-                if (imageUrl) {
-                    document.getElementById('fullscreenBg').innerHTML = `<img src="${imageUrl}" alt="Background">`;
+                // Background Image - Column P (index 15)
+                if (rowData[15]) {
+                    document.getElementById('fullscreenBg').innerHTML = `<img src="${rowData[15]}" alt="Background">`;
                 }
                 
-                // Handle message display (Q2)
-                const message = rowData[16];
+                // Message - Column Q (index 16)
                 const messageStrip = document.getElementById('messageStrip');
-                const scoreStrip = document.getElementById('scoreStrip');
-                if (message) {
-                    messageStrip.textContent = message;
+                if (rowData[16]) {
+                    messageStrip.textContent = rowData[16];
                     messageStrip.style.display = 'block';
-                    scoreStrip.style.display = 'none';
+                    document.getElementById('scoreStrip').style.display = 'none';
                 } else {
                     messageStrip.style.display = 'none';
-                    scoreStrip.style.display = 'block';
+                    document.getElementById('scoreStrip').style.display = 'block';
                 }
             }
         } catch (error) {
@@ -293,23 +282,30 @@
         }
     }
 
-    function updateRedBalls(playerId, redCount) {
-        const redBalls = parseInt(redCount) || 0;
+    function updatePlayer(playerId, name, score, redBalls) {
+        // Update name
+        const nameElement = document.getElementById(`${playerId}Name`);
+        nameElement.textContent = name || playerId.replace('player', 'Player ');
+        
+        // Update score
+        document.getElementById(`${playerId}Score`).textContent = score || '0';
+        
+        // Update red balls
+        const redCount = parseInt(redBalls) || 0;
         const redsElement = document.getElementById(`${playerId}Reds`);
-        const matureBadge = document.getElementById(`${playerId}Mature`);
-        
-        // Update red balls display
         const redIcons = redsElement.querySelectorAll('span');
-        for (let j = 0; j < 3; j++) {
-            redIcons[j].textContent = j < redBalls ? '●' : '○';
-        }
-        redIcons[3].textContent = `(${redBalls}/3)`;
         
-        // Show/hide mature badge
-        matureBadge.style.display = redBalls >= 3 ? 'inline-block' : 'none';
+        for (let j = 0; j < 3; j++) {
+            redIcons[j].textContent = j < redCount ? '●' : '○';
+        }
+        redIcons[3].textContent = `(${redCount}/3)`;
+        
+        // Update mature badge
+        document.getElementById(`${playerId}Mature`).style.display = 
+            redCount >= 3 ? 'inline-block' : 'none';
     }
 
-    // Initial fetch and set interval
+    // Initial fetch and refresh every 2.5 seconds
     fetchData();
     setInterval(fetchData, 2500);
 </script>
