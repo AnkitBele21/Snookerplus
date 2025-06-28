@@ -1,0 +1,131 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Arial", sans-serif;
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0);
+}
+.fullscreen-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.fullscreen-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(29, 29, 37, 0.95);
+  color: #ffffff;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border-top: 3px solid #01ab7a;
+  z-index: 10;
+}
+.player-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  width: 100%;
+}
+.player-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  border-left: 4px solid transparent;
+}
+.player-card.active {
+  border-left: 4px solid #01ab7a;
+  background: rgba(1, 171, 122, 0.15);
+}
+.player-info {
+  display: flex;
+  align-items: center;
+}
+.player-details {
+  margin-left: 10px;
+}
+.name {
+  font-size: 1.2em;
+  margin: 0;
+  font-weight: bold;
+  line-height: 1.2;
+}
+.red-balls {
+  font-size: 0.9em;
+  color: #ff5252;
+  display: flex;
+  align-items: center;
+  margin-top: 3px;
+}
+.red-balls span {
+  margin-right: 5px;
+}
+.score {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: #01ab7a;
+  min-width: 60px;
+  text-align: right;
+}
+.match-info {
+  font-size: 1.1em;
+  color: #ffffff;
+  width: 100%;
+  text-align: center;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+.rounds {
+  font-size: 1.1em;
+  color: #ccc;
+  width: 100%;
+  text-align: center;
+  margin: 5px 0;
+}
+.message {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  font-size: 1.8em;
+  padding: 15px;
+  background: #01ab7a;
+  color: #1d1d25;
+  font-weight: bold;
+}
+.top-right-logo {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 15;
+}
+.top-right-logo img {
+  width: 180px;
+  opacity: 0.9;
+}
+.mature-badge {
+  background: #ff5252;
+  color: white;
+  font-size: 0.8em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  display: none;
+}
