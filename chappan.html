@@ -234,42 +234,41 @@
             const data = await response.json();
             const values = data.values;
             
-            if (values && values.length > 1) {
-                const rowData = values[1]; // Gets the second row (row 2 in Sheets)
-                console.log("Full row data:", rowData); // Debug: Check all data is being fetched
+            if (values && values.length >= 5) { // Need at least 5 rows (header + 4 players)
+                console.log("Fetched data:", values); // Debug: Check all data
+                
+                // Player 1 - Row 2 (A2,B2,C2)
+                updatePlayer('player1', values[1][0], values[1][1], values[1][2]);
+                
+                // Player 2 - Row 3 (A3,B3,C3)
+                updatePlayer('player2', values[2][0], values[2][1], values[2][2]);
+                
+                // Player 3 - Row 4 (A4,B4,C4)
+                updatePlayer('player3', values[3][0], values[3][1], values[3][2]);
+                
+                // Player 4 - Row 5 (A5,B5,C5)
+                updatePlayer('player4', values[4][0], values[4][1], values[4][2]);
 
-                // Player 1 - Columns A, B, C
-                updatePlayer('player1', rowData[0], rowData[1], rowData[2]);
-                
-                // Player 2 - Columns D, E, F
-                updatePlayer('player2', rowData[3], rowData[4], rowData[5]);
-                
-                // Player 3 - Columns G, H, I
-                updatePlayer('player3', rowData[6], rowData[7], rowData[8]);
-                
-                // Player 4 - Columns J, K, L
-                updatePlayer('player4', rowData[9], rowData[10], rowData[11]);
-
-                // Active Player - Column M (index 12)
-                const activePlayer = parseInt(rowData[12]) || 1;
+                // Active Player - Assuming in D2
+                const activePlayer = parseInt(values[1][3]) || 1;
                 document.querySelectorAll('.player-card').forEach(card => card.classList.remove('active'));
                 document.getElementById(`player${activePlayer}`).classList.add('active');
 
-                // Match Info - Column N (index 13)
-                document.getElementById('matchInfo').textContent = rowData[13] || 'Century Tournament';
+                // Match Info - Assuming in E2
+                document.getElementById('matchInfo').textContent = values[1][4] || 'Century Tournament';
                 
-                // Rounds Info - Column O (index 14)
-                document.getElementById('rounds').textContent = rowData[14] || '';
+                // Rounds Info - Assuming in F2
+                document.getElementById('rounds').textContent = values[1][5] || '';
                 
-                // Background Image - Column P (index 15)
-                if (rowData[15]) {
-                    document.getElementById('fullscreenBg').innerHTML = `<img src="${rowData[15]}" alt="Background">`;
+                // Background Image - Assuming in G2
+                if (values[1][6]) {
+                    document.getElementById('fullscreenBg').innerHTML = `<img src="${values[1][6]}" alt="Background">`;
                 }
                 
-                // Message - Column Q (index 16)
+                // Message - Assuming in H2
                 const messageStrip = document.getElementById('messageStrip');
-                if (rowData[16]) {
-                    messageStrip.textContent = rowData[16];
+                if (values[1][7]) {
+                    messageStrip.textContent = values[1][7];
                     messageStrip.style.display = 'block';
                     document.getElementById('scoreStrip').style.display = 'none';
                 } else {
