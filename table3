@@ -166,7 +166,7 @@
 <script>
     const SHEET_ID = "1Wk61dTUlNu84sYIc42IierWo8HCdHkgYg899OGNyrxI";
     const SHEET_NAME = "table3";
-    const API_KEY = "AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc";
+    const API_KEY = "1FD4unKr6u9fLOjeOVdtzgrDcw6cUWuyjJFQVBaQRoaI";
     const API_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
 
     async function fetchData() {
