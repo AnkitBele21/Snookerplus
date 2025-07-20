@@ -2,228 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Snooker Scoring</title>
-
+  <title>Live Scoreboard</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      font-family: 'Arial', sans-serif;
-      position: relative;
-      height: 100vh;
-      width: 100vw;
-      background: rgba(0, 0, 0, 0);
-    }
-
-    .fullscreen-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-
-    .fullscreen-bg img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(29, 29, 37, 0.9);
-      color: #FFFFFF;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 20px;
-      box-sizing: border-box;
-      border-top: 2px solid #01AB7A;
-      z-index: 10;
-    }
-
-    .center-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #0b0b0b;
+      color: white;
       text-align: center;
     }
-
-    .main-logo {
-      height: 40px;
-      opacity: 0;
+    .scoreboard {
+      margin-top: 50px;
+      font-size: 24px;
     }
-
-    .player-info {
+    .players {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      justify-content: space-around;
+      margin: 20px;
+    }
+    .player {
       flex: 1;
-      text-align: center;
-      position: relative;
     }
-
-    .active-indicator {
-      margin-right: 10px;
-      width: 20px;
-      height: 20px;
-      background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
-      background-size: cover;
-      display: none;
-    }
-
-    .name {
-      font-size: 1.2em;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    .score {
-      font-size: 1.4em;
-      margin-left: 10px;
-      font-weight: 700;
-      color: #01AB7A;
-      text-align: right;
-    }
-
-    .rounds {
-      font-size: 1.1em;
-      color: #ccc;
-    }
-
     .message {
-      width: 100%;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      text-align: center;
-      font-size: 1.5em;
-      padding: 5px;
-      background: #01AB7A;
-      color: #1D1D25;
-      display: none;
-    }
-
-    .venue-logo {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 10;
-    }
-
-    .venue-logo-img {
-      width: 160px;
-      max-width: 240px;
-      opacity: 0.9;
-    }
-
-    .top-right-logo {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 15;
-    }
-
-    .top-right-logo img {
-      width: 150px;
-      opacity: 0.9;
+      margin-top: 30px;
+      font-size: 20px;
+      color: #00ff95;
     }
   </style>
 </head>
 <body>
-
-<div class="fullscreen-bg" id="fullscreenBg"></div>
-
-<!-- Venue Logo -->
-<div class="venue-logo">
-  <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" class="venue-logo-img">
-</div>
-
-<div class="overlay" id="scoreStrip">
-  <!-- Player 1 -->
-  <div class="player-info" id="player1">
-    <div class="active-indicator" id="player1Indicator"></div>
-    <div class="name" id="player1Name">Player 1</div>
-    <div class="score" id="player1Score">0</div>
+  <div class="scoreboard">
+    <div class="players">
+      <div class="player">
+        <h2 id="player1Name">Player 1</h2>
+        <h1 id="player1Score">0</h1>
+      </div>
+      <div class="player">
+        <h2 id="player2Name">Player 2</h2>
+        <h1 id="player2Score">0</h1>
+      </div>
+    </div>
+    <div class="message" id="message"></div>
   </div>
 
-  <!-- Center Content: Logo + Rounds -->
-  <div class="center-content">
-    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
-    <div class="rounds" id="rounds">(0-0)</div>
-  </div>
+  <script>
+    const sheetId = "1FD4unKr6u9fLOjeOVdtzgrDcw6cUWuyjJFQVBaQRoaI";
+    const sheetName = "table3";
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
 
-  <!-- Player 2 -->
-  <div class="player-info" id="player2">
-    <div class="active-indicator" id="player2Indicator"></div>
-    <div class="name" id="player2Name">Player 2</div>
-    <div class="score" id="player2Score">0</div>
-  </div>
-</div>
+    async function fetchSheetData() {
+      try {
+        const response = await fetch(url);
+        const text = await response.text();
 
-<!-- Media Partner Logo -->
-<div class="top-right-logo">
-  <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
-</div>
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows;
+        const headers = json.table.cols.map(col => col.label);
 
-<div class="message" id="messageStrip"></div>
+        if (!rows[0]) {
+          console.error("No data found.");
+          return;
+        }
 
-<!-- Google Sheets Integration Script -->
-<script>
-  const SHEET_ID = "1FD4unKr6u9fLOjeOVdtzgrDcw6cUWuyjJFQVBaQRoaI";
-  const SHEET_NAME = "table3";
-  const API_KEY = "AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc";
-  const API_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+        const values = rows[0].c.map(cell => (cell ? cell.v : ""));
+        const data = {};
+        headers.forEach((key, i) => {
+          data[key] = values[i] || "";
+        });
 
-  async function fetchData() {
-    try {
-      const res = await fetch(API_URL);
-      const json = await res.json();
+        console.log("Fetched data:", data);
 
-      const rows = json.values;
-      if (!rows || rows.length < 2) return;
+        // Update DOM safely
+        document.getElementById('player1Name').innerText = data.player1Name || "Player 1";
+        document.getElementById('player1Score').innerText = data.player1Score || "0";
+        document.getElementById('player2Name').innerText = data.player2Name || "Player 2";
+        document.getElementById('player2Score').innerText = data.player2Score || "0";
+        document.getElementById('message').innerText = data.message || "";
 
-      const headers = rows[0];
-      const values = rows[1];
-      const data = Object.fromEntries(headers.map((key, i) => [key, values[i]]));
-
-      document.getElementById('player1Name').innerText = data.player1Name || "Player 1";
-      document.getElementById('player1Score').innerText = data.player1Score || "0";
-      document.getElementById('player2Name').innerText = data.player2Name || "Player 2";
-      document.getElementById('player2Score').innerText = data.player2Score || "0";
-
-      document.getElementById('player1Indicator').style.display = data.activePlayer === "1" ? 'block' : 'none';
-      document.getElementById('player2Indicator').style.display = data.activePlayer === "2" ? 'block' : 'none';
-
-      document.getElementById('rounds').innerText = `(${data.rounds || '0-0'} Best of ${data.totalFrames || '1'})`;
-
-      let messageStrip = document.getElementById('messageStrip');
-      let scoreStrip = document.getElementById('scoreStrip');
-
-      if (data.message && data.message.trim() !== "") {
-        messageStrip.innerText = data.message;
-        messageStrip.style.display = 'block';
-        scoreStrip.style.display = 'none';
-      } else {
-        messageStrip.style.display = 'none';
-        scoreStrip.style.display = 'flex';
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-
-    } catch (err) {
-      console.error("Failed to fetch data from Google Sheets:", err);
     }
-  }
 
-  // Initial fetch and then update every 3 seconds
-  fetchData();
-  setInterval(fetchData, 3000);
-</script>
-
+    // Refresh every 3 seconds
+    fetchSheetData();
+    setInterval(fetchSheetData, 3000);
+  </script>
 </body>
 </html>
