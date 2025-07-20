@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Snooker Scoring</title>
-
   <style>
     body {
       margin: 0;
@@ -16,7 +15,6 @@
       width: 100vw;
       background: rgba(0, 0, 0, 0);
     }
-
     .fullscreen-bg {
       position: absolute;
       top: 0;
@@ -25,13 +23,11 @@
       height: 100%;
       z-index: -1;
     }
-
     .fullscreen-bg img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
     .overlay {
       position: absolute;
       bottom: 0;
@@ -47,19 +43,16 @@
       border-top: 2px solid #01AB7A;
       z-index: 10;
     }
-
     .center-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
     }
-
     .main-logo {
       height: 40px;
       opacity: 0;
     }
-
     .player-info {
       display: flex;
       justify-content: center;
@@ -68,7 +61,6 @@
       text-align: center;
       position: relative;
     }
-
     .active-indicator {
       margin-right: 10px;
       width: 20px;
@@ -77,13 +69,11 @@
       background-size: cover;
       display: none;
     }
-
     .name {
       font-size: 1.2em;
       font-weight: bold;
       text-align: center;
     }
-
     .score {
       font-size: 1.4em;
       margin-left: 10px;
@@ -91,12 +81,10 @@
       color: #01AB7A;
       text-align: right;
     }
-
     .rounds {
       font-size: 1.1em;
       color: #ccc;
     }
-
     .message {
       width: 100%;
       position: absolute;
@@ -109,27 +97,23 @@
       color: #1D1D25;
       display: none;
     }
-
     .venue-logo {
       position: absolute;
       top: 10px;
       left: 10px;
       z-index: 10;
     }
-
     .venue-logo-img {
       width: 160px;
       max-width: 240px;
       opacity: 0.9;
     }
-
     .top-right-logo {
       position: absolute;
       top: 10px;
       right: 10px;
       z-index: 15;
     }
-
     .top-right-logo img {
       width: 150px;
       opacity: 0.9;
@@ -191,24 +175,25 @@
 
       const headers = rows[0];
       const values = rows[1];
-      const data = Object.fromEntries(headers.map((key, i) => [key, values[i]]));
+      const data = Object.fromEntries(headers.map((key, i) => [key.trim(), values[i]]));
 
-      // Update elements
-      document.getElementById('player1Name').innerText = data.player1Name || "Player 1";
-      document.getElementById('player1Score').innerText = data.player1Score || "0";
-      document.getElementById('player2Name').innerText = data.player2Name || "Player 2";
-      document.getElementById('player2Score').innerText = data.player2Score || "0";
+      document.getElementById('player1Name').innerText = data["player1Name"] || "Player 1";
+      document.getElementById('player1Score').innerText = data["player1Score"] || "0";
+      document.getElementById('player2Name').innerText = data["player2Name"] || "Player 2";
+      document.getElementById('player2Score').innerText = data["player2Score"] || "0";
 
-      document.getElementById('player1Indicator').style.display = data.activePlayer === "1" ? 'block' : 'none';
-      document.getElementById('player2Indicator').style.display = data.activePlayer === "2" ? 'block' : 'none';
+      document.getElementById('player1Indicator').style.display = data["activePlayer"] === "1" ? 'block' : 'none';
+      document.getElementById('player2Indicator').style.display = data["activePlayer"] === "2" ? 'block' : 'none';
 
-      document.getElementById('rounds').innerText = `(${data.rounds || '0-0'} Best of ${data.totalFrames || '1'})`;
+      const roundText = data["rounds"] || "0-0";
+      const totalFrames = data["totalFrames"] || "1";
+      document.getElementById('rounds').innerText = `(${roundText} Best of ${totalFrames})`;
 
       const messageStrip = document.getElementById('messageStrip');
       const scoreStrip = document.getElementById('scoreStrip');
 
-      if (data.message && data.message.trim() !== "") {
-        messageStrip.innerText = data.message;
+      if (data["message"] && data["message"].trim() !== "") {
+        messageStrip.innerText = data["message"];
         messageStrip.style.display = 'block';
         scoreStrip.style.display = 'none';
       } else {
@@ -221,7 +206,7 @@
     }
   }
 
-  // Initial fetch and then every 3 seconds
+  // Fetch on load + refresh every 3 seconds
   fetchData();
   setInterval(fetchData, 3000);
 </script>
