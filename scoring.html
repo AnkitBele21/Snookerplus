@@ -339,9 +339,10 @@
                 if (jsonData.table.rows.length > 0) {
                     const cells = jsonData.table.rows[0].c;
                     
-                    const imageUrl = cells[0] ? cells[0].v : null;
-                    const message = cells[1] ? cells[1].v : null;
-                    const videoUrl = cells[2] ? cells[2].v : null;
+                    // Check if cells exist and have values
+                    const imageUrl = cells[0] && cells[0].v !== null && cells[0].v !== "" ? cells[0].v : null;
+                    const message = cells[1] && cells[1].v !== null && cells[1].v !== "" ? cells[1].v : null;
+                    const videoUrl = cells[2] && cells[2].v !== null && cells[2].v !== "" ? cells[2].v : null;
                     
                     // Show creative content based on priority
                     if (videoUrl) {
@@ -354,6 +355,9 @@
                         // If no creative content, show scoring
                         showScoring();
                     }
+                } else {
+                    // If no rows, show scoring
+                    showScoring();
                 }
             })
             .catch(error => {
