@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker Scoring - Modern Design</title>
+    <title>Snooker Scoring Overlay</title>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
@@ -18,69 +18,67 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1D1D25;
+            background: #000;
             color: white;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Video background simulation */
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0a2e38, #163d42);
+            z-index: -1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 10rem;
         }
         
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .scoring-strip {
-            background: linear-gradient(135deg, #1D1D25 0%, #2D2D3A 100%);
+        /* Scoring Overlay */
+        .scoring-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(29, 29, 37, 0.85);
             border-radius: 12px;
-            padding: 20px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            border: 1px solid #383845;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 100;
         }
         
         .player {
             display: flex;
-            flex-direction: column;
             align-items: center;
             flex: 1;
-            padding: 15px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            position: relative;
         }
         
         .player.active {
-            background: rgba(1, 171, 122, 0.15);
-            box-shadow: 0 0 15px rgba(1, 171, 122, 0.3);
+            position: relative;
         }
         
-        .player.active .player-name {
-            color: #01AB7A;
-        }
-        
-        .player.active .player-score {
-            color: #01AB7A;
-            text-shadow: 0 0 10px rgba(1, 171, 122, 0.5);
-        }
-        
-        .player.active::before {
+        .player.active::after {
             content: '';
             position: absolute;
-            top: -5px;
+            bottom: -13px;
             left: 50%;
             transform: translateX(-50%);
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             background: #01AB7A;
             border-radius: 50%;
             box-shadow: 0 0 10px #01AB7A;
@@ -88,39 +86,38 @@
         
         .player-info {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            width: 100%;
         }
         
         .player-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-right: 10px;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .player-score {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #FFFFFF 0%, #CCCCCC 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #01AB7A;
+            min-width: 40px;
+            text-align: right;
         }
         
         .center-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 30px;
+            margin: 0 20px;
         }
         
         .tournament-logo {
-            height: 50px;
-            margin-bottom: 15px;
+            height: 30px;
+            margin-bottom: 5px;
             opacity: 0.9;
         }
         
@@ -128,41 +125,36 @@
             display: flex;
             align-items: center;
             background: rgba(0, 0, 0, 0.3);
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: 1px solid #383845;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
         }
         
         .frame-score {
-            font-size: 1.8rem;
             font-weight: 700;
-            min-width: 30px;
+            min-width: 20px;
             text-align: center;
         }
         
         .frame-separator {
-            margin: 0 15px;
-            font-size: 1.5rem;
-            font-weight: 700;
+            margin: 0 8px;
             color: #01AB7A;
+            font-weight: 700;
         }
         
         .total-frames {
-            font-size: 1.2rem;
-            color: #01AB7A;
-            font-weight: 700;
-            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #AAAAAA;
+            margin-top: 3px;
         }
         
         .break-display {
-            position: absolute;
-            top: -15px;
-            background: #FF6B6B;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+            font-size: 0.8rem;
+            background: rgba(255, 107, 107, 0.2);
+            color: #FF6B6B;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 10px;
             display: none;
         }
         
@@ -173,7 +165,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 100;
+            z-index: 90;
             display: none;
             justify-content: center;
             align-items: center;
@@ -185,31 +177,29 @@
             max-height: 90%;
             object-fit: contain;
             border-radius: 10px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.7);
         }
         
         .ticker-message {
             position: fixed;
-            bottom: 20px;
+            bottom: 80px;
             left: 0;
             width: 100%;
             background: linear-gradient(90deg, #01AB7A 0%, #00D1A8 100%);
             color: #1D1D25;
-            padding: 15px 0;
+            padding: 12px 0;
             white-space: nowrap;
             overflow: hidden;
             box-sizing: border-box;
             font-weight: bold;
-            z-index: 90;
+            z-index: 95;
             display: none;
-            box-shadow: 0 -5px 20px rgba(1, 171, 122, 0.4);
         }
         
         .ticker-content {
             display: inline-block;
             padding-left: 100%;
             animation: ticker 20s linear infinite;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         @keyframes ticker {
@@ -219,15 +209,15 @@
         
         .close-button {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             background: rgba(255, 255, 255, 0.1);
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
             z-index: 110;
             display: none;
@@ -237,69 +227,107 @@
             background: rgba(255, 255, 255, 0.2);
         }
         
+        /* Venue and partner logos */
+        .venue-logo {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 80;
+        }
+        
+        .venue-logo img {
+            height: 40px;
+            opacity: 0.9;
+        }
+        
+        .partner-logo {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 80;
+        }
+        
+        .partner-logo img {
+            height: 40px;
+            opacity: 0.9;
+        }
+        
         @media (max-width: 768px) {
-            .scoring-strip {
-                flex-direction: column;
-                padding: 15px;
-            }
-            
-            .player {
-                width: 100%;
-                margin-bottom: 20px;
-            }
-            
-            .center-content {
-                padding: 20px 0;
-                order: -1;
+            .scoring-overlay {
+                width: 95%;
+                padding: 10px 15px;
+                bottom: 10px;
             }
             
             .player-name {
-                font-size: 1.2rem;
+                font-size: 1rem;
+                max-width: 90px;
             }
             
             .player-score {
-                font-size: 2.8rem;
+                font-size: 1.5rem;
             }
             
-            .frame-score {
-                font-size: 1.5rem;
+            .tournament-logo {
+                height: 25px;
+            }
+            
+            .frame-display {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+            
+            .venue-logo img, .partner-logo img {
+                height: 30px;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="scoring-strip">
-        <!-- Player 1 -->
-        <div class="player" id="player1">
-            <div class="break-display" id="player1Break">Break: 32</div>
-            <div class="player-info">
-                <div class="player-name" id="player1Name">PLAYER 1</div>
-                <div class="player-score" id="player1Score">0</div>
-            </div>
-        </div>
+<!-- Simulated video background -->
+<div class="video-background">LIVE VIDEO</div>
 
-        <!-- Center Content -->
-        <div class="center-content">
-            <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Tournament Logo" class="tournament-logo">
-            <div class="frame-display">
-                <div class="frame-score" id="player1Frames">0</div>
-                <div class="frame-separator">-</div>
-                <div class="frame-score" id="player2Frames">0</div>
-            </div>
-            <div class="total-frames">Best of <span id="totalFrames">7</span></div>
-        </div>
-
-        <!-- Player 2 -->
-        <div class="player" id="player2">
-            <div class="break-display" id="player2Break">Break: 48</div>
-            <div class="player-info">
-                <div class="player-name" id="player2Name">PLAYER 2</div>
-                <div class="player-score" id="player2Score">0</div>
-            </div>
+<!-- Scoring Overlay -->
+<div class="scoring-overlay">
+    <!-- Player 1 -->
+    <div class="player" id="player1">
+        <div class="player-info">
+            <div class="player-name" id="player1Name">PLAYER 1</div>
+            <div class="player-score" id="player1Score">0</div>
+            <div class="break-display" id="player1Break">32</div>
         </div>
     </div>
+
+    <!-- Center Content -->
+    <div class="center-content">
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Tournament Logo" class="tournament-logo">
+        <div class="frame-display">
+            <div class="frame-score" id="player1Frames">0</div>
+            <div class="frame-separator">-</div>
+            <div class="frame-score" id="player2Frames">0</div>
+        </div>
+        <div class="total-frames">Best of <span id="totalFrames">7</span></div>
+    </div>
+
+    <!-- Player 2 -->
+    <div class="player" id="player2">
+        <div class="player-info">
+            <div class="player-name" id="player2Name">PLAYER 2</div>
+            <div class="player-score" id="player2Score">0</div>
+            <div class="break-display" id="player2Break">48</div>
+        </div>
+    </div>
+</div>
+
+<!-- Venue Logo -->
+<div class="venue-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" alt="Venue Logo">
+</div>
+
+<!-- Partner Logo -->
+<div class="partner-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Partner Logo">
 </div>
 
 <!-- Creative Content Overlays -->
@@ -358,14 +386,14 @@
         // Update breaks
         if (data.player1Break && data.player1Break !== "0") {
             document.getElementById('player1Break').style.display = 'block';
-            document.getElementById('player1Break').innerText = `Break: ${data.player1Break}`;
+            document.getElementById('player1Break').innerText = data.player1Break;
         } else {
             document.getElementById('player1Break').style.display = 'none';
         }
         
         if (data.player2Break && data.player2Break !== "0") {
             document.getElementById('player2Break').style.display = 'block';
-            document.getElementById('player2Break').innerText = `Break: ${data.player2Break}`;
+            document.getElementById('player2Break').innerText = data.player2Break;
         } else {
             document.getElementById('player2Break').style.display = 'none';
         }
@@ -391,9 +419,6 @@
                         // Check if cells exist and have values (only columns A and B)
                         const imageUrl = cells[0] && cells[0].v !== null && cells[0].v !== "" ? cells[0].v : null;
                         const message = cells[1] && cells[1].v !== null && cells[1].v !== "" ? cells[1].v : null;
-                        
-                        console.log("Image URL:", imageUrl);
-                        console.log("Message:", message);
                         
                         // Show creative content based on priority
                         if (imageUrl) {
