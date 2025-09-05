@@ -104,9 +104,23 @@
         }
         
         .rounds {
-            font-size: 0.85em;
+            font-size: 0.95em;
             color: #ccc;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .frame-score {
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .total-frames {
+            color: #01AB7A;
+            font-weight: bold;
+            padding: 0 2px;
         }
         
         .message {
@@ -167,7 +181,7 @@
             }
             
             .rounds {
-                font-size: 0.75em;
+                font-size: 0.8em;
             }
             
             .main-logo {
@@ -210,7 +224,13 @@
     <!-- Center Content: Logo + Rounds -->
     <div class="center-content">
         <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
-        <div class="rounds" id="rounds">(0-0)</div>
+        <div class="rounds" id="rounds">
+            <span class="frame-score" id="player1Frames">0</span>
+            <span>(</span>
+            <span class="total-frames" id="currentFrame">1</span>
+            <span>)</span>
+            <span class="frame-score" id="player2Frames">0</span>
+        </div>
     </div>
 
     <!-- Player 2 -->
@@ -249,8 +269,13 @@
             document.getElementById('player1Indicator').style.display = data.activePlayer == "1" ? 'block' : 'none';
             document.getElementById('player2Indicator').style.display = data.activePlayer == "2" ? 'block' : 'none';
 
-            // Update Rounds with Total Rounds (Best of N)
-            document.getElementById('rounds').innerText = `(${data.rounds || '0-0'} Best of ${data.totalFrames || '1'})`;
+            // Update frame scores in the format ( 0 (1) 0 )
+            const frameScores = data.rounds ? data.rounds.split('-') : ['0', '0'];
+            document.getElementById('player1Frames').innerText = frameScores[0] || '0';
+            document.getElementById('player2Frames').innerText = frameScores[1] || '0';
+            
+            // Update current frame number
+            document.getElementById('currentFrame').innerText = data.currentFrame || '1';
 
             // Show Message Strip (if any message is present)
             let messageStrip = document.getElementById('messageStrip');
