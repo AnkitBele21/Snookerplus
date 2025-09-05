@@ -41,12 +41,6 @@
             object-fit: cover; /* Fill the screen */
         }
         
-        .creative-video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
         .ticker-message {
             position: absolute;
             bottom: 70px;
@@ -245,10 +239,6 @@
     <img class="creative-image" id="creativeImage" src="" alt="Creative Content">
 </div>
 
-<div class="creative-overlay" id="videoOverlay">
-    <video class="creative-video" id="creativeVideo" controls muted autoplay></video>
-</div>
-
 <div class="ticker-message" id="tickerMessage">
     <div class="ticker-content" id="tickerContent"></div>
 </div>
@@ -333,30 +323,35 @@
         fetch(SHEET_URL)
             .then(response => response.text())
             .then(data => {
-                // Remove unwanted text from response
-                const jsonData = JSON.parse(data.substring(47).slice(0, -2));
-                
-                if (jsonData.table.rows.length > 0) {
-                    const cells = jsonData.table.rows[0].c;
+                try {
+                    // Remove unwanted text from response
+                    const jsonData = JSON.parse(data.substring(47).slice(0, -2));
                     
-                    // Check if cells exist and have values
-                    const imageUrl = cells[0] && cells[0].v !== null && cells[0].v !== "" ? cells[0].v : null;
-                    const message = cells[1] && cells[1].v !== null && cells[1].v !== "" ? cells[1].v : null;
-                    const videoUrl = cells[2] && cells[2].v !== null && cells[2].v !== "" ? cells[2].v : null;
-                    
-                    // Show creative content based on priority
-                    if (videoUrl) {
-                        showVideo(videoUrl);
-                    } else if (imageUrl) {
-                        showImage(imageUrl);
-                    } else if (message) {
-                        showMessage(message);
+                    if (jsonData.table.rows.length > 0) {
+                        const cells = jsonData.table.rows[0].c;
+                        
+                        // Check if cells exist and have values (only columns A and B)
+                        const imageUrl = cells[0] && cells[0].v !== null && cells[0].v !== "" ? cells[0].v : null;
+                        const message = cells[1] && cells[1].v !== null && cells[1].v !== "" ? cells[1].v : null;
+                        
+                        console.log("Image URL:", imageUrl);
+                        console.log("Message:", message);
+                        
+                        // Show creative content based on priority
+                        if (imageUrl) {
+                            showImage(imageUrl);
+                        } else if (message) {
+                            showMessage(message);
+                        } else {
+                            // If no creative content, show scoring
+                            showScoring();
+                        }
                     } else {
-                        // If no creative content, show scoring
+                        // If no rows, show scoring
                         showScoring();
                     }
-                } else {
-                    // If no rows, show scoring
+                } catch (e) {
+                    console.error("Error parsing Google Sheets data:", e);
                     showScoring();
                 }
             })
@@ -371,30 +366,14 @@
     function showImage(url) {
         hideAllCreativeContent();
         const imgElement = document.getElementById('creativeImage');
+        imgElement.onload = function() {
+            document.getElementById('imageOverlay').style.display = 'flex';
+        };
+        imgElement.onerror = function() {
+            console.error("Error loading image:", url);
+            showScoring();
+        };
         imgElement.src = url;
-        document.getElementById('imageOverlay').style.display = 'flex';
-    }
-
-    // Function to show video
-    function showVideo(url) {
-        hideAllCreativeContent();
-        const videoElement = document.getElementById('creativeVideo');
-        
-        // Handle YouTube URLs specifically to avoid cookie issues
-        if (url.includes('youtube.com') || url.includes('youtu.be')) {
-            // Convert to embedded version to avoid cookie issues
-            let videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
-            if (videoId) {
-                url = `https://www.youtube.com/embed/${videoId[1]}?autoplay=1&mute=1&modestbranding=1&rel=0`;
-                videoElement.src = url;
-            } else {
-                videoElement.src = url;
-            }
-        } else {
-            videoElement.src = url;
-        }
-        
-        document.getElementById('videoOverlay').style.display = 'flex';
     }
 
     // Function to show message ticker
@@ -413,13 +392,7 @@
     // Function to hide all creative content
     function hideAllCreativeContent() {
         document.getElementById('imageOverlay').style.display = 'none';
-        document.getElementById('videoOverlay').style.display = 'none';
         document.getElementById('tickerMessage').style.display = 'none';
-        
-        // Pause video if playing
-        const videoElement = document.getElementById('creativeVideo');
-        videoElement.pause();
-        videoElement.src = '';
     }
 
     // Initial load - check for creative content every 5 seconds
