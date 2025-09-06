@@ -72,16 +72,20 @@
         .overlay {
             position: absolute;
             bottom: 0;
-            left: 0;
-            width: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            min-width: 600px;
+            max-width: 90%;
             background: rgba(29, 29, 37, 0.95);
             color: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px;
+            padding: 10px 20px;
             box-sizing: border-box;
             border-top: 3px solid #01AB7A;
+            border-radius: 12px 12px 0 0;
             z-index: 7; /* Below creative content */
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
         }
@@ -92,14 +96,14 @@
             align-items: center;
             text-align: center;
             flex: 0 0 auto;
-            margin: 0 15px;
+            margin: 0 20px;
         }
         
         .main-logo {
-            height: 32px;
+            height: 10px;
             margin-bottom: 4px;
             opacity: 1;
-            filter: brightness(0) invert(1);
+            /* Removed the filter that was making it black and white */
         }
         
         .player-info {
@@ -110,6 +114,7 @@
             text-align: center;
             position: relative;
             padding: 5px 0;
+            min-width: 160px;
         }
         
         .active-indicator {
@@ -181,12 +186,16 @@
         }
         
         /* Venue logo styling */
+
         .venue-logo {
+    display: none;
+}
+        /* .venue-logo {
             position: absolute;
             top: 6px;
             left: 6px;
             z-index: 10;
-        }
+        } */
         
         .venue-logo-img {
             width: 100px;
@@ -210,7 +219,8 @@
         /* Media query for very small screens */
         @media (max-height: 400px) and (orientation: landscape) {
             .overlay {
-                padding: 8px 12px;
+                padding: 8px 15px;
+                min-width: 500px;
             }
             
             .name {
@@ -252,6 +262,27 @@
                 font-size: 0.9em;
             }
         }
+        
+        @media (max-width: 650px) {
+            .overlay {
+                min-width: unset;
+                width: 95%;
+                padding: 8px 12px;
+            }
+            
+            .player-info {
+                min-width: unset;
+            }
+            
+            .name {
+                max-width: 100px;
+                font-size: 1em;
+            }
+            
+            .center-content {
+                margin: 0 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -267,7 +298,7 @@
     <div class="ticker-content" id="tickerContent"></div>
 </div>
 
-<!-- Venue Logo -->
+<!-- Venue Logo (Top Left) -->
 <div class="venue-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" class="venue-logo-img">
 </div>
@@ -301,7 +332,7 @@
     </div>
 </div>
 
-<!-- Media Partner Logo -->
+<!-- Media Partner Logo (Top Right) -->
 <div class="top-right-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
