@@ -17,7 +17,7 @@
         }
         
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Montserrat', 'Arial', sans-serif;
             background: #000;
             color: white;
             height: 100vh;
@@ -49,12 +49,14 @@
             transform: translateX(-50%);
             width: 90%;
             max-width: 1000px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 4px;
-            padding: 12px 15px;
+            background: rgba(29, 29, 37, 0.95);
+            border-radius: 8px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top: 3px solid #E51937; /* Snooker+ brand color */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
             z-index: 100;
         }
         
@@ -62,6 +64,12 @@
             display: flex;
             align-items: center;
             flex: 1;
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            width: 100%;
         }
         
         .player-left {
@@ -72,46 +80,56 @@
             justify-content: flex-end;
         }
         
-        .player-info {
-            display: flex;
-            align-items: center;
-        }
-        
         .player-name {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: #FFFFFF;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin: 0 10px;
         }
         
         .player-score {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 700;
             color: #FFFFFF;
-            min-width: 40px;
+            min-width: 50px;
             text-align: center;
-            margin: 0 15px;
             background: rgba(255, 255, 255, 0.1);
             padding: 5px 10px;
-            border-radius: 3px;
+            border-radius: 4px;
+        }
+        
+        .active-indicator {
+            width: 10px;
+            height: 10px;
+            background: #E51937; /* Snooker+ brand color */
+            border-radius: 50%;
+            margin: 0 10px;
+            display: none;
+            box-shadow: 0 0 8px #E51937;
+        }
+        
+        .player.active .active-indicator {
+            display: block;
         }
         
         .center-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0 20px;
+            margin: 0 25px;
         }
         
         .frame-display {
             display: flex;
             align-items: center;
             background: rgba(255, 255, 255, 0.9);
-            padding: 5px 15px;
-            border-radius: 3px;
+            padding: 6px 15px;
+            border-radius: 4px;
             color: #000;
             font-weight: 700;
+            margin-bottom: 5px;
         }
         
         .frame-score {
@@ -129,69 +147,30 @@
         
         .total-frames {
             font-size: 0.9rem;
-            color: #AAAAAA;
-            margin-top: 5px;
+            color: #CCCCCC;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
-        /* Tournament branding */
-        .tournament-brand {
+        /* Brand logos */
+        .brand-logo {
             position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
             z-index: 80;
         }
         
-        .tournament-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #FFFFFF;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-        
-        .tournament-subtitle {
-            font-size: 0.9rem;
-            color: #CCCCCC;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-        
-        /* Sponsor logos */
-        .sponsor-logo {
-            position: absolute;
+        .venue-logo {
             top: 15px;
-            z-index: 80;
-        }
-        
-        .sponsor-left {
             left: 15px;
         }
         
-        .sponsor-right {
+        .partner-logo {
+            top: 15px;
             right: 15px;
         }
         
-        .sponsor-logo img {
-            height: 35px;
-        }
-        
-        /* Active player indicator */
-        .active-indicator {
-            width: 8px;
-            height: 8px;
-            background: #FF0000;
-            border-radius: 50%;
-            margin: 0 10px;
-            display: none;
-        }
-        
-        .player.active .active-indicator {
-            display: block;
+        .brand-logo img {
+            height: 40px;
+            opacity: 0.9;
         }
         
         /* Creative Content Overlays */
@@ -212,6 +191,7 @@
             max-width: 90%;
             max-height: 90%;
             object-fit: contain;
+            border-radius: 8px;
         }
         
         .ticker-message {
@@ -265,29 +245,20 @@
         @media (max-width: 768px) {
             .scoring-overlay {
                 width: 95%;
-                padding: 10px;
+                padding: 10px 15px;
                 bottom: 10px;
             }
             
             .player-name {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
             
             .player-score {
-                font-size: 1.5rem;
-                margin: 0 10px;
+                font-size: 1.6rem;
             }
             
-            .tournament-title {
-                font-size: 1.1rem;
-            }
-            
-            .tournament-subtitle {
-                font-size: 0.8rem;
-            }
-            
-            .sponsor-logo img {
-                height: 25px;
+            .brand-logo img {
+                height: 30px;
             }
             
             .frame-display {
@@ -296,6 +267,10 @@
             
             .frame-score {
                 font-size: 1rem;
+            }
+            
+            .center-content {
+                margin: 0 15px;
             }
         }
     </style>
@@ -311,7 +286,7 @@
     <div class="player player-left" id="player1">
         <div class="player-info">
             <div class="active-indicator"></div>
-            <div class="player-name" id="player1Name">O'SULLIVAN</div>
+            <div class="player-name" id="player1Name">PLAYER 1</div>
             <div class="player-score" id="player1Score">0</div>
         </div>
     </div>
@@ -319,36 +294,30 @@
     <!-- Center Content -->
     <div class="center-content">
         <div class="frame-display">
-            <div class="frame-score" id="player1Frames">4</div>
-            <div class="frame-separator">(19)</div>
-            <div class="frame-score" id="player2Frames">1</div>
+            <div class="frame-score" id="player1Frames">0</div>
+            <div class="frame-separator">-</div>
+            <div class="frame-score" id="player2Frames">0</div>
         </div>
-        <div class="total-frames">Best of 19</div>
+        <div class="total-frames">Best of <span id="totalFrames">7</span></div>
     </div>
 
     <!-- Player 2 -->
     <div class="player player-right" id="player2">
         <div class="player-info">
-            <div class="player-score" id="player2Score">4</div>
-            <div class="player-name" id="player2Name">TRUMP</div>
+            <div class="player-score" id="player2Score">0</div>
+            <div class="player-name" id="player2Name">PLAYER 2</div>
             <div class="active-indicator"></div>
         </div>
     </div>
 </div>
 
-<!-- Tournament Branding -->
-<div class="tournament-brand">
-    <div class="tournament-title">Snooker+ Championship</div>
-    <div class="tournament-subtitle">Final</div>
+<!-- Brand Logos -->
+<div class="brand-logo venue-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" alt="Venue Logo">
 </div>
 
-<!-- Sponsor Logos -->
-<div class="sponsor-logo sponsor-left">
-    <img src="https://via.placeholder.com/150x50/ffffff/000000?text=SPONSOR" alt="Sponsor Logo">
-</div>
-
-<div class="sponsor-logo sponsor-right">
-    <img src="https://via.placeholder.com/150x50/ffffff/000000?text=SPONSOR" alt="Sponsor Logo">
+<div class="brand-logo partner-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
 
 <!-- Creative Content Overlays -->
@@ -372,13 +341,13 @@
 
     // Initialize with sample data
     const initializeData = {
-        player1Name: "O'SULLIVAN",
+        player1Name: "PLAYER 1",
         player1Score: "0",
-        player2Name: "TRUMP", 
-        player2Score: "4",
-        activePlayer: "2",
-        rounds: "4-1",
-        totalFrames: "19"
+        player2Name: "PLAYER 2", 
+        player2Score: "0",
+        activePlayer: "1",
+        rounds: "0-0",
+        totalFrames: "7"
     };
 
     // Load Score Data from Firebase
@@ -400,7 +369,7 @@
         document.getElementById('player2Frames').innerText = frameScores[1] || '0';
         
         // Update total frames
-        document.getElementById('total-frames').innerText = `Best of ${data.totalFrames || '19'}`;
+        document.getElementById('totalFrames').innerText = data.totalFrames || '7';
     });
 
     // Google Sheets integration for creative content
