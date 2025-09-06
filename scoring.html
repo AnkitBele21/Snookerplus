@@ -10,35 +10,15 @@
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database-compat.js"></script>
 
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Montserrat', 'Arial', sans-serif;
-            background: #000;
-            color: white;
-            height: 100vh;
             overflow: hidden;
+            font-family: 'Arial', sans-serif;
             position: relative;
-        }
-        
-        /* Video background simulation */
-        .video-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #0a2e38, #163d42);
-            z-index: -1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.1);
-            font-size: 10rem;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0, 0, 0, 0);
         }
         
         /* Creative Content Overlays */
@@ -48,40 +28,39 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 90;
+            z-index: 8; /* Higher than score strip */
             display: none;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.85);
         }
         
         .creative-image {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Fill the screen */
         }
         
         .ticker-message {
-            position: fixed;
-            top: 80px;
+            position: absolute;
+            bottom: 70px;
             left: 0;
             width: 100%;
-            background: #01AB7A;
-            color: #FFFFFF;
-            padding: 12px 0;
+            background: rgba(1, 171, 122, 0.9);
+            color: #1D1D25;
+            padding: 10px 0;
             white-space: nowrap;
             overflow: hidden;
             box-sizing: border-box;
             font-weight: bold;
-            z-index: 95;
+            z-index: 9; /* Above score strip */
             display: none;
         }
         
         .ticker-content {
             display: inline-block;
             padding-left: 100%;
-            animation: ticker 20s linear infinite;
-            font-size: 1.1rem;
+            animation: ticker 15s linear infinite;
         }
         
         @keyframes ticker {
@@ -89,196 +68,171 @@
             100% { transform: translateX(-100%); }
         }
         
-        /* NEW SCORING STRIP DESIGN */
-        .scoring-strip {
+        /* Scoring overlay */
+        .overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
             background: rgba(29, 29, 37, 0.9);
-            border-top: 3px solid #01AB7A;
-            padding: 12px 20px;
+            color: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 6px 12px;
             box-sizing: border-box;
-            z-index: 7;
-        }
-        
-        .player {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-        
-        .player-info {
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-        
-        .player-left {
-            justify-content: flex-start;
-        }
-        
-        .player-right {
-            justify-content: flex-end;
-            flex-direction: row-reverse;
-        }
-        
-        .player-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #FFFFFF;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 0 10px;
-        }
-        
-        .player-score {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #FFFFFF;
-            min-width: 50px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-        
-        .active-indicator {
-            width: 10px;
-            height: 10px;
-            background: #01AB7A;
-            border-radius: 50%;
-            margin: 0 10px;
-            display: none;
-            box-shadow: 0 0 8px #01AB7A;
-        }
-        
-        .player.active .active-indicator {
-            display: block;
+            border-top: 2px solid #01AB7A;
+            z-index: 7; /* Below creative content */
         }
         
         .center-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0 25px;
-        }
-        
-        .frame-display {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 6px 15px;
-            border-radius: 4px;
-            color: #000;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .frame-score {
-            font-weight: 700;
-            min-width: 20px;
             text-align: center;
-            font-size: 1.2rem;
+            flex: 0 0 auto;
+            margin: 0 8px;
         }
         
-        .frame-separator {
-            margin: 0 10px;
-            color: #000;
-            font-weight: 700;
+        .main-logo {
+            height: 28px;
+            margin-bottom: 2px;
+            opacity: 0;
         }
         
-        .total-frames {
-            font-size: 0.9rem;
-            color: #CCCCCC;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .player-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            text-align: center;
+            position: relative;
         }
         
-        /* Brand logos */
-        .brand-logo {
-            position: absolute;
-            z-index: 80;
-        }
-        
-        .venue-logo {
-            top: 15px;
-            left: 15px;
-        }
-        
-        .partner-logo {
-            top: 15px;
-            right: 15px;
-        }
-        
-        .brand-logo img {
-            height: 40px;
-            opacity: 0.9;
-        }
-        
-        .close-button {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            font-size: 1rem;
-            cursor: pointer;
-            z-index: 110;
+        .active-indicator {
+            margin-right: 6px;
+            width: 14px;
+            height: 14px;
+            background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
+            background-size: cover;
             display: none;
         }
         
-        .close-button:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .name {
+            font-size: 0.95em;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100px;
         }
         
-        @media (max-width: 768px) {
-            .scoring-strip {
-                padding: 10px 15px;
+        .score {
+            font-size: 1.1em;
+            margin-left: 8px;
+            font-weight: 700;
+            color: #01AB7A;
+            text-align: right;
+            min-width: 30px;
+        }
+        
+        .rounds {
+            font-size: 0.95em;
+            color: #ccc;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .frame-score {
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .total-frames {
+            color: #01AB7A;
+            font-weight: bold;
+            padding: 0 2px;
+        }
+        
+        /* Venue logo styling */
+        .venue-logo {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            z-index: 10;
+        }
+        
+        .venue-logo-img {
+            width: 100px;
+            max-width: 120px;
+            opacity: 0.9;
+        }
+
+        /* Media Partner Logo */
+        .top-right-logo {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            z-index: 15;
+        }
+        
+        .top-right-logo img {
+            width: 100px;
+            opacity: 0.9;
+        }
+        
+        /* Media query for very small screens */
+        @media (max-height: 400px) and (orientation: landscape) {
+            .overlay {
+                padding: 4px 8px;
             }
             
-            .player-name {
-                font-size: 1rem;
+            .name {
+                font-size: 0.85em;
+                max-width: 80px;
             }
             
-            .player-score {
-                font-size: 1.6rem;
+            .score {
+                font-size: 1em;
+                margin-left: 6px;
+                min-width: 25px;
             }
             
-            .brand-logo img {
-                height: 30px;
+            .rounds {
+                font-size: 0.8em;
             }
             
-            .frame-display {
-                padding: 4px 10px;
+            .main-logo {
+                height: 22px;
             }
             
-            .frame-score {
-                font-size: 1rem;
+            .active-indicator {
+                width: 12px;
+                height: 12px;
+                margin-right: 4px;
             }
             
-            .center-content {
-                margin: 0 15px;
+            .venue-logo-img {
+                width: 80px;
+            }
+            
+            .top-right-logo img {
+                width: 80px;
             }
             
             .ticker-message {
-                top: 60px;
-                padding: 8px 0;
+                bottom: 60px;
+                font-size: 0.9em;
             }
         }
     </style>
 </head>
 <body>
 
-<!-- Simulated video background -->
-<div class="video-background">LIVE VIDEO</div>
+<div class="fullscreen-bg" id="fullscreenBg"></div>
 
 <!-- Creative Content Overlays -->
 <div class="creative-overlay" id="imageOverlay">
@@ -289,47 +243,44 @@
     <div class="ticker-content" id="tickerContent"></div>
 </div>
 
-<!-- NEW SCORING STRIP -->
-<div class="scoring-strip" id="scoreStrip">
+<!-- Venue Logo -->
+<div class="venue-logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" class="venue-logo-img">
+</div>
+
+<!-- Scoring Overlay -->
+<div class="overlay" id="scoreStrip">
     <!-- Player 1 -->
-    <div class="player player-left" id="player1">
-        <div class="player-info">
-            <div class="active-indicator"></div>
-            <div class="player-name" id="player1Name">PRATIK</div>
-            <div class="player-score" id="player1Score">21</div>
-        </div>
+    <div class="player-info" id="player1">
+        <div class="active-indicator" id="player1Indicator"></div>
+        <div class="name" id="player1Name">Player 1</div>
+        <div class="score" id="player1Score">0</div>
     </div>
 
-    <!-- Center Content -->
+    <!-- Center Content: Logo + Rounds -->
     <div class="center-content">
-        <div class="frame-display">
-            <div class="frame-score" id="player1Frames">2</div>
-            <div class="frame-separator">:</div>
-            <div class="frame-score" id="player2Frames">3</div>
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
+        <div class="rounds" id="rounds">
+            <span class="frame-score" id="player1Frames">0</span>
+            <span>(</span>
+            <span class="total-frames" id="currentFrame">1</span>
+            <span>)</span>
+            <span class="frame-score" id="player2Frames">0</span>
         </div>
-        <div class="total-frames">Best of <span id="totalFrames">7</span></div>
     </div>
 
     <!-- Player 2 -->
-    <div class="player player-right" id="player2">
-        <div class="player-info">
-            <div class="active-indicator"></div>
-            <div class="player-name" id="player2Name">ANKIT</div>
-            <div class="player-score" id="player2Score">26</div>
-        </div>
+    <div class="player-info" id="player2">
+        <div class="active-indicator" id="player2Indicator"></div>
+        <div class="name" id="player2Name">Player 2</div>
+        <div class="score" id="player2Score">0</div>
     </div>
 </div>
 
-<!-- Brand Logos -->
-<div class="brand-logo venue-logo">
-    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" alt="Venue Logo">
-</div>
-
-<div class="brand-logo partner-logo">
+<!-- Media Partner Logo -->
+<div class="top-right-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
 </div>
-
-<button class="close-button" id="closeButton">×</button>
 
 <script>
     // Firebase Configuration
@@ -339,37 +290,27 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Initialize with sample data
-    const initializeData = {
-        player1Name: "PRATIK",
-        player1Score: "21",
-        player2Name: "ANKIT", 
-        player2Score: "26",
-        activePlayer: "1",
-        rounds: "2-3",
-        totalFrames: "7"
-    };
-
     // Load Score Data from Firebase
     db.ref("snooker").on("value", (snapshot) => {
-        let data = snapshot.val() || initializeData;
-        
-        document.getElementById('player1Name').innerText = data.player1Name;
-        document.getElementById('player1Score').innerText = data.player1Score;
-        document.getElementById('player2Name').innerText = data.player2Name;
-        document.getElementById('player2Score').innerText = data.player2Score;
+        let data = snapshot.val();
+        if (data) {
+            document.getElementById('player1Name').innerText = data.player1Name;
+            document.getElementById('player1Score').innerText = data.player1Score;
+            document.getElementById('player2Name').innerText = data.player2Name;
+            document.getElementById('player2Score').innerText = data.player2Score;
 
-        // Handle Active Player Indicator
-        document.getElementById('player1').classList.toggle('active', data.activePlayer == "1");
-        document.getElementById('player2').classList.toggle('active', data.activePlayer == "2");
+            // Handle Active Player Indicator
+            document.getElementById('player1Indicator').style.display = data.activePlayer == "1" ? 'block' : 'none';
+            document.getElementById('player2Indicator').style.display = data.activePlayer == "2" ? 'block' : 'none';
 
-        // Update frame scores
-        const frameScores = data.rounds ? data.rounds.split('-') : ['0', '0'];
-        document.getElementById('player1Frames').innerText = frameScores[0] || '0';
-        document.getElementById('player2Frames').innerText = frameScores[1] || '0';
-        
-        // Update total frames
-        document.getElementById('totalFrames').innerText = data.totalFrames || '7';
+            // Update frame scores in the format ( 0 (1) 0 )
+            const frameScores = data.rounds ? data.rounds.split('-') : ['0', '0'];
+            document.getElementById('player1Frames').innerText = frameScores[0] || '0';
+            document.getElementById('player2Frames').innerText = frameScores[1] || '0';
+            
+            // Update current frame number - fixed to use totalFrames instead of currentFrame
+            document.getElementById('currentFrame').innerText = data.totalFrames || '1';
+        }
     });
 
     // Google Sheets integration for creative content
@@ -392,6 +333,9 @@
                         // Check if cells exist and have values (only columns A and B)
                         const imageUrl = cells[0] && cells[0].v !== null && cells[0].v !== "" ? cells[0].v : null;
                         const message = cells[1] && cells[1].v !== null && cells[1].v !== "" ? cells[1].v : null;
+                        
+                        console.log("Image URL:", imageUrl);
+                        console.log("Message:", message);
                         
                         // Show creative content based on priority
                         if (imageUrl) {
@@ -424,7 +368,6 @@
         const imgElement = document.getElementById('creativeImage');
         imgElement.onload = function() {
             document.getElementById('imageOverlay').style.display = 'flex';
-            document.getElementById('closeButton').style.display = 'block';
         };
         imgElement.onerror = function() {
             console.error("Error loading image:", url);
@@ -438,14 +381,12 @@
         hideAllCreativeContent();
         document.getElementById('tickerContent').innerText = message;
         document.getElementById('tickerMessage').style.display = 'block';
-        document.getElementById('closeButton').style.display = 'block';
     }
 
     // Function to show scoring overlay
     function showScoring() {
         hideAllCreativeContent();
         document.getElementById('scoreStrip').style.display = 'flex';
-        document.getElementById('closeButton').style.display = 'none';
     }
 
     // Function to hide all creative content
@@ -453,11 +394,6 @@
         document.getElementById('imageOverlay').style.display = 'none';
         document.getElementById('tickerMessage').style.display = 'none';
     }
-
-    // Close button functionality
-    document.getElementById('closeButton').addEventListener('click', function() {
-        showScoring();
-    });
 
     // Initial load - check for creative content every 5 seconds
     fetchCreativeContent();
