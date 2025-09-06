@@ -68,21 +68,22 @@
             100% { transform: translateX(-100%); }
         }
         
-        /* Scoring overlay */
+        /* Scoring overlay - REDESIGNED */
         .overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(29, 29, 37, 0.9);
+            background: rgba(29, 29, 37, 0.95);
             color: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 12px;
+            padding: 10px 15px;
             box-sizing: border-box;
-            border-top: 2px solid #01AB7A;
+            border-top: 3px solid #01AB7A;
             z-index: 7; /* Below creative content */
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
         }
         
         .center-content {
@@ -91,13 +92,14 @@
             align-items: center;
             text-align: center;
             flex: 0 0 auto;
-            margin: 0 8px;
+            margin: 0 15px;
         }
         
         .main-logo {
-            height: 28px;
-            margin-bottom: 2px;
-            opacity: 0;
+            height: 32px;
+            margin-bottom: 4px;
+            opacity: 1;
+            filter: brightness(0) invert(1);
         }
         
         .player-info {
@@ -107,54 +109,75 @@
             flex: 1;
             text-align: center;
             position: relative;
+            padding: 5px 0;
         }
         
         .active-indicator {
-            margin-right: 6px;
-            width: 14px;
-            height: 14px;
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
             background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
             background-size: cover;
             display: none;
+            filter: drop-shadow(0 0 4px rgba(1, 171, 122, 0.8));
         }
         
         .name {
-            font-size: 0.95em;
-            font-weight: bold;
+            font-size: 1.1em;
+            font-weight: 700;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 100px;
+            max-width: 140px;
+            letter-spacing: 0.5px;
         }
         
         .score {
-            font-size: 1.1em;
-            margin-left: 8px;
-            font-weight: 700;
+            font-size: 1.5em;
+            margin-left: 12px;
+            font-weight: 800;
             color: #01AB7A;
             text-align: right;
-            min-width: 30px;
+            min-width: 40px;
+            text-shadow: 0 0 6px rgba(1, 171, 122, 0.4);
         }
         
         .rounds {
-            font-size: 0.95em;
-            color: #ccc;
+            font-size: 1em;
+            color: #e0e0e0;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 2px;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-weight: 600;
         }
         
         .frame-score {
-            font-weight: bold;
+            font-weight: 700;
             color: #fff;
         }
         
         .total-frames {
             color: #01AB7A;
-            font-weight: bold;
-            padding: 0 2px;
+            font-weight: 700;
+            padding: 0 3px;
+        }
+        
+        /* Player info containers with subtle differentiation */
+        #player1 {
+            justify-content: flex-end;
+            padding-right: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #player2 {
+            justify-content: flex-start;
+            padding-left: 15px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         /* Venue logo styling */
@@ -187,32 +210,33 @@
         /* Media query for very small screens */
         @media (max-height: 400px) and (orientation: landscape) {
             .overlay {
-                padding: 4px 8px;
+                padding: 8px 12px;
             }
             
             .name {
-                font-size: 0.85em;
-                max-width: 80px;
+                font-size: 1em;
+                max-width: 120px;
             }
             
             .score {
-                font-size: 1em;
-                margin-left: 6px;
-                min-width: 25px;
+                font-size: 1.3em;
+                margin-left: 10px;
+                min-width: 35px;
             }
             
             .rounds {
-                font-size: 0.8em;
+                font-size: 0.9em;
+                padding: 4px 10px;
             }
             
             .main-logo {
-                height: 22px;
+                height: 28px;
             }
             
             .active-indicator {
-                width: 12px;
-                height: 12px;
-                margin-right: 4px;
+                width: 14px;
+                height: 14px;
+                margin-right: 6px;
             }
             
             .venue-logo-img {
@@ -248,7 +272,7 @@
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" class="venue-logo-img">
 </div>
 
-<!-- Scoring Overlay -->
+<!-- Scoring Overlay - REDESIGNED -->
 <div class="overlay" id="scoreStrip">
     <!-- Player 1 -->
     <div class="player-info" id="player1">
@@ -259,7 +283,7 @@
 
     <!-- Center Content: Logo + Rounds -->
     <div class="center-content">
-        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Main Tournament Logo" class="main-logo">
         <div class="rounds" id="rounds">
             <span class="frame-score" id="player1Frames">0</span>
             <span>(</span>
