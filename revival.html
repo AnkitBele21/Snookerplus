@@ -1,127 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Revival Leaderboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Revival Spot Leaderboard</title>
   <style>
     body {
+      background: #000;
       font-family: Arial, sans-serif;
-      background: #0d0d0d;
-      color: #fff;
-      text-align: center;
+      color: white;
       margin: 0;
-      padding: 15px;
+      padding: 0;
+      text-align: center;
     }
-    header img {
-      max-width: 140px; /* slightly bigger logo */
-      margin-bottom: 10px;
+    .logo {
+      margin: 20px 0;
     }
-    h1 {
-      color: #f5c542;
-      margin: 15px 0 25px;
-      font-size: 26px; /* bigger title */
-      text-shadow: 0 0 8px rgba(245,197,66,0.8);
+    .logo img {
+      width: 180px;
     }
-    .leaderboard {
-      display: flex;
-      flex-direction: column;
-      gap: 20px; /* more space between cards */
-      max-width: 600px;
-      margin: auto;
+    h2 {
+      color: #FFD700;
+      margin-bottom: 15px;
     }
-    .player-card {
-      background: linear-gradient(135deg, #1a1a1a, #262626);
-      border: 3px solid #f5c542;
-      border-radius: 14px;
-      padding: 18px;
+    .card {
+      background: #111;
+      margin: 12px auto;
+      padding: 14px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 380px;
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
       text-align: left;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 0 12px rgba(245,197,66,0.6);
     }
     .rank {
-      font-size: 22px; /* bigger rank */
+      font-size: 18px;
       font-weight: bold;
-      color: #f5c542;
-      margin-right: 15px;
-      min-width: 50px;
-      text-align: center;
+      color: #FFD700;
+    }
+    .name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00FFFF;
+      margin: 6px 0;
     }
     .details {
-      flex: 1;
+      font-size: 15px;
+      color: #ccc;
+      line-height: 1.4;
     }
-    .player-name {
-      font-size: 20px; /* bigger name */
-      font-weight: bold;
-      margin-bottom: 6px;
-      color: #00eaff;
-    }
-    .stats {
-      font-size: 16px; /* bigger stats */
-      margin: 3px 0;
-      color: #ddd;
-    }
-    .player-card.top {
-      border-color: #ffcc00;
-      box-shadow: 0 0 18px #ffcc00;
-    }
-  </style>  
+  </style>
 </head>
 <body>
-  <header>
-    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
-    <h1>Revival Spot Leaderboard</h1>
-  </header>
-  <div id="leaderboard" class="leaderboard"></div>
+  <div class="logo">
+    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Logo">
+  </div>
+  <h2>Revival Spot Leaderboard</h2>
+  <div id="leaderboard"></div>
 
   <script>
-    const sheetId = "1FD4unKr6u9fLOjeOVdtzgrDcw6cUWuyjJFQVBaQRoaI";
-    const apiKey = "AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc";
-    const range = "'mini tournament'!G1:K8"; // sheet name included
+    const API_KEY = "AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc";
+    const SHEET_ID = "1FD4unKr6u9fLOjeOVdtzgrDcw6cUWuyjJFQVBaQRoaI";
+    const RANGE = "mini tournament!G1:K8"; // Player, Wins, Avg Lead, Matches
 
-    async function fetchData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+    async function loadData() {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
       const res = await fetch(url);
       const data = await res.json();
-      
-      let rows = data.values;
-      if (!rows) return;
+      const rows = data.values;
 
-      let players = [];
-      for (let i = 1; i < rows.length; i++) {
-        let name = rows[i][0] || "";
-        let wins = parseInt(rows[i][1] || 0);
-        let avgLead = parseFloat(rows[i][4] || 0);
-        players.push({ name, wins, avgLead });
-      }
+      if (!rows || rows.length < 2) return;
 
-      // sort: wins desc, then avgLead desc
-      players.sort((a, b) => {
-        if (b.wins !== a.wins) return b.wins - a.wins;
+      const players = rows.slice(1); // skip header
+
+      const playerData = players.map((row, i) => {
+        let name = row[0] || "";
+        let wins = row[1] || 0;
+        let avgLead = row[4] || "0.00";
+        let rawMatch = row[3] || "0";
+
+        // force format X/6
+        if (!rawMatch.includes("/")) {
+          rawMatch = `${rawMatch}/6`;
+        }
+
+        return { name, wins, avgLead, matches: rawMatch };
+      });
+
+      // sort: more wins first, then higher avg lead
+      playerData.sort((a, b) => {
+        if (b.wins != a.wins) return b.wins - a.wins;
         return b.avgLead - a.avgLead;
       });
 
+      render(playerData);
+    }
+
+    function render(players) {
       const container = document.getElementById("leaderboard");
       container.innerHTML = "";
-      players.forEach((p, index) => {
-        let card = document.createElement("div");
-        card.className = "player-card" + (index === 0 ? " top" : "");
+      players.forEach((p, i) => {
+        const card = document.createElement("div");
+        card.className = "card";
         card.innerHTML = `
-          <div class="rank">#${index + 1}</div>
+          <div class="rank">#${i+1}</div>
+          <div class="name">${p.name}</div>
           <div class="details">
-            <div class="player-name">${p.name}</div>
-            <div class="stats">Wins: ${p.wins}</div>
-            <div class="stats">Avg Lead: ${p.avgLead.toFixed(2)}</div>
+            Wins: ${p.wins} <br>
+            Avg Lead: ${p.avgLead} <br>
+            Matches Played: ${p.matches}
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    // Load immediately and auto-refresh every 30s
-    fetchData();
-    setInterval(fetchData, 30000);
+    loadData();
   </script>
 </body>
 </html>
