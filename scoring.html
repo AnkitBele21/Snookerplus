@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,18 +43,19 @@
         
         .ticker-message {
             position: absolute;
-            bottom: 70px;
+            bottom: 60px;
             left: 0;
             width: 100%;
             background: rgba(1, 171, 122, 0.9);
             color: #1D1D25;
-            padding: 10px 0;
+            padding: 8px 0;
             white-space: nowrap;
             overflow: hidden;
             box-sizing: border-box;
             font-weight: bold;
             z-index: 9;
             display: none;
+            font-size: 14px;
         }
         
         .ticker-content {
@@ -69,26 +69,26 @@
             100% { transform: translateX(-100%); }
         }
         
-        /* Scoring overlay - REDESIGNED */
+        /* Scoring overlay - OPTIMIZED FOR MOBILE LANDSCAPE */
         .overlay {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
             width: auto;
-            min-width: 600px;
-            max-width: 90%;
+            min-width: 450px;
+            max-width: 95%;
             background: rgba(29, 29, 37, 0.95);
             color: #FFFFFF;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
+            padding: 8px 15px;
             box-sizing: border-box;
-            border-top: 3px solid #01AB7A;
-            border-radius: 12px 12px 0 0;
+            border-top: 2px solid #01AB7A;
+            border-radius: 10px 10px 0 0;
             z-index: 7;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.3);
         }
         
         .center-content {
@@ -97,13 +97,7 @@
             align-items: center;
             text-align: center;
             flex: 0 0 auto;
-            margin: 0 20px;
-        }
-        
-        .main-logo {
-            height: 32px; /* Desktop size */
-            margin-bottom: 4px;
-            opacity: 1;
+            margin: 0 15px;
         }
         
         .player-info {
@@ -113,51 +107,51 @@
             flex: 1;
             text-align: center;
             position: relative;
-            padding: 5px 0;
-            min-width: 160px;
+            padding: 3px 0;
+            min-width: 130px;
         }
         
         .active-indicator {
-            margin-right: 8px;
-            width: 16px;
-            height: 16px;
+            margin-right: 6px;
+            width: 12px;
+            height: 12px;
             background-image: url('https://github.com/AnkitBele21/centurydewas/blob/main/photo/Frame%2013196%20(1).png?raw=true');
             background-size: cover;
             display: none;
-            filter: drop-shadow(0 0 4px rgba(1, 171, 122, 0.8));
+            filter: drop-shadow(0 0 3px rgba(1, 171, 122, 0.7));
         }
         
         .name {
-            font-size: 1.1em;
+            font-size: 0.95em;
             font-weight: 700;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 140px;
-            letter-spacing: 0.5px;
+            max-width: 110px;
+            letter-spacing: 0.3px;
         }
         
         .score {
-            font-size: 1.5em;
-            margin-left: 12px;
+            font-size: 1.3em;
+            margin-left: 8px;
             font-weight: 800;
             color: #01AB7A;
             text-align: right;
-            min-width: 40px;
-            text-shadow: 0 0 6px rgba(1, 171, 122, 0.4);
+            min-width: 35px;
+            text-shadow: 0 0 4px rgba(1, 171, 122, 0.3);
         }
         
         .rounds {
-            font-size: 1em;
+            font-size: 0.9em;
             color: #e0e0e0;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             background: rgba(255, 255, 255, 0.1);
-            padding: 5px 12px;
-            border-radius: 12px;
+            padding: 6px 12px;
+            border-radius: 10px;
             font-weight: 600;
         }
         
@@ -169,57 +163,58 @@
         .total-frames {
             color: #01AB7A;
             font-weight: 700;
-            padding: 0 3px;
+            padding: 0 2px;
         }
         
         /* Player info containers */
         #player1 {
             justify-content: flex-end;
-            padding-right: 15px;
+            padding-right: 12px;
             border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         #player2 {
             justify-content: flex-start;
-            padding-left: 15px;
+            padding-left: 12px;
             border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         /* Venue logo styling */
         .venue-logo {
             position: absolute;
-            top: 6px;
-            left: 6px;
+            top: 5px;
+            left: 5px;
             z-index: 10;
         }
         
         .venue-logo-img {
-            width: 100px;
-            max-width: 120px;
+            width: 80px;
+            max-width: 90px;
             opacity: 0.9;
         }
 
         /* Media Partner Logo */
         .top-right-logo {
             position: absolute;
-            top: 6px;
-            right: 6px;
+            top: 5px;
+            right: 5px;
             z-index: 15;
         }
         
         .top-right-logo img {
-            width: 100px;
+            width: 80px;
             opacity: 0.9;
         }
         
-        /* Media query for mobile landscape - FIXED */
-        @media (max-height: 500px) and (orientation: landscape), (max-width: 768px) {
+        /* Enhanced media query for mobile landscape */
+        @media (max-height: 500px) and (orientation: landscape) {
             .overlay {
-                padding: 6px 12px;
+                padding: 6px 10px;
                 min-width: unset;
-                width: 95%;
-                max-width: 95%;
+                width: 98%;
+                max-width: 98%;
                 border-radius: 8px 8px 0 0;
+                border-top-width: 2px;
             }
             
             .player-info {
@@ -228,73 +223,83 @@
             }
             
             .name {
-                font-size: 0.9em;
-                max-width: 100px;
+                font-size: 0.85em;
+                max-width: 90px;
             }
             
             .score {
-                font-size: 1.2em;
-                margin-left: 8px;
-                min-width: 30px;
+                font-size: 1.1em;
+                margin-left: 6px;
+                min-width: 28px;
             }
             
             .rounds {
-                font-size: 0.85em;
-                padding: 3px 8px;
-            }
-            
-            .main-logo {
-                height: 12px !important; /* Force mobile size */
-                margin-bottom: 2px;
+                font-size: 0.8em;
+                padding: 4px 10px;
+                gap: 2px;
             }
             
             .active-indicator {
-                width: 12px;
-                height: 12px;
-                margin-right: 5px;
+                width: 10px;
+                height: 10px;
+                margin-right: 4px;
+            }
+            
+            .center-content {
+                margin: 0 8px;
+            }
+            
+            /* Adjust logos for mobile landscape */
+            .venue-logo-img {
+                width: 60px;
+            }
+            
+            .top-right-logo img {
+                width: 60px;
+            }
+            
+            .ticker-message {
+                bottom: 45px;
+                font-size: 12px;
+                padding: 6px 0;
+            }
+            
+            #player1 {
+                padding-right: 8px;
+            }
+            
+            #player2 {
+                padding-left: 8px;
+            }
+        }
+        
+        @media (max-width: 650px) {
+            .overlay {
+                min-width: unset;
+                width: 96%;
+                padding: 7px 12px;
+            }
+            
+            .player-info {
+                min-width: unset;
+            }
+            
+            .name {
+                max-width: 90px;
+                font-size: 0.9em;
             }
             
             .center-content {
                 margin: 0 10px;
             }
             
-            /* Adjust logos for mobile */
+            /* Adjust logos for mobile portrait */
             .venue-logo-img {
                 width: 70px;
             }
             
             .top-right-logo img {
                 width: 70px;
-            }
-            
-            .ticker-message {
-                bottom: 50px;
-                font-size: 0.8em;
-                padding: 6px 0;
-            }
-            
-            #player1 {
-                padding-right: 10px;
-            }
-            
-            #player2 {
-                padding-left: 10px;
-            }
-        }
-        
-        /* Additional media query for very small mobile devices */
-        @media (max-width: 350px) {
-            .main-logo {
-                height: 20px !important;
-            }
-            
-            .name {
-                font-size: 0.8em;
-                max-width: 80px;
-            }
-            
-            .score {
-                font-size: 1em;
             }
         }
     </style>
@@ -312,12 +317,12 @@
     <div class="ticker-content" id="tickerContent"></div>
 </div>
 
-<!-- Venue Logo (Top Left) 
+<!-- Venue Logo (Top Left) -->
 <div class="venue-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" class="venue-logo-img">
 </div>
--->
-<!-- Scoring Overlay - REDESIGNED -->
+
+<!-- Scoring Overlay - OPTIMIZED FOR MOBILE LANDSCAPE -->
 <div class="overlay" id="scoreStrip">
     <!-- Player 1 -->
     <div class="player-info" id="player1">
@@ -326,9 +331,8 @@
         <div class="score" id="player1Score">0</div>
     </div>
 
-    <!-- Center Content: Logo + Rounds -->
+    <!-- Center Content: Rounds Only (Logo Removed) -->
     <div class="center-content">
-        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Main Tournament Logo" class="main-logo">
         <div class="rounds" id="rounds">
             <span class="frame-score" id="player1Frames">0</span>
             <span>(</span>
