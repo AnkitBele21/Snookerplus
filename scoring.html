@@ -103,7 +103,6 @@
             height: 18px;
             margin-bottom: 4px;
             opacity: 1;
-            /* Removed the filter that was making it black and white */
         }
         
         .player-info {
@@ -186,16 +185,12 @@
         }
         
         /* Venue logo styling */
-
         .venue-logo {
-    display: none;
-}
-        /* .venue-logo {
             position: absolute;
             top: 6px;
             left: 6px;
             z-index: 10;
-        } */
+        }
         
         .venue-logo-img {
             width: 100px;
@@ -216,50 +211,73 @@
             opacity: 0.9;
         }
         
-        /* Media query for very small screens */
-        @media (max-height: 400px) and (orientation: landscape) {
+        /* Media query for very small screens - UPDATED */
+        @media (max-height: 500px) and (orientation: landscape) {
             .overlay {
-                padding: 8px 15px;
-                min-width: 500px;
+                padding: 6px 12px;
+                min-width: unset;
+                width: 95%;
+                max-width: 95%;
+                border-radius: 8px 8px 0 0;
+            }
+            
+            .player-info {
+                min-width: unset;
+                padding: 2px 0;
             }
             
             .name {
-                font-size: 1em;
-                max-width: 120px;
+                font-size: 0.9em;
+                max-width: 100px;
             }
             
             .score {
-                font-size: 1.3em;
-                margin-left: 10px;
-                min-width: 35px;
+                font-size: 1.2em;
+                margin-left: 8px;
+                min-width: 30px;
             }
             
             .rounds {
-                font-size: 0.9em;
-                padding: 4px 10px;
+                font-size: 0.85em;
+                padding: 3px 8px;
             }
             
             .main-logo {
-                height: 28px;
+                height: 24px;
+                margin-bottom: 2px;
             }
             
             .active-indicator {
-                width: 14px;
-                height: 14px;
-                margin-right: 6px;
+                width: 12px;
+                height: 12px;
+                margin-right: 5px;
             }
             
+            .center-content {
+                margin: 0 10px;
+            }
+            
+            /* Adjust logos for mobile landscape */
             .venue-logo-img {
-                width: 80px;
+                width: 70px;
             }
             
             .top-right-logo img {
-                width: 80px;
+                width: 70px;
             }
             
             .ticker-message {
-                bottom: 60px;
-                font-size: 0.9em;
+                bottom: 50px;
+                font-size: 0.8em;
+                padding: 6px 0;
+            }
+            
+            #player1 {
+                padding-right: 10px;
+            }
+            
+            #player2 {
+                padding-left: 10px;
             }
         }
         
@@ -281,6 +299,15 @@
             
             .center-content {
                 margin: 0 10px;
+            }
+            
+            /* Adjust logos for mobile portrait */
+            .venue-logo-img {
+                width: 80px;
+            }
+            
+            .top-right-logo img {
+                width: 80px;
             }
         }
     </style>
