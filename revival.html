@@ -1,131 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Revival Leaderboard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0d0d0d;
-      color: #fff;
-      text-align: center;
-      margin: 0;
-      padding: 15px;
-    }
-    header {
-      margin-bottom: 20px;
-    }
-    header img {
-      max-width: 120px;
-      margin-bottom: 10px;
-    }
-    h1 {
-      color: #f5c542;
-      margin: 10px 0 20px;
-      font-size: 22px;
-      text-shadow: 0 0 8px rgba(245,197,66,0.8);
-    }
-    .leaderboard {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      max-width: 500px;
-      margin: auto;
-    }
-    .player-card {
-      background: linear-gradient(135deg, #1a1a1a, #262626);
-      border: 2px solid #f5c542;
-      border-radius: 12px;
-      padding: 12px;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 0 10px rgba(245,197,66,0.5);
-    }
-    .rank {
-      font-size: 18px;
-      font-weight: bold;
-      color: #f5c542;
-      margin-right: 10px;
-      min-width: 40px;
-      text-align: center;
-    }
-    .details {
-      flex: 1;
-    }
-    .player-name {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #00eaff;
-    }
-    .stats {
-      font-size: 14px;
-      margin: 2px 0;
-      color: #ddd;
-    }
-    /* Highlight top player */
-    .player-card.top {
-      border-color: #ffcc00;
-      box-shadow: 0 0 15px #ffcc00;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Snooker+ Logo">
-    <h1>Revival Spot Leaderboard</h1>
-  </header>
-  <div id="leaderboard" class="leaderboard"></div>
-
-  <script>
-    const sheetId = "1FD4unKr6u9fLOjeOVdtzgrDcw6cUWuyjJFQVBaQRoaI";
-    const apiKey = "AIzaSyCfxg14LyZ1hrs18WHUuGOnSaJ_IJEtDQc";
-    const range = "'mini tournament'!G1:K8"; // sheet name included
-
-    async function fetchData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      
-      let rows = data.values;
-      if (!rows) return;
-
-      let players = [];
-      for (let i = 1; i < rows.length; i++) {
-        let name = rows[i][0] || "";
-        let wins = parseInt(rows[i][1] || 0);
-        let avgLead = parseFloat(rows[i][4] || 0);
-        players.push({ name, wins, avgLead });
-      }
-
-      // sort: wins desc, then avgLead desc
-      players.sort((a, b) => {
-        if (b.wins !== a.wins) return b.wins - a.wins;
-        return b.avgLead - a.avgLead;
-      });
-
-      const container = document.getElementById("leaderboard");
-      container.innerHTML = "";
-      players.forEach((p, index) => {
-        let card = document.createElement("div");
-        card.className = "player-card" + (index === 0 ? " top" : "");
-        card.innerHTML = `
-          <div class="rank">#${index + 1}</div>
-          <div class="details">
-            <div class="player-name">${p.name}</div>
-            <div class="stats">Wins: ${p.wins}</div>
-            <div class="stats">Avg Lead: ${p.avgLead.toFixed(2)}</div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // Load immediately and auto-refresh every 30s
-    fetchData();
-    setInterval(fetchData, 30000);
-  </script>
-</body>
-</html>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #0d0d0d;
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    padding: 15px;
+  }
+  header img {
+    max-width: 140px; /* slightly bigger logo */
+    margin-bottom: 10px;
+  }
+  h1 {
+    color: #f5c542;
+    margin: 15px 0 25px;
+    font-size: 26px; /* bigger title */
+    text-shadow: 0 0 8px rgba(245,197,66,0.8);
+  }
+  .leaderboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* more space between cards */
+    max-width: 600px;
+    margin: auto;
+  }
+  .player-card {
+    background: linear-gradient(135deg, #1a1a1a, #262626);
+    border: 3px solid #f5c542;
+    border-radius: 14px;
+    padding: 18px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 0 12px rgba(245,197,66,0.6);
+  }
+  .rank {
+    font-size: 22px; /* bigger rank */
+    font-weight: bold;
+    color: #f5c542;
+    margin-right: 15px;
+    min-width: 50px;
+    text-align: center;
+  }
+  .details {
+    flex: 1;
+  }
+  .player-name {
+    font-size: 20px; /* bigger name */
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #00eaff;
+  }
+  .stats {
+    font-size: 16px; /* bigger stats */
+    margin: 3px 0;
+    color: #ddd;
+  }
+  .player-card.top {
+    border-color: #ffcc00;
+    box-shadow: 0 0 18px #ffcc00;
+  }
+</style>
