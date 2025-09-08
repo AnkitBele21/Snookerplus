@@ -28,7 +28,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 8; /* Higher than score strip */
+            z-index: 8;
             display: none;
             justify-content: center;
             align-items: center;
@@ -38,7 +38,7 @@
         .creative-image {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Fill the screen */
+            object-fit: cover;
         }
         
         .ticker-message {
@@ -53,7 +53,7 @@
             overflow: hidden;
             box-sizing: border-box;
             font-weight: bold;
-            z-index: 9; /* Above score strip */
+            z-index: 9;
             display: none;
         }
         
@@ -86,7 +86,7 @@
             box-sizing: border-box;
             border-top: 3px solid #01AB7A;
             border-radius: 12px 12px 0 0;
-            z-index: 7; /* Below creative content */
+            z-index: 7;
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
         }
         
@@ -100,7 +100,7 @@
         }
         
         .main-logo {
-            height: 4px;
+            height: 32px; /* Desktop size */
             margin-bottom: 4px;
             opacity: 1;
         }
@@ -171,7 +171,7 @@
             padding: 0 3px;
         }
         
-        /* Player info containers with subtle differentiation */
+        /* Player info containers */
         #player1 {
             justify-content: flex-end;
             padding-right: 15px;
@@ -211,8 +211,8 @@
             opacity: 0.9;
         }
         
-        /* Media query for very small screens - UPDATED */
-        @media (max-height: 500px) and (orientation: landscape) {
+        /* Media query for mobile landscape - FIXED */
+        @media (max-height: 500px) and (orientation: landscape), (max-width: 768px) {
             .overlay {
                 padding: 6px 12px;
                 min-width: unset;
@@ -243,7 +243,7 @@
             }
             
             .main-logo {
-                height: 24px;
+                height: 24px !important; /* Force mobile size */
                 margin-bottom: 2px;
             }
             
@@ -257,7 +257,7 @@
                 margin: 0 10px;
             }
             
-            /* Adjust logos for mobile landscape */
+            /* Adjust logos for mobile */
             .venue-logo-img {
                 width: 70px;
             }
@@ -281,33 +281,19 @@
             }
         }
         
-        @media (max-width: 650px) {
-            .overlay {
-                min-width: unset;
-                width: 95%;
-                padding: 8px 12px;
-            }
-            
-            .player-info {
-                min-width: unset;
+        /* Additional media query for very small mobile devices */
+        @media (max-width: 350px) {
+            .main-logo {
+                height: 20px !important;
             }
             
             .name {
-                max-width: 100px;
+                font-size: 0.8em;
+                max-width: 80px;
+            }
+            
+            .score {
                 font-size: 1em;
-            }
-            
-            .center-content {
-                margin: 0 10px;
-            }
-            
-            /* Adjust logos for mobile portrait */
-            .venue-logo-img {
-                width: 80px;
-            }
-            
-            .top-right-logo img {
-                width: 80px;
             }
         }
     </style>
@@ -324,12 +310,12 @@
 <div class="ticker-message" id="tickerMessage">
     <div class="ticker-content" id="tickerContent"></div>
 </div>
-<!-- 
-Venue Logo (Top Left)
+
+<!-- Venue Logo (Top Left) -->
 <div class="venue-logo">
     <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/NEXTGEN.png?raw=true" class="venue-logo-img">
 </div>
--->
+
 <!-- Scoring Overlay - REDESIGNED -->
 <div class="overlay" id="scoreStrip">
     <!-- Player 1 -->
@@ -341,7 +327,7 @@ Venue Logo (Top Left)
 
     <!-- Center Content: Logo + Rounds -->
     <div class="center-content">
-        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/logo%20(1).png?raw=true" alt="Main Tournament Logo" class="main-logo">
+        <img src="https://github.com/AnkitBele21/centurydewas/blob/main/photo/deluxe%20white.png?raw=true" alt="Main Tournament Logo" class="main-logo">
         <div class="rounds" id="rounds">
             <span class="frame-score" id="player1Frames">0</span>
             <span>(</span>
@@ -390,7 +376,7 @@ Venue Logo (Top Left)
             document.getElementById('player1Frames').innerText = frameScores[0] || '0';
             document.getElementById('player2Frames').innerText = frameScores[1] || '0';
             
-            // Update current frame number - fixed to use totalFrames instead of currentFrame
+            // Update current frame number
             document.getElementById('currentFrame').innerText = data.totalFrames || '1';
         }
     });
